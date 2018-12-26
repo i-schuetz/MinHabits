@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { FlatList, StyleSheet, Text } from 'react-native';
-import Repo from './Repo.js';
+import Repo from '../Repo.js';
 
 export default class DailyHabitsList extends Component {
     state = { items: [] };

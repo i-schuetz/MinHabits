@@ -4,7 +4,7 @@ import {
 
 const ITEMS_KEY = 'SIMPLE_HABITS';
 
-export default class Store {
+export default class Repo {
 
     static loadItems = async () => {
         // let items = null;
