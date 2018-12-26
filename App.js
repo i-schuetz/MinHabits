@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, StyleSheet, View, Text, TouchableHighlight } from 'react-native';
 import DailyHabitsList from './js/components/DailyHabitsList'
 import NavigationBar from 'react-native-navbar';
+import StatusBarArea from './js/components/StatusBarArea';
 
 export default class App extends React.Component {
 
@@ -24,6 +25,7 @@ export default class App extends React.Component {
         };
         return (
             <View style={styles.container}>
+                <StatusBarArea />
                 <NavigationBar
                     title={titleConfig}
                     rightButton={rightButtonConfig}
@@ -48,7 +50,6 @@ export default class App extends React.Component {
                         </View>
                     </View>
                 </Modal>
-
             </View>
         );
     }
