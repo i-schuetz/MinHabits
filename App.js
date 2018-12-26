@@ -3,6 +3,7 @@ import { Modal, StyleSheet, View, Text, TouchableHighlight } from 'react-native'
 import DailyHabitsList from './js/components/DailyHabitsList'
 import NavigationBar from 'react-native-navbar';
 import StatusBarArea from './js/components/StatusBarArea';
+import EditHabitView from './js/components/EditHabitView';
 
 export default class App extends React.Component {
 
@@ -37,18 +38,9 @@ export default class App extends React.Component {
                     transparent={false}
                     visible={this.state.modalVisible}
                     >
-                    <View style={{marginTop: 22}}>
-                        <View>
-                        <Text>Hello World!</Text>
-
-                        <TouchableHighlight
-                            onPress={() => {
-                            this.setModalVisible(!this.state.modalVisible);
-                            }}>
-                            <Text>Hide Modal</Text>
-                        </TouchableHighlight>
-                        </View>
-                    </View>
+                    <EditHabitView onClose={() =>
+                        this.setModalVisible(false)
+                    }/>
                 </Modal>
             </View>
         );
