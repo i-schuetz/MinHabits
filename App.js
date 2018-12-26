@@ -1,14 +1,22 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Modal, StyleSheet, View, Text, TouchableHighlight } from 'react-native';
 import DailyHabitsList from './js/components/DailyHabitsList'
 import NavigationBar from 'react-native-navbar';
 
 export default class App extends React.Component {
 
+    state = {
+        modalVisible: false,
+    };
+
+    setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+    }
+
     render() {
         const rightButtonConfig = {
             title: '+',
-            handler: () => alert('hello!'),
+            handler: () => this.setModalVisible(!this.state.modalVisible)
         };
         
         const titleConfig = {
@@ -21,6 +29,26 @@ export default class App extends React.Component {
                     rightButton={rightButtonConfig}
                 />
                 <DailyHabitsList />
+
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.modalVisible}
+                    >
+                    <View style={{marginTop: 22}}>
+                        <View>
+                        <Text>Hello World!</Text>
+
+                        <TouchableHighlight
+                            onPress={() => {
+                            this.setModalVisible(!this.state.modalVisible);
+                            }}>
+                            <Text>Hide Modal</Text>
+                        </TouchableHighlight>
+                        </View>
+                    </View>
+                </Modal>
+
             </View>
         );
     }
