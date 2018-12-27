@@ -32,8 +32,6 @@ export default class EditHabitView extends Component {
                     }}
                 />
 
-                <Text>Hello World!</Text>
-
                 <Button 
                     title="Submit" 
                     onPress={() => {
