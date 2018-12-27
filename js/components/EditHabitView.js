@@ -25,9 +25,9 @@ export default class EditHabitView extends Component {
                     style={styles.nameInput} 
                     ref={input => (this.textInput = input)}
                     placeholder="Name" 
-                    onSubmitEditing={event => {
-                        this.setState({ habit: { name: event.nativeEvent.text }}, () => {
-                            console.log("Habit added/edited: " + JSON.stringify(this.state.habit));
+                    onChangeText={text => {
+                        this.setState({ habit: { name: text }}, () => {
+                            console.log("Habit name changed: " + JSON.stringify(this.state.habit));
                         });
                     }}
                 />
