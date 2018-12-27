@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import NavigationBar from 'react-native-navbar';
-import Repo from '../Repo.js';
 
 export default class EditHabitView extends Component {
+    state = { habit: { name: "" } }
+
     render() {
         const leftButtonConfig = {
             title: 'x',
@@ -21,14 +21,25 @@ export default class EditHabitView extends Component {
                     leftButton={leftButtonConfig}
                 />
                 <View>
+                <TextInput 
+                    style={styles.nameInput} 
+                    ref={input => (this.textInput = input)}
+                    placeholder="Name" 
+                    onSubmitEditing={event => {
+                        this.setState({ habit: { name: event.nativeEvent.text }}, () => {
+                            console.log("Habit added/edited: " + JSON.stringify(this.state.habit));
+                        });
+                    }}
+                />
+
                 <Text>Hello World!</Text>
 
-                <TouchableHighlight
+                <Button 
+                    title="Submit" 
                     onPress={() => {
-                        this.props.onClose();
-                    }}>
-                    <Text>Hide Modal</Text>
-                </TouchableHighlight>
+                        this.props.onSubmit(this.state.habit);
+                    }}
+                />
                 </View>
             </View>
         );
@@ -36,4 +47,7 @@ export default class EditHabitView extends Component {
 }
 
 const styles = StyleSheet.create({
+    nameInput: {
+        height: 40
+    }
 });

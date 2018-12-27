@@ -7,19 +7,26 @@ const ITEMS_KEY = 'SIMPLE_HABITS';
 export default class Repo {
 
     static loadItems = async () => {
-        // let items = null;
-        // try {
-        //     const jsonItems = await AsyncStorage.getItem(ITEMS_KEY);
-        //     items = JSON.parse(jsonItems);
-        // } catch (error) {
-        //     console.error('Error loading journal items. ', error.message);
-        // }
-        // return items || [];
-        return [
-            { name: "Foo" },
-            { name: "The store is working!" }
-        ]
+        let items = null;
+        try {
+            const jsonItems = await AsyncStorage.getItem(ITEMS_KEY);
+            items = JSON.parse(jsonItems);
+        } catch (error) {
+            console.error('Error loading journal items. ', error.message);
+        }
+        return items || [];
     }
+
+    static addHabit = async habit => {
+        try { 
+            const habits = await Repo.loadItems();
+            // console.log("Loaded habits: " + JSON.stringify(habits));
+            habits.push(habit);
+            await Repo.saveItems(habits);
+        } catch (error) { 
+            console.error('Error saving habit.', error.message); 
+        } 
+    };
 
     static saveItems = async items => { 
         try { 
