@@ -1,8 +1,30 @@
 import { AsyncStorage } from "react-native";
+// import { SQLite } from 'expo';
 
 const ITEMS_KEY = "SIMPLE_HABITS";
+// const db = SQLite.openDatabase('db.db');
 
 export default class Repo {
+
+  static init = () => {
+    // return new Promise((resolve, reject) => db.transaction(tx => {
+    //   tx.executeSql(
+    //     'create table if not exists habits (id integer primary key not null, name text);',
+    //     [],
+    //     () => resolve(), reject
+    //   )
+    // }))
+  }
+
+  // static loadItems2 = async () => {
+  //   return new Promise((resolve, reject) => db.transaction(tx => {
+  //     tx.executeSql(
+  //       `select * from habits`,
+  //       [],
+  //       (_, { rows: { _array } }) => resolve(rows._array), reject)
+  //   }))
+  // }
+
   static loadItems = async () => {
     let items = null;
     try {
