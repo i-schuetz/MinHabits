@@ -31,6 +31,7 @@ export default class App extends React.Component {
   };
 
   submitHabit = async habit => {
+    console.log("Submitting habit: " + JSON.stringify(habit));
     this.setModalVisible(false);
     await Repo.addHabit(habit);
     this.updateHabits();

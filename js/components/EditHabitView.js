@@ -1,14 +1,30 @@
 import React, { Component } from "react";
-import {
-  Button,
-  StyleSheet,
-  TextInput,
-  View
-} from "react-native";
+import { Button, StyleSheet, TextInput, View } from "react-native";
 import NavigationBar from "react-native-navbar";
+import WeekdayPicker from "./WeekdayPicker";
 
 export default class EditHabitView extends Component {
-  state = { habit: null };
+  state = { name: null, time: null };
+
+  toggleWeekday(weekdays, weekday) {
+    if (weekdays.includes(weekday)) {
+      return weekdays.filter(element => element != weekday);
+    } else {
+      weekdays.push(weekday);
+      return weekdays;
+    }
+  }
+
+  toHabit(habitInputs) {
+    if (!habitInputs.name || !habitInputs.time) {
+      console.log("Input validation failed: " + JSON.stringify(habitInputs));
+      return null;
+    }
+    return {
+      name: habitInputs.name,
+      time: habitInputs.time
+    };
+  }
 
   render() {
     const leftButtonConfig = {
@@ -28,18 +44,46 @@ export default class EditHabitView extends Component {
             ref={input => (this.textInput = input)}
             placeholder="Name"
             onChangeText={text => {
-              this.setState({ habit: { name: text } }, () => {
+              this.setState({ name: text }, () => {
                 console.log(
-                  "Habit name changed: " + JSON.stringify(this.state.habit)
+                  "Habit name changed: " +
+                    JSON.stringify(this.state)
                 );
               });
             }}
           />
-
+          <WeekdayPicker
+            style={styles.weekdayPicker}
+            onSelect={key => {
+              console.log("selected: " + key);
+              this.setState(
+                {
+                  time: {
+                    type: "wd",
+                    value: this.toggleWeekday(
+                      this.state.time
+                        ? this.state.time.value
+                        : [],
+                      key
+                    )
+                  }
+                },
+                () => {
+                  console.log(
+                    "Habit name changed: " +
+                      JSON.stringify(this.state)
+                  );
+                }
+              );
+            }}
+          />
           <Button
             title="Submit"
             onPress={() => {
-              this.props.onSubmit(this.state.habit);
+              const habit = this.toHabit(this.state);
+              if (habit) {
+                this.props.onSubmit(habit);
+              }
             }}
           />
         </View>
@@ -51,5 +95,8 @@ export default class EditHabitView extends Component {
 const styles = StyleSheet.create({
   nameInput: {
     height: 40
+  },
+  weekdayPicker: {
+    height: 50
   }
 });
