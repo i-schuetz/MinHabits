@@ -2,15 +2,13 @@ import React, { Component } from "react";
 import {
   Button,
   StyleSheet,
-  Text,
   TextInput,
-  TouchableHighlight,
   View
 } from "react-native";
 import NavigationBar from "react-native-navbar";
 
 export default class EditHabitView extends Component {
-  state = { habit: { name: "" } };
+  state = { habit: null };
 
   render() {
     const leftButtonConfig = {
