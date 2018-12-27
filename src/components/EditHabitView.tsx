@@ -2,12 +2,23 @@ import React, { Component } from "react";
 import { Button, StyleSheet, TextInput, View } from "react-native";
 import NavigationBar from "react-native-navbar";
 import WeekdayPicker from "./WeekdayPicker";
+import Habit from "../models/Habit";
 
-export default class EditHabitView extends Component {
-  state = { name: null, time: null };
+export interface EditHabitViewProps { onClose: () => void; onSubmit: (habit: Habit) => void; }
+export interface EditHabitViewState { name?: string; time?: any; }
 
-  toggleWeekday(weekdays, weekday) {
-    if (weekdays.includes(weekday)) {
+export default class EditHabitView extends Component<EditHabitViewProps, EditHabitViewState> {
+  private textInput: React.RefObject<TextInput>;
+
+  constructor(props: EditHabitViewProps) {
+    super(props);
+    this.textInput = React.createRef();
+  }
+
+  state: EditHabitViewState = { name: undefined, time: undefined };
+
+  toggleWeekday(weekdays: Array<string>, weekday: string): Array<string> {
+    if (weekdays.indexOf(weekday)) {
       return weekdays.filter(element => element != weekday);
     } else {
       weekdays.push(weekday);
@@ -15,7 +26,7 @@ export default class EditHabitView extends Component {
     }
   }
 
-  toHabit(habitInputs) {
+  toHabit(habitInputs: EditHabitViewState): Habit {
     if (!habitInputs.name || !habitInputs.time) {
       console.log("Input validation failed: " + JSON.stringify(habitInputs));
       return null;
@@ -41,7 +52,7 @@ export default class EditHabitView extends Component {
         <View>
           <TextInput
             style={styles.nameInput}
-            ref={input => (this.textInput = input)}
+            ref={this.textInput}
             placeholder="Name"
             onChangeText={text => {
               this.setState({ name: text }, () => {
@@ -54,7 +65,7 @@ export default class EditHabitView extends Component {
           />
           <WeekdayPicker
             style={styles.weekdayPicker}
-            onSelect={key => {
+            onSelect={(key: string) => {
               console.log("selected: " + key);
               this.setState(
                 {

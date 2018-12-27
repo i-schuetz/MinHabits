@@ -4,16 +4,33 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "lint": "tslint src/**/*.ts",
+    "tsc": "tsc",
+    "clean": "rimraf build",
+    "build": "yarn run clean && yarn run tsc --",
+    "watch": "yarn run build -- -w",
+    "watchAndRunAndroid": "concurrently \"yarn run watch\" \"yarn run android\"",
+    "buildRunAndroid": "yarn run build && yarn run watchAndRunAndroid ",
+    "watchAndRunIOS": "concurrently \"yarn run watch\" \"yarn run ios\"",
+    "buildRunIOS": "yarn run build && yarn run watchAndRunIOS ",
+    "watchAndStart": "concurrently \"yarn run watch\" \"yarn run start\"",
+    "buildAndStart": "yarn run build && yarn run watchAndStart "
   },
   "dependencies": {
+    "@types/react-native-navbar": "^2.1.1",
     "expo": "^31.0.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-native-navbar": "^2.1.0"
   },
   "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
+    "@types/react-native": "^0.57.23",
+    "babel-preset-expo": "^5.0.0",
+    "concurrently": "^4.1.0",
+    "rimraf": "^2.6.2"
   },
   "private": true
 }

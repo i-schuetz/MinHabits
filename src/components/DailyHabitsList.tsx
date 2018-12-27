@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 
 import { FlatList, StyleSheet, Text } from "react-native";
+import Habit from "../models/Habit";
 
-export default class DailyHabitsList extends Component {
+export interface DailyHabitsListProps { habits: Array<Habit> };
+
+export default class DailyHabitsList extends Component<DailyHabitsListProps> {
   render() {
     return (
       <FlatList

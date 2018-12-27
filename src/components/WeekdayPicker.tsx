@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default class WeekdayPicker extends Component {
-  state = { habit: null };
+export interface WeekdayPickerProps { onSelect: (key: string) => void, style: React.CSSProperties }
+
+export default class WeekdayPicker extends Component<WeekdayPickerProps> {
 
   render() {
     return (
       <View>
         <FlatList
           horizontal={true}
-          style={styles.list}
           data={[
             { key: "m", name: "M" },
             { key: "t", name: "T" },
