@@ -30,7 +30,7 @@ export default class App extends React.Component {
     }
   };
 
-  onSubmitHabit = async habit => {
+  submitHabit = async habit => {
     this.setModalVisible(false);
     await Repo.addHabit(habit);
     this.updateHabits();
@@ -61,7 +61,11 @@ export default class App extends React.Component {
         >
           <EditHabitView
             onSubmit={habit => {
-              this.onSubmitHabit(habit);
+              this.setModalVisible(false);
+              this.submitHabit(habit);
+            }}
+            onClose={() => {
+              this.setModalVisible(false);
             }}
           />
         </Modal>
