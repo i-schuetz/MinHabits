@@ -20,11 +20,11 @@ export default class App extends React.Component<any, AppState> {
     this.updateHabits()
   }
 
-  setModalVisible(visible: boolean) {
+  private setModalVisible(visible: boolean) {
     this.setState({ modalVisible: visible });
   }
 
-  updateHabits = async () => {
+  private updateHabits = async () => {
     try {
       const habits = await Repo.loadItems();
       console.log("updating list with items: " + JSON.stringify(habits));
@@ -34,7 +34,7 @@ export default class App extends React.Component<any, AppState> {
     }
   };
 
-  submitHabit = async (habit: Habit) => {
+  private submitHabit = async (habit: Habit) => {
     console.log("Submitting habit: " + JSON.stringify(habit));
     this.setModalVisible(false);
     await Repo.addHabit(habit);

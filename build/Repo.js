@@ -32,7 +32,9 @@ Repo.loadItems = () => __awaiter(this, void 0, void 0, function* () {
     let items = null;
     try {
         const jsonItems = yield AsyncStorage.getItem(ITEMS_KEY);
-        items = JSON.parse(jsonItems);
+        if (jsonItems) {
+            items = JSON.parse(jsonItems);
+        }
     }
     catch (error) {
         console.error("Error loading journal items. ", error.message);

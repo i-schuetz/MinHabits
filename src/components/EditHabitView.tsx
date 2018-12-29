@@ -17,7 +17,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
 
   state: EditHabitViewState = { name: undefined, time: undefined };
 
-  toggleWeekday(weekdays: Array<string>, weekday: string): Array<string> {
+  private toggleWeekday(weekdays: Array<string>, weekday: string): Array<string> {
     if (weekdays.indexOf(weekday)) {
       return weekdays.filter(element => element != weekday);
     } else {
@@ -26,7 +26,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
     }
   }
 
-  toHabit(habitInputs: EditHabitViewState): Habit {
+  private toHabit(habitInputs: EditHabitViewState): Habit | null {
     if (!habitInputs.name || !habitInputs.time) {
       console.log("Input validation failed: " + JSON.stringify(habitInputs));
       return null;

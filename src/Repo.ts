@@ -30,7 +30,9 @@ export default class Repo {
     let items = null;
     try {
       const jsonItems = await AsyncStorage.getItem(ITEMS_KEY);
-      items = JSON.parse(jsonItems);
+      if (jsonItems) {
+        items = JSON.parse(jsonItems);
+      }
     } catch (error) {
       console.error("Error loading journal items. ", error.message);
     }
