@@ -1,10 +1,20 @@
 import React, { Component } from "react";
-import { FlatList, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import {
+  FlatList,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle
+} from "react-native";
 
-export interface WeekdayPickerProps { onSelect: (key: string) => void, style: StyleProp<ViewStyle> }
+export interface WeekdayPickerProps {
+  onSelect: (key: string) => void;
+  style: StyleProp<ViewStyle>;
+}
 
 export default class WeekdayPicker extends Component<WeekdayPickerProps> {
-
   render() {
     return (
       <View>

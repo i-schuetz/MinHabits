@@ -4,10 +4,19 @@ import NavigationBar from "react-native-navbar";
 import WeekdayPicker from "./WeekdayPicker";
 import Habit from "../models/Habit";
 
-export interface EditHabitViewProps { onClose: () => void; onSubmit: (habit: Habit) => void; }
-export interface EditHabitViewState { name?: string; time?: any; }
+export interface EditHabitViewProps {
+  onClose: () => void;
+  onSubmit: (habit: Habit) => void;
+}
+export interface EditHabitViewState {
+  name?: string;
+  time?: any;
+}
 
-export default class EditHabitView extends Component<EditHabitViewProps, EditHabitViewState> {
+export default class EditHabitView extends Component<
+  EditHabitViewProps,
+  EditHabitViewState
+> {
   private textInput: React.RefObject<TextInput>;
 
   constructor(props: EditHabitViewProps) {
@@ -17,7 +26,10 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
 
   state: EditHabitViewState = { name: undefined, time: undefined };
 
-  private toggleWeekday(weekdays: Array<string>, weekday: string): Array<string> {
+  private toggleWeekday(
+    weekdays: Array<string>,
+    weekday: string
+  ): Array<string> {
     if (weekdays.indexOf(weekday)) {
       return weekdays.filter(element => element != weekday);
     } else {
@@ -57,8 +69,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
             onChangeText={text => {
               this.setState({ name: text }, () => {
                 console.log(
-                  "Habit name changed: " +
-                    JSON.stringify(this.state)
+                  "Habit name changed: " + JSON.stringify(this.state)
                 );
               });
             }}
@@ -72,17 +83,14 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
                   time: {
                     type: "wd",
                     value: this.toggleWeekday(
-                      this.state.time
-                        ? this.state.time.value
-                        : [],
+                      this.state.time ? this.state.time.value : [],
                       key
                     )
                   }
                 },
                 () => {
                   console.log(
-                    "Habit name changed: " +
-                      JSON.stringify(this.state)
+                    "Habit name changed: " + JSON.stringify(this.state)
                   );
                 }
               );

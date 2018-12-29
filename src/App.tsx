@@ -5,19 +5,21 @@ import NavigationBar from "react-native-navbar";
 import StatusBarArea from "./components/StatusBarArea";
 import EditHabitView from "./components/EditHabitView";
 import Repo from "./Repo";
-import Habit from './models/Habit';
+import Habit from "./models/Habit";
 
-export interface AppState { habits: Array<Habit>; modalVisible: boolean; }
+export interface AppState {
+  habits: Array<Habit>;
+  modalVisible: boolean;
+}
 
-export default class App extends React.Component<any, AppState> {  
-  
+export default class App extends React.Component<any, AppState> {
   state = {
     habits: Array<Habit>(),
     modalVisible: false
   };
 
   componentWillMount() {
-    this.updateHabits()
+    this.updateHabits();
   }
 
   private setModalVisible(visible: boolean) {
@@ -65,11 +67,11 @@ export default class App extends React.Component<any, AppState> {
           }}
         >
           <EditHabitView
-            onSubmit={ (habit: Habit) => {
+            onSubmit={(habit: Habit) => {
               this.setModalVisible(false);
               this.submitHabit(habit);
             }}
-            onClose={ () => {
+            onClose={() => {
               this.setModalVisible(false);
             }}
           />
