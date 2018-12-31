@@ -1,68 +1,72 @@
-import { AsyncStorage } from "react-native";
-// import { SQLite } from 'expo';
-import Habit from './models/Habit';
-
-const ITEMS_KEY = "SIMPLE_HABITS";
-// const db = SQLite.openDatabase('db.db');
+import { SQLite, HashMap } from "expo";
+import Habit from "./models/Habit";
+const db = SQLite.openDatabase("db.db");
 
 export default class Repo {
-
+  
   static init = () => {
-    // return new Promise((resolve, reject) => db.transaction(tx => {
-    //   tx.executeSql(
-    //     'create table if not exists habits (id integer primary key not null, name text);',
-    //     [],
-    //     () => resolve(), reject
-    //   )
-    // }))
-  }
+    return new Promise((resolve, reject) => {
+      console.log("Initializing db");
+      return db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          "create table if not exists habits (id integer primary key not null, name text, time text);",
+          [],
+          () => {
+            console.log("Create habits if not exist success");
+            resolve();
+          },
+          ({}, error) => {
+            console.log(`Create table error: ${error}`);
+            reject();
+          }
+        );
+      })
+    });
+  };
 
-  // static loadItems2 = async () => {
-  //   return new Promise((resolve, reject) => db.transaction(tx => {
-  //     tx.executeSql(
-  //       `select * from habits`,
-  //       [],
-  //       (_, { rows: { _array } }) => resolve(rows._array), reject)
-  //   }))
-  // }
+  static loadItems: () => Promise<Habit[]> = async () => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `select * from habits`,
+          [],
+          (_, { rows: { _array } }) => {
+            console.log(`Loaded habits from db: ${_array}`);
 
-  static loadItems: () => Promise<Array<Habit>> = async () => {
-    let items = null;
-    try {
-      const jsonItems = await AsyncStorage.getItem(ITEMS_KEY);
-      if (jsonItems) {
-        items = JSON.parse(jsonItems);
-      }
-    } catch (error) {
-      console.error("Error loading journal items. ", error.message);
-    }
-    return items || [];
+            const habits: Habit[] = _array.map((map: HashMap) => {
+              return {
+                name: map["name"],
+                time: map["time"]
+              };
+            });
+            console.log(`mapped habits: ${habits}`);
+
+            resolve(habits);
+          },
+          ({}, error) => {
+            console.log(`Loading error: ${error}`);
+            reject();
+          }
+        );
+      })
+    );
   };
 
   static addHabit = async (habit: Habit) => {
-    try {
-      const habits = await Repo.loadItems();
-      // console.log("Loaded habits: " + JSON.stringify(habits));
-      habits.push(habit);
-      await Repo.saveItems(habits);
-    } catch (error) {
-      console.error("Error saving habit.", error.message);
-    }
-  };
-
-  static saveItems = async (items: Array<Habit>) => {
-    try {
-      await AsyncStorage.setItem(ITEMS_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.error("Error saving journal items.", error.message);
-    }
-  };
-
-  static deleteItems = async () => {
-    try {
-      await AsyncStorage.removeItem(ITEMS_KEY);
-    } catch (error) {
-      console.error("Error deleting journal items.", error.message);
-    }
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `insert into habits (name, time) values (?, ?)`,
+          [habit.name, habit.time],
+          () => {
+            resolve();
+          },
+          ({}, error) => {
+            console.log(`Add habit error: ${error}`);
+            reject();
+          }
+        );
+      })
+    );
   };
 }

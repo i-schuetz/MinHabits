@@ -23,6 +23,7 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
 
   private updateHabits = async () => {
     try {
+      await Repo.init(); // TODO only at app init (but async...), or prebundled db?
       const habits = await Repo.loadItems();
       console.log("updating list with items: " + JSON.stringify(habits));
       this.setState({ habits: habits });
