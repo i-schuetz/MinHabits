@@ -18,7 +18,8 @@
       "skipLibCheck": true,
       "moduleResolution":"Node",
       "strictNullChecks": true,
-      "alwaysStrict": true
+      "alwaysStrict": true,
+      "noImplicitThis": true
   },
   "filesGlob": [
       "typings/index.d.ts",

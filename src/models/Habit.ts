@@ -1,4 +1,4 @@
 export default interface Habit {
-  name: string;
-  time: any;
+  readonly name: string;
+  readonly time: any;
 }
