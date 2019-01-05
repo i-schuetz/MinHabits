@@ -1,5 +1,6 @@
 import { SQLite, HashMap } from "expo";
 import Habit from "./models/Habit";
+import { TimeRule } from "./models/TimeRule";
 const db = SQLite.openDatabase("db.db");
 
 export default class Repo {
@@ -57,7 +58,7 @@ export default class Repo {
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
           `insert into habits (name, time) values (?, ?)`,
-          [habit.name, habit.time],
+          [habit.name, TimeRule.toString(habit.time)],
           () => {
             resolve();
           },
