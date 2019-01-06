@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { FlatList, Modal, StyleSheet, Text, View } from "react-native";
-import Habit from "../models/Habit";
+import { Habit } from "../models/Habit";
 import NavigationBar from "react-native-navbar";
 import Repo from "../Repo";
 import EditHabitView from "./EditHabitView";

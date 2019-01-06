@@ -1,4 +1,4 @@
-enum Month {
+export enum Month {
   January,
   February,
   March,
@@ -13,7 +13,7 @@ enum Month {
   December
 }
 
-namespace Month {
+export namespace Month {
 
   export function toString(month: Month): string {
     return `${toNumber(month)}`

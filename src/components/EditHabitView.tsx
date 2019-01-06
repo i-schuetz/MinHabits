@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Button, StyleSheet, TextInput, View } from "react-native";
 import NavigationBar from "react-native-navbar";
 import WeekdayPicker from "./WeekdayPicker";
-import Habit from "../models/Habit";
+import { Habit } from "../models/Habit";
 
 export interface EditHabitViewProps {
   onClose: () => void;

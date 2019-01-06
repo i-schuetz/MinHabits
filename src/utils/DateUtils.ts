@@ -1,17 +1,21 @@
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { DayDate } from '../models/DayDate';
+import { Month } from '../models/Month';
+import { TimeUnit } from '../models/TimeUnit';
 import TimeInterval from '../models/TimeInterval';
+import { Weekday } from '../models/Weekday';
 
 export namespace DateUtils {
   
   const dayDateFormat = "DD-MM-YYYY" 
+  const timezone = "UTC" // Use always UTC to prevent timezone convertion.
 
   export function getWeekday(date: DayDate): Weekday {
-    return toWeekday(toMoment(date).isoWeekday());
+    return toWeekday(toMomentFromDayDate(date).isoWeekday());
   }
   
   export function getEnd(start: DayDate, interval: TimeInterval): DayDate {
-    const endDate = toMoment(start).add(1, toMomentUnitString(interval.unit))
+    const endDate = toMomentFromDayDate(start).add(1, toMomentUnitString(interval.unit))
     return { day: endDate.day(), month: toMonth(endDate.month()), year: endDate.year() }
   } 
   
@@ -21,7 +25,7 @@ export namespace DateUtils {
   }
   
   export function isInStartEnd(date: DayDate, start: DayDate, end: DayDate): boolean {
-    return toMoment(date).isBetween(toMoment(start), toMoment(end));
+    return toMomentFromDayDate(date).isBetween(toMomentFromDayDate(start), toMomentFromDayDate(end));
   }
 
   /**
@@ -30,15 +34,20 @@ export namespace DateUtils {
    */
   export function toDayDateString(dayDate: DayDate): {formatted: string, format: string} {
     return {
-      formatted: `${dayDate.day}-${dayDate.month}-${dayDate.year}`, 
+      formatted: toMomentFromDayDate(dayDate).format(dayDateFormat), 
       format: dayDateFormat
     };
   }
 
   export function parseDayDate(str: string): DayDate {
-    const mom = moment(str, dayDateFormat);
+    const mom = toMomentFromString(str, dayDateFormat);
+    
+    if (JSON.stringify(mom) == "null") { // Validation hack - if str is invalid, mom will be NaN, but the compiler doesn't let us check for NaN!
+      throw new Error(`Couldn't parse day date string: ${str}`)
+    }
+
     return {
-      day: mom.day(),
+      day: mom.date(),
       month: parseMonth(mom.month()),
       year: mom.year()
     }
@@ -48,7 +57,7 @@ export namespace DateUtils {
    * Converts moment lib month index to Month
    */
   function parseMonth(index: number): Month {
-    return Month.parseNumber(index - 1); // moment's months are 1-indexed
+    return Month.parseNumber(index);
   }
 
   function toWeekday(momentIsoWeekday: number): Weekday {
@@ -91,8 +100,13 @@ export namespace DateUtils {
     }
   }
 
-  function toMoment(dayDate: DayDate): moment.Moment {
-    const {formatted, format} = toDayDateString(dayDate);
-    return moment(formatted, format);
+  function toMomentFromDayDate(dayDate: DayDate): moment.Moment {
+    // Note: Setters have to be called in decresing order (year-month-date) for leap years to work properly.
+    // See https://github.com/moment/moment/issues/3041
+    return moment.tz(timezone).year(dayDate.year).month(dayDate.month).date(dayDate.day);
+  }
+
+  function toMomentFromString(formatted: string, format: string): moment.Moment {
+    return moment.tz(formatted, format, true, timezone)
   }
 }

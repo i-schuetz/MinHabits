@@ -1,5 +1,6 @@
 import { DayDate } from './DayDate';
-import { TimeRuleValue } from './TimeRuleValue';
+import { TimeRuleValue, TimeRuleValueDescriptor } from './TimeRuleValue';
+import { TimeRuleType } from './TimeRuleType';
 
 export type TimeRule = {
   readonly type: TimeRuleType;
@@ -8,14 +9,18 @@ export type TimeRule = {
 }
 
 export namespace TimeRule {
-  export function toString(timeRuleType: TimeRule): string {
-    return JSON.stringify(timeRuleType)
+  export function toJSON(timeRule: TimeRule): any {
+    return {
+      type: TimeRuleType.toString(timeRule.type),
+      value: TimeRuleValue.toJson(timeRule.value),
+      start: DayDate.toString(timeRule.start)
+    }
   }
 
-  export function parse(str: string): TimeRule {
-    const json: any = JSON.parse(str); // TODO how to get rid of this any?
+  export function parse(json: any): TimeRule {
     const type: TimeRuleType = TimeRuleType.parse(json["type"]);
-    const value: TimeRuleValue = toTimeRuleValue(type, json["value"]);
+    const valueDescriptor: TimeRuleValueDescriptor = toTimeRuleValueDescriptor(type)
+    const value: TimeRuleValue = TimeRuleValue.parse(valueDescriptor, json["value"]);
     const start: DayDate = DayDate.parse(json["start"]);
     return {
       type: type,
@@ -24,15 +29,13 @@ export namespace TimeRule {
     }
   }
 
-  function toTimeRuleValue(type: TimeRuleType, json: any): TimeRuleValue {
+  function toTimeRuleValueDescriptor(type: TimeRuleType): TimeRuleValueDescriptor {
     switch (type) {
       case TimeRuleType.Weekday: 
-      case TimeRuleType.Each: 
-        return { kind: "plain", value: json as number };
+        return TimeRuleValueDescriptor.Plain
       case TimeRuleType.TimesIn:
-        return TimeRuleValue.parseUnitTime(json);
-      case TimeRuleType.Date:
-        return { kind: "date", value: DayDate.parse(json) };
+      case TimeRuleType.Each: 
+        return TimeRuleValueDescriptor.Unit
     }
   }
 }
