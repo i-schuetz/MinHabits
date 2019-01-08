@@ -10,7 +10,7 @@ export type TimeRule = {
 
 export interface TimeRuleJSON {
   readonly type: string;
-  readonly value: number | number[] | UnitTimeRuleValueJSON;
+  readonly value: number[] | UnitTimeRuleValueJSON;
   readonly start: string;
 }
 

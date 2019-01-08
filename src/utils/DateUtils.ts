@@ -82,6 +82,7 @@ export namespace DateUtils {
     }
   }
 
+  // TODO index is wrong - test!
   function toMonth(momentMonth: number) {
     switch (momentMonth) {
       case 1: return Month.January;

@@ -1,36 +1,11 @@
 import {
   TimeRuleValue,
   TimeRuleValueDescriptor,
-  PlainTimeRuleValue,
   NumberListTimeRuleValue,
   UnitTimeRuleValue,
   UnitTimeRuleValueJSON
 } from "../../models/TimeRuleValue"
 import { TimeUnit } from "../../models/TimeUnit"
-
-describe("TimeRuleValue.PlainTimeRuleValue", () => {
-  it("Parses valid plain time rule correctly", () => {
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, 1)).toEqual({
-      kind: "plain",
-      value: 1
-    } as PlainTimeRuleValue)
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, 1000000000)).toEqual({
-      kind: "plain",
-      value: 1000000000
-    } as PlainTimeRuleValue)
-  })
-
-  it("Throws error parsing invalid plain time rule value", () => {
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, 0)).toThrow()
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, -1)).toThrow()
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, -1000000000)).toThrow()
-  })
-
-  it("Generates correct string", () => {
-    expect(TimeRuleValue.toJSON({ kind: "plain", value: 1 })).toEqual(1)
-    expect(TimeRuleValue.toJSON({ kind: "plain", value: 1000000000 })).toEqual(1000000000)
-  })
-})
 
 describe("TimeRuleValue.NumberListTimeRuleValue", () => {
   it("Parses valid number list rule correctly", () => {
@@ -45,12 +20,11 @@ describe("TimeRuleValue.NumberListTimeRuleValue", () => {
   })
 
   it("Throws error parsing invalid number list rule value", () => {
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, 0)).toThrow()
     expect(() =>
       TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, {
         value: -10,
         unit: "w"
-      })
+      } as UnitTimeRuleValueJSON)
     ).toThrow()
     expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, [])).toThrow()
   })

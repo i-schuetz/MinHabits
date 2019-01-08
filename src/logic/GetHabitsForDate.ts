@@ -3,9 +3,8 @@ import { Habit } from "../models/Habit"
 import { TimeRule } from "../models/TimeRule"
 import { TimeRuleType } from "../models/TimeRuleType"
 import TimeInterval from "../models/TimeInterval"
-import { UnitTimeRuleValue, PlainTimeRuleValue } from "../models/TimeRuleValue"
+import { UnitTimeRuleValue } from "../models/TimeRuleValue"
 import { DateUtils } from "../utils/DateUtils"
-import { Weekday } from "../models/Weekday";
 
 export function getHabitsForDate(date: DayDate, habits: Habit[]): Habit[] {
   return habits.filter(habit => match(date, habit.time))
@@ -14,9 +13,11 @@ export function getHabitsForDate(date: DayDate, habits: Habit[]): Habit[] {
 function match(date: DayDate, timeRule: TimeRule): boolean {
   switch (timeRule.type) {
     case TimeRuleType.Weekday:
-      const ruleValue: PlainTimeRuleValue = <PlainTimeRuleValue>timeRule.value
-      const ruleWeekday: Weekday = (<any>Weekday)[ruleValue.value]
-      return ruleWeekday == DateUtils.getWeekday(date)
+      // TODO
+      // const ruleValue: NumberListTimeRuleValue = <NumberListTimeRuleValue>timeRule.value
+      // const ruleWeekday: Weekday = (<any>Weekday)[ruleValue.numbers]
+      // return ruleWeekday == DateUtils.getWeekday(date)
+      return false
 
     case TimeRuleType.TimesIn: {
       const ruleValue: UnitTimeRuleValue = <UnitTimeRuleValue>timeRule.value
