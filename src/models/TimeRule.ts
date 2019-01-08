@@ -10,7 +10,7 @@ export type TimeRule = {
 
 export interface TimeRuleJSON {
   readonly type: string;
-  readonly value: number | UnitTimeRuleValueJSON;
+  readonly value: number | number[] | UnitTimeRuleValueJSON;
   readonly start: string;
 }
 
@@ -38,7 +38,7 @@ export namespace TimeRule {
   function toTimeRuleValueDescriptor(type: TimeRuleType): TimeRuleValueDescriptor {
     switch (type) {
       case TimeRuleType.Weekday: 
-        return TimeRuleValueDescriptor.Plain
+        return TimeRuleValueDescriptor.NumberList
       case TimeRuleType.TimesIn:
       case TimeRuleType.Each: 
         return TimeRuleValueDescriptor.Unit

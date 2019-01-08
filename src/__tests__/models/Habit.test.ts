@@ -1,4 +1,4 @@
-import { Habit } from "../../models/Habit"
+import { Habit, HabitJSON } from "../../models/Habit"
 import { TimeRuleType } from "../../models/TimeRuleType"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
@@ -10,7 +10,7 @@ describe("Habit", () => {
         name: "My habit",
         time: {
           type: TimeRuleType.Weekday,
-          value: { kind: "plain", value: 1 },
+          value: { kind: "numberList", numbers: [1, 2] },
           start: { day: 1, month: Month.January, year: 2019 }
         }
       })
@@ -18,10 +18,10 @@ describe("Habit", () => {
       name: "My habit",
       time: {
         type: "w",
-        value: 1,
-        start: "01-01-2019"
+        value: [1, 2],
+        start:"01-01-2019"
       }
-    })
+    } as HabitJSON)
 
     expect(
       Habit.toJSON({
@@ -39,7 +39,7 @@ describe("Habit", () => {
         value: { value: 2, unit: "m" },
         start: "01-01-2019"
       }
-    })
+    } as HabitJSON)
   })
 
   it("Parses JSON correctly", () => {
@@ -48,7 +48,7 @@ describe("Habit", () => {
         name: "My habit",
         time: {
           type: "w",
-          value: 1,
+          value: [1, 2],
           start: "01-01-2019"
         }
       })
@@ -56,10 +56,10 @@ describe("Habit", () => {
       name: "My habit",
       time: {
         type: TimeRuleType.Weekday,
-        value: { kind: "plain", value: 1 },
+        value: { kind: "numberList", numbers: [1, 2] },
         start: { day: 1, month: Month.January, year: 2019 }
       }
-    })
+    } as Habit)
 
     expect(
       Habit.parse({
@@ -77,6 +77,6 @@ describe("Habit", () => {
         value: { kind: "unit", value: 2, unit: TimeUnit.Month },
         start: { day: 1, month: Month.January, year: 2019 }
       }
-    })
+    } as Habit)
   })
 })
