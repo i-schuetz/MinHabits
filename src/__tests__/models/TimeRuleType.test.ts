@@ -18,8 +18,8 @@ describe("TimeRuleType", () => {
   })
 
   it("Generates correct string", () => {
-    expect(TimeRuleType.toString(TimeRuleType.Weekday)).toEqual("w")
-    expect(TimeRuleType.toString(TimeRuleType.TimesIn)).toEqual("t")
-    expect(TimeRuleType.toString(TimeRuleType.Each)).toEqual("e")
+    expect(TimeRuleType.toJSON(TimeRuleType.Weekday)).toEqual("w")
+    expect(TimeRuleType.toJSON(TimeRuleType.TimesIn)).toEqual("t")
+    expect(TimeRuleType.toJSON(TimeRuleType.Each)).toEqual("e")
   })
 })

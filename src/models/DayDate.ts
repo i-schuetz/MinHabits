@@ -9,7 +9,7 @@ export type DayDate = {
 
 export namespace DayDate {
 
-  export function toString(dayDate: DayDate): string {
+  export function toJSON(dayDate: DayDate): string {
     return DateUtils.toDayDateString(dayDate).formatted;
   }
 

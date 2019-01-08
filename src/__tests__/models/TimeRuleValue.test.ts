@@ -11,17 +11,14 @@ describe("TimeRuleValue.PlainTimeRuleValue", () => {
   })
 
   it("Throws error parsing invalid plain time rule value", () => {
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, "1")).toThrow()
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, "2")).toThrow()
-
     expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, 0)).toThrow()
     expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, -1)).toThrow()
     expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Plain, -1000000000)).toThrow()
   })
 
   it("Generates correct string", () => {
-    expect(TimeRuleValue.toJson({ kind: "plain", value: 1 })).toEqual(1)
-    expect(TimeRuleValue.toJson({ kind: "plain", value: 1000000000 })).toEqual(1000000000)
+    expect(TimeRuleValue.toJSON({ kind: "plain", value: 1 })).toEqual(1)
+    expect(TimeRuleValue.toJSON({ kind: "plain", value: 1000000000 })).toEqual(1000000000)
   })
 })
 
@@ -129,26 +126,26 @@ describe("TimeRuleValue.UnitTimeRuleValue", () => {
     expect(() =>
       TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
         value: 1,
-        unit: 1
+        unit: "1"
       })
     ).toThrow()
 
     expect(() =>
       TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
         value: -1,
-        unit: 10
+        unit: "10"
       })
     ).toThrow()
   })
 
   it("Generates correct string", () => {
-    expect(TimeRuleValue.toJson({ kind: "unit", value: 1, unit: TimeUnit.Day })).toEqual({ value: 1, unit: "d" })
-    expect(TimeRuleValue.toJson({ kind: "unit", value: 100, unit: TimeUnit.Week })).toEqual({ value: 100, unit: "w" })
-    expect(TimeRuleValue.toJson({ kind: "unit", value: 1234, unit: TimeUnit.Month })).toEqual({
+    expect(TimeRuleValue.toJSON({ kind: "unit", value: 1, unit: TimeUnit.Day })).toEqual({ value: 1, unit: "d" })
+    expect(TimeRuleValue.toJSON({ kind: "unit", value: 100, unit: TimeUnit.Week })).toEqual({ value: 100, unit: "w" })
+    expect(TimeRuleValue.toJSON({ kind: "unit", value: 1234, unit: TimeUnit.Month })).toEqual({
       value: 1234,
       unit: "m"
     })
-    expect(TimeRuleValue.toJson({ kind: "unit", value: 20000, unit: TimeUnit.Year })).toEqual({
+    expect(TimeRuleValue.toJSON({ kind: "unit", value: 20000, unit: TimeUnit.Year })).toEqual({
       value: 20000,
       unit: "y"
     })

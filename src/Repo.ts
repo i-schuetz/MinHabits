@@ -58,7 +58,7 @@ export default class Repo {
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
           `insert into habits (name, time) values (?, ?)`,
-          [habit.name, TimeRule.toJSON(habit.time)],
+          [habit.name, JSON.stringify(TimeRule.toJSON(habit.time))],
           () => {
             resolve();
           },

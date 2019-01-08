@@ -31,56 +31,57 @@ export enum TimeRuleValueDescriptor {
   Unit
 }
 
+export interface UnitTimeRuleValueJSON {
+  value: number,
+  unit: string
+}
+
 export namespace TimeRuleValue {
-  export function parse(type: TimeRuleValueDescriptor, json: any): TimeRuleValue {
+  export function parse(type: TimeRuleValueDescriptor, json: number | UnitTimeRuleValueJSON): TimeRuleValue {
     switch (type) {
       case TimeRuleValueDescriptor.Plain:
+        if (typeof json !== "number") {
+          throw new Error(`Invalid type: ${json}`)
+        }
         return createPlainTimeRuleValue(json)
       case TimeRuleValueDescriptor.Unit:
+        if (!isUnitTimeRuleValueJSON(json)) {
+          throw new Error(`Invalid type: ${json}`)
+        }
         return parseUnitTimeRuleValue(json)
     }
   }
 
-  function createPlainTimeRuleValue(json: any): PlainTimeRuleValue {
-    const value: any = json
-
-    if (typeof value !== "number") {
-      throw new Error(`Invalid type: ${json}`)
-    }
-    if (value < 1) {
-      throw new Error(`Value: ${value} must be > 1`) // It doesn't make sense to schedule 0 or less times.
+  function createPlainTimeRuleValue(json: number): PlainTimeRuleValue {
+    if (json < 1) {
+      throw new Error(`Value: ${json} must be > 1`) // It doesn't make sense to schedule 0 or less times.
     }
 
-    return { kind: "plain", value: value }
+    return { kind: "plain", value: json }
   }
 
-  function parseUnitTimeRuleValue(json: any): UnitTimeRuleValue {
-    const unit: any = json["unit"]
-    const value: any = json["value"]
-
-    if (typeof unit !== "string") {
-      throw new Error(`Invalid type: ${unit}`)
-    }
-    if (typeof value !== "number") {
-      throw new Error(`Invalid type: ${value}`)
-    }
-    if (value < 1) {
-      throw new Error(`Value: ${value} must be > 1`) // It doesn't make sense to schedule 0 or less times.
+  function parseUnitTimeRuleValue(json: UnitTimeRuleValueJSON): UnitTimeRuleValue {
+    if (json.value < 1) {
+      throw new Error(`Value: ${json.value} must be > 1`) // It doesn't make sense to schedule 0 or less times.
     }
 
     return {
       kind: "unit",
-      value: value,
-      unit: TimeUnit.parse(unit)
+      value: json.value,
+      unit: TimeUnit.parse(json.unit)
     }
   }
 
-  export function toJson(value: TimeRuleValue): any {
+  export function toJSON(value: TimeRuleValue): number | UnitTimeRuleValueJSON {
     switch (value.kind) {
       case "plain":
         return value.value
       case "unit":
-        return { value: value.value, unit: TimeUnit.toString(value.unit) }
+        return { value: value.value, unit: TimeUnit.toJSON(value.unit) }
     }
   }
+
+  function isUnitTimeRuleValueJSON(json: number | UnitTimeRuleValueJSON): json is UnitTimeRuleValueJSON {
+    return (<UnitTimeRuleValueJSON>json).unit !== undefined;
+}
 }

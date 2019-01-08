@@ -5,7 +5,7 @@ export enum TimeRuleType {
 }
 
 export namespace TimeRuleType {
-  export function toString(timeRuleType: TimeRuleType): string {
+  export function toJSON(timeRuleType: TimeRuleType): string {
       switch(timeRuleType) {
         case TimeRuleType.Weekday: return "w";
         case TimeRuleType.TimesIn: return "t";

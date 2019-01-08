@@ -19,9 +19,9 @@ describe("TimeUnit", () => {
   })
 
   it("Generates correct string", () => {
-    expect(TimeUnit.toString(TimeUnit.Day)).toEqual("d")
-    expect(TimeUnit.toString(TimeUnit.Week)).toEqual("w")
-    expect(TimeUnit.toString(TimeUnit.Month)).toEqual("m")
-    expect(TimeUnit.toString(TimeUnit.Year)).toEqual("y")
+    expect(TimeUnit.toJSON(TimeUnit.Day)).toEqual("d")
+    expect(TimeUnit.toJSON(TimeUnit.Week)).toEqual("w")
+    expect(TimeUnit.toJSON(TimeUnit.Month)).toEqual("m")
+    expect(TimeUnit.toJSON(TimeUnit.Year)).toEqual("y")
   })
 })

@@ -6,7 +6,7 @@ export enum TimeUnit {
 }
 
 export namespace TimeUnit {
-  export function toString(timeUnit: TimeUnit): string {
+  export function toJSON(timeUnit: TimeUnit): string {
     switch (timeUnit) {
       case TimeUnit.Day:
         return "d"

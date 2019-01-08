@@ -1,5 +1,5 @@
 import { DayDate } from './DayDate';
-import { TimeRuleValue, TimeRuleValueDescriptor } from './TimeRuleValue';
+import { TimeRuleValue, TimeRuleValueDescriptor, UnitTimeRuleValueJSON } from './TimeRuleValue';
 import { TimeRuleType } from './TimeRuleType';
 
 export type TimeRule = {
@@ -8,16 +8,22 @@ export type TimeRule = {
   readonly start: DayDate;
 }
 
+export interface TimeRuleJSON {
+  readonly type: string;
+  readonly value: number | UnitTimeRuleValueJSON;
+  readonly start: string;
+}
+
 export namespace TimeRule {
-  export function toJSON(timeRule: TimeRule): any {
+  export function toJSON(timeRule: TimeRule): TimeRuleJSON {
     return {
-      type: TimeRuleType.toString(timeRule.type),
-      value: TimeRuleValue.toJson(timeRule.value),
-      start: DayDate.toString(timeRule.start)
+      type: TimeRuleType.toJSON(timeRule.type),
+      value: TimeRuleValue.toJSON(timeRule.value),
+      start: DayDate.toJSON(timeRule.start)
     }
   }
 
-  export function parse(json: any): TimeRule {
+  export function parse(json: TimeRuleJSON): TimeRule {
     const type: TimeRuleType = TimeRuleType.parse(json["type"]);
     const valueDescriptor: TimeRuleValueDescriptor = toTimeRuleValueDescriptor(type)
     const value: TimeRuleValue = TimeRuleValue.parse(valueDescriptor, json["value"]);

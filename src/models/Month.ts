@@ -15,7 +15,7 @@ export enum Month {
 
 export namespace Month {
 
-  export function toString(month: Month): string {
+  export function toJSON(month: Month): string {
     return `${toNumber(month)}`
   }
 
