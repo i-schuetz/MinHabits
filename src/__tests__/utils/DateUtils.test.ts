@@ -89,6 +89,7 @@ describe("DateUtils", () => {
     ).toEqual(true)
   })
 
+  // TODO some of these tests sometimes fail, e.g. the last one in this block. This may point to a bug in moment.js? (iirc the first one of above block failed once too)
   it("DayDate is not in interval", () => {
     // Exclusive interval - day is not in previous day + 1 day interval!
     expect(
