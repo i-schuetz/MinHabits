@@ -1,5 +1,6 @@
 import { DayDate } from "../../models/DayDate"
 import { Month } from "../../models/Month"
+import { Order } from "../../models/Order"
 
 describe("DayDate", () => {
   it("Parses day date string correctly", () => {
@@ -18,5 +19,31 @@ describe("DayDate", () => {
     expect(DayDate.toJSON({ day: 15, month: Month.October, year: 2500 })).toEqual("15-10-2500")
     expect(DayDate.toJSON({ day: 31, month: Month.December, year: 2016 })).toEqual("31-12-2016")
     expect(DayDate.toJSON({ day: 4, month: Month.April, year: 1000 })).toEqual("04-04-1000")
+  })
+
+  it("Can compare 2 day dates", () => {
+    expect(
+      DayDate.compare({ day: 1, month: Month.January, year: 2019 }, { day: 1, month: Month.January, year: 2019 })
+    ).toEqual(Order.EQ)
+
+    expect(
+      DayDate.compare({ day: 2, month: Month.January, year: 2019 }, { day: 1, month: Month.January, year: 2019 })
+    ).toEqual(Order.GT)
+
+    expect(
+      DayDate.compare({ day: 1, month: Month.February, year: 2019 }, { day: 1, month: Month.January, year: 2019 })
+    ).toEqual(Order.GT)
+
+    expect(
+      DayDate.compare({ day: 5, month: Month.July, year: 2019 }, { day: 5, month: Month.August, year: 2019 })
+    ).toEqual(Order.LT)
+
+    expect(
+      DayDate.compare({ day: 30, month: Month.December, year: 2018 }, { day: 1, month: Month.January, year: 2019 })
+    ).toEqual(Order.LT)
+
+    expect(
+      DayDate.compare({ day: 1, month: Month.January, year: 2020 }, { day: 1, month: Month.January, year: 1999 })
+    ).toEqual(Order.GT)
   })
 })

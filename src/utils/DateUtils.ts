@@ -13,6 +13,10 @@ export namespace DateUtils {
     return toWeekday(toMomentFromDayDate(date).isoWeekday())
   }
 
+  export function today(): DayDate {
+    return toDayDateFromMoment(moment())
+  }
+
   export function getEnd(start: DayDate, interval: TimeInterval): DayDate {
     const endDate = toMomentFromDayDate(start).add(interval.value, toMomentUnitString(interval.unit))
     return { day: endDate.date(), month: toMonth(endDate.month()), year: endDate.year() }
@@ -162,6 +166,10 @@ export namespace DateUtils {
       .year(dayDate.year)
       .month(toMomentMonth(dayDate.month))
       .date(dayDate.day)
+  }
+
+  function toDayDateFromMoment(moment: moment.Moment): DayDate {
+    return { day: moment.date(), month: toMonth(moment.month()), year: moment.year()}
   }
 
   function toMomentFromString(formatted: string, format: string): moment.Moment {
