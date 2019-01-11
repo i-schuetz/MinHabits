@@ -1,17 +1,9 @@
-import React, { Component } from "react";
-import {
-  FlatList,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle
-} from "react-native";
+import React, { Component } from "react"
+import { FlatList, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 
 export interface WeekdayPickerProps {
-  onSelect: (key: string) => void;
-  style: StyleProp<ViewStyle>;
+  onSelect: (key: string) => void
+  style: StyleProp<ViewStyle>
 }
 
 export default class WeekdayPicker extends Component<WeekdayPickerProps> {
@@ -30,16 +22,13 @@ export default class WeekdayPicker extends Component<WeekdayPickerProps> {
             { key: "su", name: "S" }
           ]}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.weekdayButtonContainer}
-              onPress={() => this.props.onSelect(item.key)}
-            >
+            <TouchableOpacity style={styles.weekdayButtonContainer} onPress={() => this.props.onSelect(item.key)}>
               <Text style={styles.weekdayButton}>{item.name}</Text>
             </TouchableOpacity>
           )}
         />
       </View>
-    );
+    )
   }
 }
 
@@ -58,4 +47,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center"
   }
-});
+})
