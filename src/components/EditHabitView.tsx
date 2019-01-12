@@ -3,6 +3,9 @@ import { Button, StyleSheet, TextInput, View } from "react-native"
 import NavigationBar from "react-native-navbar"
 import WeekdayPicker from "./WeekdayPicker"
 import { Habit } from "../models/Habit"
+import { Weekday } from "../models/Weekday"
+import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
+import { DayDate } from "../models/DayDate"
 
 export interface EditHabitViewProps {
   onClose: () => void
@@ -10,7 +13,8 @@ export interface EditHabitViewProps {
 }
 export interface EditHabitViewState {
   name?: string
-  time?: any
+  timeRuleValue?: TimeRuleValue
+  startDate?: DayDate
 }
 
 export default class EditHabitView extends Component<EditHabitViewProps, EditHabitViewState> {
@@ -21,10 +25,11 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
     this.textInput = React.createRef()
   }
 
-  state: EditHabitViewState = { name: undefined, time: undefined }
+  state: EditHabitViewState = { name: undefined, timeRuleValue: undefined }
 
-  private toggleWeekday(weekdays: Array<string>, weekday: string): Array<string> {
-    if (weekdays.indexOf(weekday)) {
+  private toggleWeekday(weekdays: Array<Weekday>, weekday: Weekday): Array<Weekday> {
+    // TODO generic extension function? possible?
+    if (weekdays.indexOf(weekday) != -1) {
       return weekdays.filter(element => element != weekday)
     } else {
       weekdays.push(weekday)
@@ -33,14 +38,39 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
   }
 
   private toHabit(habitInputs: EditHabitViewState): Habit | null {
-    if (!habitInputs.name || !habitInputs.time) {
+    if (!habitInputs.name || !habitInputs.timeRuleValue || !habitInputs.startDate) {
       console.log("Input validation failed: " + JSON.stringify(habitInputs))
       return null
     }
     return {
       name: habitInputs.name,
-      time: habitInputs.time
+      time: {
+        value: habitInputs.timeRuleValue,
+        start: habitInputs.startDate
+      }
     }
+  }
+
+  private selectedWeekdays(): Weekday[] {
+    if (this.state.timeRuleValue === undefined) {
+      // No time has been selected yet
+      return []
+    }
+    switch (this.state.timeRuleValue.kind) {
+      case "weekday":
+        return this.state.timeRuleValue.weekdays
+      case "each":
+        return []
+    }
+  }
+
+  private onSelectWeekday(weekday: Weekday) {
+    const selectedWeekdays = this.selectedWeekdays()
+    const updatedWeekdays = this.toggleWeekday(selectedWeekdays, weekday)
+    const timeRuleValue: WeekdayTimeRuleValue = { kind: "weekday", weekdays: updatedWeekdays }
+    this.setState({ timeRuleValue: timeRuleValue }, () => {
+      console.log("State changed: " + JSON.stringify(this.state))
+    })
   }
 
   render() {
@@ -68,20 +98,8 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
           />
           <WeekdayPicker
             style={styles.weekdayPicker}
-            onSelect={(key: string) => {
-              console.log("selected: " + key)
-              this.setState(
-                {
-                  time: {
-                    type: "wd",
-                    value: this.toggleWeekday(this.state.time ? this.state.time.value : [], key)
-                  }
-                },
-                () => {
-                  console.log("Habit name changed: " + JSON.stringify(this.state))
-                }
-              )
-            }}
+            selectedWeekdays={this.selectedWeekdays()}
+            onSelect={(weekday: Weekday) => this.onSelectWeekday(weekday)}
           />
           <Button
             title="Submit"
