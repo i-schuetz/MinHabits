@@ -2,25 +2,26 @@ import { Habit } from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
 import { GetHabitsForDate } from '../../logic/GetHabitsForDate';
+import { Weekday } from "../../models/Weekday";
 
 const wakeUpWeekdaysHabit: Habit = {
   name: "Wake up at 6:00",
   time: {
-    value: { kind: "weekday", numbers: [0, 1, 2, 3, 4] },
+    value: { kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
 const makeSportHabit: Habit = {
   name: "Make sport",
   time: {
-    value: { kind: "weekday", numbers: [0, 2, 4] },
+    value: { kind: "weekday", weekdays: [Weekday.Monday, Weekday.Wednesday, Weekday.Friday] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
 const meditateHabit: Habit = {
   name: "Meditate",
   time: {
-    value: { kind: "weekday", numbers: [0, 1, 2, 3, 4, 5, 6] },
+    value: { kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday, Weekday.Saturday, Weekday.Sunday] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }

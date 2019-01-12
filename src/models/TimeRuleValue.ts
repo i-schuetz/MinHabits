@@ -1,6 +1,7 @@
 import { DayDate } from "./DayDate"
 import { TimeUnit } from "./TimeUnit"
 import { TimeRuleValueDescriptor } from "./TimeRuleTypeDescriptor";
+import { Weekday } from "./Weekday";
 
 export interface DateTimeRuleValue {
   kind: "date"
@@ -14,7 +15,7 @@ export type TimeRuleValue = WeekdayTimeRuleValue | EachTimeRuleValue
 
 export interface WeekdayTimeRuleValue {
   kind: "weekday"
-  numbers: number[]
+  weekdays: Weekday[]
 }
 
 export interface EachTimeRuleValue {
@@ -48,9 +49,10 @@ export namespace TimeRuleValue {
     if (json.length == 0 ) {
       throw new Error("Array must not be empty") // It doesn't make sense to not schedule
     }
+
     return {
       kind: "weekday",
-      numbers: json
+      weekdays: json.map((number) => Weekday.parse(number))
     }
   }
 
@@ -69,7 +71,7 @@ export namespace TimeRuleValue {
   export function toJSON(value: TimeRuleValue): number[] | EachTimeRuleValueJSON {
     switch (value.kind) {
       case "weekday":
-        return value.numbers
+        return value.weekdays.map((weekday) => Weekday.toJSON(weekday))
       case "each":
         return { value: value.value, unit: TimeUnit.toJSON(value.unit) }
     }

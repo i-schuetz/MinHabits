@@ -6,16 +6,17 @@ import {
 } from "../../models/TimeRuleValue"
 import { TimeUnit } from "../../models/TimeUnit"
 import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor";
+import { Weekday } from "../../models/Weekday";
 
 describe("TimeRuleValue.WeekdayTimeRuleValue", () => {
   it("Parses weekday rule correctly", () => {
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [1])).toEqual({
+    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [0])).toEqual({
       kind: "weekday",
-      numbers: [1]
+      weekdays: [Weekday.Monday]
     } as WeekdayTimeRuleValue)
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [1, 2, 3])).toEqual({
+    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [0, 1, 2])).toEqual({
       kind: "weekday",
-      numbers: [1, 2, 3]
+      weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday]
     } as WeekdayTimeRuleValue)
   })
 
@@ -30,8 +31,8 @@ describe("TimeRuleValue.WeekdayTimeRuleValue", () => {
   })
 
   it("Generates correct json", () => {
-    expect(TimeRuleValue.toJSON({ kind: "weekday", numbers: [1] })).toEqual([1])
-    expect(TimeRuleValue.toJSON({ kind: "weekday", numbers: [1, 2, 3] })).toEqual([1, 2, 3])
+    expect(TimeRuleValue.toJSON({ kind: "weekday", weekdays: [Weekday.Monday] })).toEqual([0])
+    expect(TimeRuleValue.toJSON({ kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday] })).toEqual([0, 1, 2])
   })
 })
 

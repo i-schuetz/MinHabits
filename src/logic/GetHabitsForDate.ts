@@ -24,8 +24,8 @@ export namespace GetHabitsForDate {
 
   function matchWeekdayRule(date: DayDate, ruleValue: WeekdayTimeRuleValue): boolean {
     const dateWeekday = DateUtils.getWeekday(date)
-    return ruleValue.numbers.some((number: number) =>
-      dateWeekday == Weekday.parse(number)
+    return ruleValue.weekdays.some((weekday: Weekday) =>
+      dateWeekday == weekday
     )
   }
 

@@ -1,6 +1,7 @@
 import { Habit, HabitJSON } from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
+import { Weekday } from "../../models/Weekday";
 
 describe("Habit", () => {
   it("Generates correct JSON", () => {
@@ -8,7 +9,7 @@ describe("Habit", () => {
       Habit.toJSON({
         name: "My habit",
         time: {
-          value: { kind: "weekday", numbers: [1, 2] },
+          value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
           start: { day: 1, month: Month.January, year: 2019 }
         }
       })
@@ -52,7 +53,7 @@ describe("Habit", () => {
     ).toEqual({
       name: "My habit",
       time: {
-        value: { kind: "weekday", numbers: [1, 2] },
+        value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
         start: { day: 1, month: Month.January, year: 2019 }
       }
     } as Habit)
