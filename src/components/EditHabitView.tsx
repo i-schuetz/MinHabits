@@ -6,6 +6,8 @@ import { Habit } from "../models/Habit"
 import { Weekday } from "../models/Weekday"
 import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
+import MyDatePicker from "./MyDatePicker"
+import { DateUtils } from "../utils/DateUtils"
 
 export interface EditHabitViewProps {
   onClose: () => void
@@ -64,6 +66,10 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
     }
   }
 
+  private selectStartDate(daydate: DayDate) {
+    this.setState({ startDate: daydate })
+  }
+
   private onSelectWeekday(weekday: Weekday) {
     const selectedWeekdays = this.selectedWeekdays()
     const updatedWeekdays = this.toggleWeekday(selectedWeekdays, weekday)
@@ -101,6 +107,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
             selectedWeekdays={this.selectedWeekdays()}
             onSelect={(weekday: Weekday) => this.onSelectWeekday(weekday)}
           />
+          <MyDatePicker date={DateUtils.today()} onSelectDate={(date: DayDate) => this.selectStartDate(date)} />
           <Button
             title="Submit"
             onPress={() => {

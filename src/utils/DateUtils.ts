@@ -14,7 +14,7 @@ export namespace DateUtils {
   }
 
   export function today(): DayDate {
-    return toDayDateFromMoment(moment())
+    return toDayDateFromMoment(moment.tz(timezone))
   }
 
   export function getEnd(start: DayDate, interval: TimeInterval): DayDate {
