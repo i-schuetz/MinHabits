@@ -1,5 +1,5 @@
-import { Weekday } from "../../models/Weekday";
-import { FullWeekday } from "../../models/FullWeekday";
+import { Weekday } from "../../models/Weekday"
+import { FullWeekday } from "../../models/FullWeekday"
 
 describe("FullWeekday", () => {
   it("Array has correct order", () => {

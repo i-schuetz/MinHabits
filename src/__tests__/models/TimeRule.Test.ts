@@ -1,7 +1,7 @@
 import { TimeRule, TimeRuleJSON } from "../../models/TimeRule"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
-import { Weekday } from '../../models/Weekday';
+import { Weekday } from "../../models/Weekday"
 
 describe("TimeRule", () => {
   it("Parses correctly weekly time rule", () => {

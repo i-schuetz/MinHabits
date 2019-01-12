@@ -1,4 +1,4 @@
-import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor";
+import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor"
 
 describe("TimeRuleTypeDescriptor", () => {
   it("Parses time rule string correctly", () => {

@@ -33,9 +33,9 @@ export namespace TimeRuleValue {
   export function parse(type: TimeRuleValueDescriptor, json: number[] | EachTimeRuleValueJSON): TimeRuleValue {
     switch (type) {
       case TimeRuleValueDescriptor.Weekday:
-      if (!isArrayOfNumber(json)) {
-        throw new Error(`Invalid type: ${json}`)
-      } 
+        if (!isArrayOfNumber(json)) {
+          throw new Error(`Invalid type: ${json}`)
+        } 
         return parseWeekdayTimeRuleValue(json)
       case TimeRuleValueDescriptor.Each:
         if (!isUnitTimeRuleValueJSON(json)) {

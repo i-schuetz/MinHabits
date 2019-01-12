@@ -1,7 +1,7 @@
 import { Habit, HabitJSON } from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
-import { Weekday } from "../../models/Weekday";
+import { Weekday } from "../../models/Weekday"
 
 describe("Habit", () => {
   it("Generates correct JSON", () => {
@@ -18,7 +18,7 @@ describe("Habit", () => {
       time: {
         type: "w",
         value: [1, 2],
-        start:"01-01-2019"
+        start: "01-01-2019"
       }
     } as HabitJSON)
 

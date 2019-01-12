@@ -5,8 +5,8 @@ import {
   EachTimeRuleValueJSON
 } from "../../models/TimeRuleValue"
 import { TimeUnit } from "../../models/TimeUnit"
-import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor";
-import { Weekday } from "../../models/Weekday";
+import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor"
+import { Weekday } from "../../models/Weekday"
 
 describe("TimeRuleValue.WeekdayTimeRuleValue", () => {
   it("Parses weekday rule correctly", () => {
@@ -32,7 +32,9 @@ describe("TimeRuleValue.WeekdayTimeRuleValue", () => {
 
   it("Generates correct json", () => {
     expect(TimeRuleValue.toJSON({ kind: "weekday", weekdays: [Weekday.Monday] })).toEqual([0])
-    expect(TimeRuleValue.toJSON({ kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday] })).toEqual([0, 1, 2])
+    expect(
+      TimeRuleValue.toJSON({ kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday] })
+    ).toEqual([0, 1, 2])
   })
 })
 
