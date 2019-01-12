@@ -8,8 +8,10 @@ import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
 import MyDatePicker from "./MyDatePicker"
 import { DateUtils } from "../utils/DateUtils"
+import { TimeRule } from "../models/TimeRule";
 
 export interface EditHabitViewProps {
+  habit?: Habit
   onClose: () => void
   onSubmit: (habit: Habit) => void
 }
@@ -24,6 +26,15 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
 
   constructor(props: EditHabitViewProps) {
     super(props)
+
+    console.log("Editing habit: " + JSON.stringify(props.habit));
+    
+    this.state = {
+      name: props.habit ? props.habit.name : undefined,
+      timeRuleValue: props.habit ? props.habit.time.value : undefined,
+      startDate: props.habit ? props.habit.time.start : undefined
+    }
+
     this.textInput = React.createRef()
   }
 
@@ -79,6 +90,10 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
     })
   }
 
+  private startDate(): DayDate {
+    return this.state.startDate === undefined ? DateUtils.today() : this.state.startDate
+  }
+
   render() {
     const leftButtonConfig = {
       title: "x",
@@ -96,6 +111,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
             style={styles.nameInput}
             ref={this.textInput}
             placeholder="Name"
+            defaultValue={this.state.name}
             onChangeText={text => {
               this.setState({ name: text }, () => {
                 console.log("Habit name changed: " + JSON.stringify(this.state))
@@ -107,7 +123,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
             selectedWeekdays={this.selectedWeekdays()}
             onSelect={(weekday: Weekday) => this.onSelectWeekday(weekday)}
           />
-          <MyDatePicker date={DateUtils.today()} onSelectDate={(date: DayDate) => this.selectStartDate(date)} />
+          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => this.selectStartDate(date)} />
           <Button
             title="Submit"
             onPress={() => {

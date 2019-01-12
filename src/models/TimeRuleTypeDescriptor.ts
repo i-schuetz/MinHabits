@@ -15,7 +15,7 @@ export namespace TimeRuleValueDescriptor {
     switch(str) {
       case "w": return TimeRuleValueDescriptor.Weekday;
       case "e": return TimeRuleValueDescriptor.Each;
-      default: throw new Error(`Invalid time rule type: ${str}`)
+      default: throw new Error(`Invalid time rule value descriptor: ${str}`)
     }
   }
 }

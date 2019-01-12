@@ -9,6 +9,7 @@ import EditHabitView from "./EditHabitView"
 export interface DailyHabitsState {
   habits: Habit[]
   modalVisible: boolean
+  selectedHabit?: Habit
 }
 
 export default class DailyHabitsList extends Component<any, DailyHabitsState> {
@@ -40,7 +41,11 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
   }
 
   private setModalVisible(visible: boolean) {
-    this.setState({ modalVisible: visible })
+    this.setState({ modalVisible: visible, selectedHabit: visible ? this.state.selectedHabit : undefined })
+  }
+
+  private onSelectHabit(habit: Habit) {
+    this.setState({ selectedHabit: habit }, () => this.setModalVisible(true))
   }
 
   render() {
@@ -59,7 +64,11 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
         <FlatList
           style={styles.list}
           data={this.state.habits}
-          renderItem={({ item }) => <Text style={styles.habit}>{item.name}</Text>}
+          renderItem={({ item }) => (
+            <Text style={styles.habit} onPress={({}) => this.onSelectHabit(item)}>
+              {item.name}
+            </Text>
+          )}
         />
 
         <Modal
@@ -71,6 +80,7 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
           }}
         >
           <EditHabitView
+            habit={this.state.selectedHabit}
             onSubmit={(habit: Habit) => {
               this.setModalVisible(false)
               this.submitHabit(habit)
