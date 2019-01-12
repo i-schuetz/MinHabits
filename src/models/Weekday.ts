@@ -9,6 +9,7 @@ export enum Weekday {
 }
 
 export namespace Weekday {
+
   export function toJSON(weekday: Weekday): number {
       switch(weekday) {
         case Weekday.Monday: return 0;

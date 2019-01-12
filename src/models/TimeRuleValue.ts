@@ -1,93 +1,85 @@
 import { DayDate } from "./DayDate"
 import { TimeUnit } from "./TimeUnit"
+import { TimeRuleValueDescriptor } from "./TimeRuleTypeDescriptor";
 
 export interface DateTimeRuleValue {
   kind: "date"
   value: DayDate
 }
 
-// TODO should we use more specific tagged types like WeeklyTimeRuleValue (etc), such that we also can validate?
-// Currently it's possible to have a TimeRule with Weekly type and a value (which is of type PlainTimeRuleValue) with
-// a number > 6. The validation can be done "externally" with current types but this seems cumbersome, so not doing it.
-export type TimeRuleValue = NumberListTimeRuleValue | UnitTimeRuleValue
+export type TimeRuleValue = WeekdayTimeRuleValue | EachTimeRuleValue
 
 // TODO (2): specific date time rule value? schedule e.g. for "the 4th July each year", or "the 12th each month", 
 // "the 12th each 2 months" or a specific complete date
 
-export interface NumberListTimeRuleValue {
-  kind: "numberList"
+export interface WeekdayTimeRuleValue {
+  kind: "weekday"
   numbers: number[]
 }
 
-export interface UnitTimeRuleValue {
-  kind: "unit"
+export interface EachTimeRuleValue {
+  kind: "each"
   value: number
   unit: TimeUnit
 }
 
-// TODO can we just use TimeRuleValue instead and remove this?
-export enum TimeRuleValueDescriptor {
-  NumberList,
-  Unit
-}
-
-export interface UnitTimeRuleValueJSON {
+export interface EachTimeRuleValueJSON {
   value: number,
   unit: string
 }
 
 export namespace TimeRuleValue {
-  export function parse(type: TimeRuleValueDescriptor, json: number[] | UnitTimeRuleValueJSON): TimeRuleValue {
+  export function parse(type: TimeRuleValueDescriptor, json: number[] | EachTimeRuleValueJSON): TimeRuleValue {
     switch (type) {
-      case TimeRuleValueDescriptor.NumberList:
+      case TimeRuleValueDescriptor.Weekday:
       if (!isArrayOfNumber(json)) {
         throw new Error(`Invalid type: ${json}`)
       } 
-        return parseNumberArrayTimeRuleValue(json)
-      case TimeRuleValueDescriptor.Unit:
+        return parseWeekdayTimeRuleValue(json)
+      case TimeRuleValueDescriptor.Each:
         if (!isUnitTimeRuleValueJSON(json)) {
           throw new Error(`Invalid type: ${json}`)
         }
-        return parseUnitTimeRuleValue(json)
+        return parseEachTimeRuleValue(json)
     }
   }
 
-  function parseNumberArrayTimeRuleValue(json: number[]): NumberListTimeRuleValue {
+  function parseWeekdayTimeRuleValue(json: number[]): WeekdayTimeRuleValue {
     if (json.length == 0 ) {
       throw new Error("Array must not be empty") // It doesn't make sense to not schedule
     }
     return {
-      kind: "numberList",
+      kind: "weekday",
       numbers: json
     }
   }
 
-  function parseUnitTimeRuleValue(json: UnitTimeRuleValueJSON): UnitTimeRuleValue {
+  function parseEachTimeRuleValue(json: EachTimeRuleValueJSON): EachTimeRuleValue {
     if (json.value < 1) {
       throw new Error(`Value: ${json.value} must be > 1`) // It doesn't make sense to schedule 0 or less times.
     }
 
     return {
-      kind: "unit",
+      kind: "each",
       value: json.value,
       unit: TimeUnit.parse(json.unit)
     }
   }
 
-  export function toJSON(value: TimeRuleValue): number[] | UnitTimeRuleValueJSON {
+  export function toJSON(value: TimeRuleValue): number[] | EachTimeRuleValueJSON {
     switch (value.kind) {
-      case "numberList":
+      case "weekday":
         return value.numbers
-      case "unit":
+      case "each":
         return { value: value.value, unit: TimeUnit.toJSON(value.unit) }
     }
   }
 
-  function isUnitTimeRuleValueJSON(json: number[] | UnitTimeRuleValueJSON): json is UnitTimeRuleValueJSON {
-    return (<UnitTimeRuleValueJSON>json).unit !== undefined;
+  function isUnitTimeRuleValueJSON(json: number[] | EachTimeRuleValueJSON): json is EachTimeRuleValueJSON {
+    return (<EachTimeRuleValueJSON>json).unit !== undefined;
   }
 
-  function isArrayOfNumber(json: number[] | UnitTimeRuleValueJSON): json is number[] {
+  function isArrayOfNumber(json: number[] | EachTimeRuleValueJSON): json is number[] {
     return Array.isArray(json)
   }
 }

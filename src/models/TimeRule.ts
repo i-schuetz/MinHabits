@@ -1,47 +1,41 @@
 import { DayDate } from './DayDate';
-import { TimeRuleValue, TimeRuleValueDescriptor, UnitTimeRuleValueJSON } from './TimeRuleValue';
-import { TimeRuleType } from './TimeRuleType';
+import { TimeRuleValue, EachTimeRuleValueJSON } from './TimeRuleValue';
+import { TimeRuleValueDescriptor } from './TimeRuleTypeDescriptor';
 
 export type TimeRule = {
-  readonly type: TimeRuleType;
   readonly value: TimeRuleValue;
   readonly start: DayDate;
 }
 
 export interface TimeRuleJSON {
-  readonly type: string;
-  readonly value: number[] | UnitTimeRuleValueJSON;
+  readonly type: "w" | "e";
+  readonly value: number[] | EachTimeRuleValueJSON;
   readonly start: string;
 }
 
 export namespace TimeRule {
   export function toJSON(timeRule: TimeRule): TimeRuleJSON {
     return {
-      type: TimeRuleType.toJSON(timeRule.type),
+      type: TimeRuleValueDescriptor.toJSON(toTimeRuleValueDescriptor(timeRule.value)),
       value: TimeRuleValue.toJSON(timeRule.value),
       start: DayDate.toJSON(timeRule.start)
     }
   }
 
   export function parse(json: TimeRuleJSON): TimeRule {
-    const type: TimeRuleType = TimeRuleType.parse(json["type"]);
-    const valueDescriptor: TimeRuleValueDescriptor = toTimeRuleValueDescriptor(type)
+    const valueDescriptor: TimeRuleValueDescriptor = TimeRuleValueDescriptor.parse(json["type"]);
     const value: TimeRuleValue = TimeRuleValue.parse(valueDescriptor, json["value"]);
     const start: DayDate = DayDate.parse(json["start"]);
     return {
-      type: type,
       value: value,
       start: start
     }
   }
 
-  function toTimeRuleValueDescriptor(type: TimeRuleType): TimeRuleValueDescriptor {
-    switch (type) {
-      case TimeRuleType.Weekday: 
-        return TimeRuleValueDescriptor.NumberList
-      case TimeRuleType.TimesIn:
-      case TimeRuleType.Each: 
-        return TimeRuleValueDescriptor.Unit
+  function toTimeRuleValueDescriptor(value: TimeRuleValue): TimeRuleValueDescriptor {
+    switch (value.kind) {
+      case "weekday": return TimeRuleValueDescriptor.Weekday
+      case "each": return TimeRuleValueDescriptor.Each
     }
   }
 }

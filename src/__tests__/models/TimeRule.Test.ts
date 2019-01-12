@@ -1,5 +1,4 @@
 import { TimeRule, TimeRuleJSON } from "../../models/TimeRule"
-import { TimeRuleType } from "../../models/TimeRuleType"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
 
@@ -12,8 +11,7 @@ describe("TimeRule", () => {
         start: "01-01-2019"
       })
     ).toEqual({
-      type: TimeRuleType.Weekday,
-      value: { kind: "numberList", numbers: [1] },
+      value: { kind: "weekday", numbers: [1] },
       start: { day: 1, month: Month.January, year: 2019 }
     } as TimeRule)
 
@@ -24,8 +22,7 @@ describe("TimeRule", () => {
         start: "28-02-2016" // leap year
       })
     ).toEqual({
-      type: TimeRuleType.Weekday,
-      value: { kind: "numberList", numbers: [1, 2, 4, 6] },
+      value: { kind: "weekday", numbers: [1, 2, 4, 6] },
       start: { day: 28, month: Month.February, year: 2016 }
     } as TimeRule)
 
@@ -37,8 +34,7 @@ describe("TimeRule", () => {
         start: "01-01-2019"
       })
     ).toEqual({
-      type: TimeRuleType.Weekday,
-      value: { kind: "numberList", numbers: [123] },
+      value: { kind: "weekday", numbers: [123] },
       start: { day: 1, month: Month.January, year: 2019 }
     } as TimeRule)
   })
@@ -46,8 +42,7 @@ describe("TimeRule", () => {
   it("Weekly time rule generates correct JSON", () => {
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Weekday,
-        value: { kind: "numberList", numbers: [1] },
+        value: { kind: "weekday", numbers: [1] },
         start: { day: 1, month: Month.January, year: 2019 }
       })
     ).toEqual({
@@ -58,114 +53,13 @@ describe("TimeRule", () => {
 
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Weekday,
-        value: { kind: "numberList", numbers: [1, 2, 4, 6] },
+        value: { kind: "weekday", numbers: [1, 2, 4, 6] },
         start: { day: 28, month: Month.February, year: 2016 }
       })
     ).toEqual({
       type: "w",
       value: [1, 2, 4, 6],
       start: "28-02-2016"
-    } as TimeRuleJSON)
-  })
-
-  it("Parses correctly 'times in' time rule", () => {
-    expect(
-      TimeRule.parse({
-        type: "t",
-        value: { value: 1, unit: "d" }, // 1 time each day
-        start: "01-01-2019"
-      })
-    ).toEqual({
-      type: TimeRuleType.TimesIn,
-      value: { kind: "unit", value: 1, unit: TimeUnit.Day },
-      start: { day: 1, month: Month.January, year: 2019 }
-    } as TimeRule)
-
-    expect(
-      TimeRule.parse({
-        type: "t",
-        value: { value: 2, unit: "w" }, // 2 times each week
-        start: "28-02-2016" // leap year
-      })
-    ).toEqual({
-      type: TimeRuleType.TimesIn,
-      value: { kind: "unit", value: 2, unit: TimeUnit.Week },
-      start: { day: 28, month: Month.February, year: 2016 }
-    } as TimeRule)
-
-    expect(
-      TimeRule.parse({
-        type: "t",
-        value: { value: 3, unit: "m" }, // 3 times each month
-        start: "01-01-2019"
-      })
-    ).toEqual({
-      type: TimeRuleType.TimesIn,
-      value: { kind: "unit", value: 3, unit: TimeUnit.Month },
-      start: { day: 1, month: Month.January, year: 2019 }
-    } as TimeRule)
-
-    expect(
-      TimeRule.parse({
-        type: "t",
-        value: { value: 4, unit: "y" }, // 4 times each year
-        start: "01-01-2019"
-      })
-    ).toEqual({
-      type: TimeRuleType.TimesIn,
-      value: { kind: "unit", value: 4, unit: TimeUnit.Year },
-      start: { day: 1, month: Month.January, year: 2019 }
-    } as TimeRule)
-  })
-
-  it("'Times in' rule generates correct JSON", () => {
-    expect(
-      TimeRule.toJSON({
-        type: TimeRuleType.TimesIn,
-        value: { kind: "unit", value: 1, unit: TimeUnit.Day },
-        start: { day: 1, month: Month.January, year: 2019 }
-      })
-    ).toEqual({
-      type: "t",
-      value: { value: 1, unit: "d" }, // 1 time each day
-      start: "01-01-2019"
-    } as TimeRuleJSON)
-
-    expect(
-      TimeRule.toJSON({
-        type: TimeRuleType.TimesIn,
-        value: { kind: "unit", value: 2, unit: TimeUnit.Week },
-        start: { day: 28, month: Month.February, year: 2016 }
-      })
-    ).toEqual({
-      type: "t",
-      value: { value: 2, unit: "w" }, // 2 times each week
-      start: "28-02-2016" // leap year
-    } as TimeRuleJSON)
-
-    expect(
-      TimeRule.toJSON({
-        type: TimeRuleType.TimesIn,
-        value: { kind: "unit", value: 3, unit: TimeUnit.Month },
-        start: { day: 1, month: Month.January, year: 2019 }
-      })
-    ).toEqual({
-      type: "t",
-      value: { value: 3, unit: "m" }, // 3 times each month
-      start: "01-01-2019"
-    } as TimeRuleJSON)
-
-    expect(
-      TimeRule.toJSON({
-        type: TimeRuleType.TimesIn,
-        value: { kind: "unit", value: 4, unit: TimeUnit.Year },
-        start: { day: 1, month: Month.January, year: 2019 }
-      })
-    ).toEqual({
-      type: "t",
-      value: { value: 4, unit: "y" }, // 4 times each year
-      start: "01-01-2019"
     } as TimeRuleJSON)
   })
 
@@ -177,8 +71,7 @@ describe("TimeRule", () => {
         start: "01-01-2019"
       })
     ).toEqual({
-      type: TimeRuleType.Each,
-      value: { kind: "unit", value: 1, unit: TimeUnit.Day },
+      value: { kind: "each", value: 1, unit: TimeUnit.Day },
       start: { day: 1, month: Month.January, year: 2019 }
     } as TimeRule)
 
@@ -189,8 +82,7 @@ describe("TimeRule", () => {
         start: "28-02-2016" // leap year
       })
     ).toEqual({
-      type: TimeRuleType.Each,
-      value: { kind: "unit", value: 2, unit: TimeUnit.Week },
+      value: { kind: "each", value: 2, unit: TimeUnit.Week },
       start: { day: 28, month: Month.February, year: 2016 }
     } as TimeRule)
 
@@ -201,8 +93,7 @@ describe("TimeRule", () => {
         start: "01-01-2019"
       })
     ).toEqual({
-      type: TimeRuleType.Each,
-      value: { kind: "unit", value: 3, unit: TimeUnit.Month },
+      value: { kind: "each", value: 3, unit: TimeUnit.Month },
       start: { day: 1, month: Month.January, year: 2019 }
     } as TimeRule)
 
@@ -213,8 +104,7 @@ describe("TimeRule", () => {
         start: "01-01-2019"
       })
     ).toEqual({
-      type: TimeRuleType.Each,
-      value: { kind: "unit", value: 4, unit: TimeUnit.Year },
+      value: { kind: "each", value: 4, unit: TimeUnit.Year },
       start: { day: 1, month: Month.January, year: 2019 }
     } as TimeRule)
   })
@@ -222,8 +112,7 @@ describe("TimeRule", () => {
   it("'Each' rule generates correct JSON", () => {
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Each,
-        value: { kind: "unit", value: 1, unit: TimeUnit.Day },
+        value: { kind: "each", value: 1, unit: TimeUnit.Day },
         start: { day: 1, month: Month.January, year: 2019 }
       })
     ).toEqual({
@@ -234,8 +123,7 @@ describe("TimeRule", () => {
 
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Each,
-        value: { kind: "unit", value: 2, unit: TimeUnit.Week },
+        value: { kind: "each", value: 2, unit: TimeUnit.Week },
         start: { day: 28, month: Month.February, year: 2016 }
       })
     ).toEqual({
@@ -246,8 +134,7 @@ describe("TimeRule", () => {
 
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Each,
-        value: { kind: "unit", value: 3, unit: TimeUnit.Month },
+        value: { kind: "each", value: 3, unit: TimeUnit.Month },
         start: { day: 1, month: Month.January, year: 2019 }
       })
     ).toEqual({
@@ -258,8 +145,7 @@ describe("TimeRule", () => {
 
     expect(
       TimeRule.toJSON({
-        type: TimeRuleType.Each,
-        value: { kind: "unit", value: 4, unit: TimeUnit.Year },
+        value: { kind: "each", value: 4, unit: TimeUnit.Year },
         start: { day: 1, month: Month.January, year: 2019 }
       })
     ).toEqual({

@@ -1,172 +1,172 @@
 import {
   TimeRuleValue,
-  TimeRuleValueDescriptor,
-  NumberListTimeRuleValue,
-  UnitTimeRuleValue,
-  UnitTimeRuleValueJSON
+  WeekdayTimeRuleValue,
+  EachTimeRuleValue,
+  EachTimeRuleValueJSON
 } from "../../models/TimeRuleValue"
 import { TimeUnit } from "../../models/TimeUnit"
+import { TimeRuleValueDescriptor } from "../../models/TimeRuleTypeDescriptor";
 
-describe("TimeRuleValue.NumberListTimeRuleValue", () => {
-  it("Parses valid number list rule correctly", () => {
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, [1])).toEqual({
-      kind: "numberList",
+describe("TimeRuleValue.WeekdayTimeRuleValue", () => {
+  it("Parses weekday rule correctly", () => {
+    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [1])).toEqual({
+      kind: "weekday",
       numbers: [1]
-    } as NumberListTimeRuleValue)
-    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, [1, 2, 3])).toEqual({
-      kind: "numberList",
+    } as WeekdayTimeRuleValue)
+    expect(TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [1, 2, 3])).toEqual({
+      kind: "weekday",
       numbers: [1, 2, 3]
-    } as NumberListTimeRuleValue)
+    } as WeekdayTimeRuleValue)
   })
 
-  it("Throws error parsing invalid number list rule value", () => {
+  it("Throws error parsing invalid weekday list rule value", () => {
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, {
         value: -10,
         unit: "w"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
-    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.NumberList, [])).toThrow()
+    expect(() => TimeRuleValue.parse(TimeRuleValueDescriptor.Weekday, [])).toThrow()
   })
 
   it("Generates correct json", () => {
-    expect(TimeRuleValue.toJSON({ kind: "numberList", numbers: [1] })).toEqual([1])
-    expect(TimeRuleValue.toJSON({ kind: "numberList", numbers: [1, 2, 3] })).toEqual([1, 2, 3])
+    expect(TimeRuleValue.toJSON({ kind: "weekday", numbers: [1] })).toEqual([1])
+    expect(TimeRuleValue.toJSON({ kind: "weekday", numbers: [1, 2, 3] })).toEqual([1, 2, 3])
   })
 })
 
-describe("TimeRuleValue.UnitTimeRuleValue", () => {
-  it("Parses valid unit time rule correctly", () => {
+describe("TimeRuleValue.EachTimeRuleValue", () => {
+  it("Parses each time rule correctly", () => {
     expect(
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1,
         unit: "d"
       })
-    ).toEqual({ kind: "unit", value: 1, unit: TimeUnit.Day } as UnitTimeRuleValue)
+    ).toEqual({ kind: "each", value: 1, unit: TimeUnit.Day } as EachTimeRuleValue)
 
     expect(
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 10,
         unit: "w"
       })
-    ).toEqual({ kind: "unit", value: 10, unit: TimeUnit.Week } as UnitTimeRuleValue)
+    ).toEqual({ kind: "each", value: 10, unit: TimeUnit.Week } as EachTimeRuleValue)
 
     expect(
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 100,
         unit: "m"
       })
-    ).toEqual({ kind: "unit", value: 100, unit: TimeUnit.Month } as UnitTimeRuleValue)
+    ).toEqual({ kind: "each", value: 100, unit: TimeUnit.Month } as EachTimeRuleValue)
 
     expect(
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1000,
         unit: "y"
       })
-    ).toEqual({ kind: "unit", value: 1000, unit: TimeUnit.Year } as UnitTimeRuleValue)
+    ).toEqual({ kind: "each", value: 1000, unit: TimeUnit.Year } as EachTimeRuleValue)
   })
 
-  it("Throws error parsing invalid time rule", () => {
+  it("Throws error parsing invalid each time rule", () => {
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: -1,
         unit: "d"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: -10,
         unit: "w"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 0,
         unit: "d"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 0,
         unit: "y"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1,
         unit: ""
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 10,
         unit: "D"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 100,
         unit: "W"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1000,
         unit: "M"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 10000,
         unit: "Y"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1,
         unit: "1"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: 1,
         unit: "1"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
 
     expect(() =>
-      TimeRuleValue.parse(TimeRuleValueDescriptor.Unit, {
+      TimeRuleValue.parse(TimeRuleValueDescriptor.Each, {
         value: -1,
         unit: "10"
-      } as UnitTimeRuleValueJSON)
+      } as EachTimeRuleValueJSON)
     ).toThrow()
   })
 
-  it("Generates correct string", () => {
-    expect(TimeRuleValue.toJSON({ kind: "unit", value: 1, unit: TimeUnit.Day })).toEqual({
+  it("Each rule Generates correct JSON", () => {
+    expect(TimeRuleValue.toJSON({ kind: "each", value: 1, unit: TimeUnit.Day })).toEqual({
       value: 1,
       unit: "d"
-    } as UnitTimeRuleValueJSON)
-    expect(TimeRuleValue.toJSON({ kind: "unit", value: 100, unit: TimeUnit.Week })).toEqual({
+    } as EachTimeRuleValueJSON)
+    expect(TimeRuleValue.toJSON({ kind: "each", value: 100, unit: TimeUnit.Week })).toEqual({
       value: 100,
       unit: "w"
-    } as UnitTimeRuleValueJSON)
-    expect(TimeRuleValue.toJSON({ kind: "unit", value: 1234, unit: TimeUnit.Month })).toEqual({
+    } as EachTimeRuleValueJSON)
+    expect(TimeRuleValue.toJSON({ kind: "each", value: 1234, unit: TimeUnit.Month })).toEqual({
       value: 1234,
       unit: "m"
-    } as UnitTimeRuleValueJSON)
-    expect(TimeRuleValue.toJSON({ kind: "unit", value: 20000, unit: TimeUnit.Year })).toEqual({
+    } as EachTimeRuleValueJSON)
+    expect(TimeRuleValue.toJSON({ kind: "each", value: 20000, unit: TimeUnit.Year })).toEqual({
       value: 20000,
       unit: "y"
-    } as UnitTimeRuleValueJSON)
+    } as EachTimeRuleValueJSON)
   })
 })

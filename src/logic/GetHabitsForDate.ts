@@ -1,8 +1,7 @@
 import { DayDate } from "../models/DayDate"
 import { Habit } from "../models/Habit"
-import { TimeRuleType } from "../models/TimeRuleType"
 import TimeInterval from "../models/TimeInterval"
-import { UnitTimeRuleValue, NumberListTimeRuleValue } from "../models/TimeRuleValue"
+import { EachTimeRuleValue, WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DateUtils } from "../utils/DateUtils"
 import { Weekday } from '../models/Weekday';
 import { Order } from "../models/Order";
@@ -15,29 +14,22 @@ export namespace GetHabitsForDate {
 
   export function match(date: DayDate, habit: Habit): boolean {
     const timeRule = habit.time
-    switch (timeRule.type) {
-
-      case TimeRuleType.Weekday:
-        return matchWeekdayRule(date, <NumberListTimeRuleValue>timeRule.value)
-
-      case TimeRuleType.Each: 
-        return matchEachRule(date, <UnitTimeRuleValue>timeRule.value, timeRule.start)
-
-      case TimeRuleType.TimesIn:
-        // const ruleValue: UnitTimeRuleValue = <UnitTimeRuleValue>timeRule.value
-        // This will not be available at least in the first release of the app. Needs to be implemented.
-        return false
+    switch (timeRule.value.kind) {
+      case "weekday":
+        return matchWeekdayRule(date, <WeekdayTimeRuleValue>timeRule.value)
+      case "each": 
+        return matchEachRule(date, <EachTimeRuleValue>timeRule.value, timeRule.start)
     }
   }
 
-  function matchWeekdayRule(date: DayDate, ruleValue: NumberListTimeRuleValue): boolean {
+  function matchWeekdayRule(date: DayDate, ruleValue: WeekdayTimeRuleValue): boolean {
     const dateWeekday = DateUtils.getWeekday(date)
     return ruleValue.numbers.some((number: number) =>
       dateWeekday == Weekday.parse(number)
     )
   }
 
-  function matchEachRule(date: DayDate, ruleValue: UnitTimeRuleValue, start: DayDate): boolean {
+  function matchEachRule(date: DayDate, ruleValue: EachTimeRuleValue, start: DayDate): boolean {
     if (DayDate.compare(date, start) == Order.EQ) {
       return true
     }

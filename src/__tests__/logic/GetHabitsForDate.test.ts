@@ -1,4 +1,3 @@
-import { TimeRuleType } from "../..//models/TimeRuleType"
 import { Habit } from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
@@ -7,40 +6,35 @@ import { GetHabitsForDate } from '../../logic/GetHabitsForDate';
 const wakeUpWeekdaysHabit: Habit = {
   name: "Wake up at 6:00",
   time: {
-    type: TimeRuleType.Weekday,
-    value: { kind: "numberList", numbers: [0, 1, 2, 3, 4] },
+    value: { kind: "weekday", numbers: [0, 1, 2, 3, 4] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
 const makeSportHabit: Habit = {
   name: "Make sport",
   time: {
-    type: TimeRuleType.Weekday,
-    value: { kind: "numberList", numbers: [0, 2, 4] },
+    value: { kind: "weekday", numbers: [0, 2, 4] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
 const meditateHabit: Habit = {
   name: "Meditate",
   time: {
-    type: TimeRuleType.Weekday,
-    value: { kind: "numberList", numbers: [0, 1, 2, 3, 4, 5, 6] },
+    value: { kind: "weekday", numbers: [0, 1, 2, 3, 4, 5, 6] },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
 const sendVATHabit: Habit = {
   name: "Send VAT",
   time: {
-    type: TimeRuleType.Each,
-    value: { kind: "unit", value: 1, unit: TimeUnit.Month },
+    value: { kind: "each", value: 1, unit: TimeUnit.Month },
     start: { day: 8, month: Month.January, year: 2019 }
   }
 }
 const sendPreliminaryTaxes: Habit = {
   name: "Send preliminary takes",
   time: {
-    type: TimeRuleType.Each,
-    value: { kind: "unit", value: 3, unit: TimeUnit.Month },
+    value: { kind: "each", value: 3, unit: TimeUnit.Month },
     start: { day: 1, month: Month.January, year: 2019 }
   }
 }
