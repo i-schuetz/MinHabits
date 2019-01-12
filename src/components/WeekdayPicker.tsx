@@ -14,8 +14,9 @@ export default class WeekdayPicker extends Component<WeekdayPickerProps> {
     return (
       <View>
         <FlatList
-          horizontal={true}
           data={FullWeekday.array()}
+          horizontal={true}
+          keyExtractor={(item, {}) => item.weekday.toString()}
           renderItem={({ item }) => {
             const isSelected = this.props.selectedWeekdays.some(selectedWeekday => selectedWeekday == item.weekday)
             return (
@@ -23,7 +24,9 @@ export default class WeekdayPicker extends Component<WeekdayPickerProps> {
                 style={isSelected ? styles.selectedWeekdayButtonContainer : styles.unselectedWeekdayButtonContainer}
                 onPress={() => this.props.onSelect(item.weekday)}
               >
-                <Text style={isSelected ? styles.selectedWeekdayButton : styles.unselectedWeekdayButton}>{item.shortName}</Text>
+                <Text style={isSelected ? styles.selectedWeekdayButton : styles.unselectedWeekdayButton}>
+                  {item.shortName}
+                </Text>
               </TouchableOpacity>
             )
           }}
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
   },
   selectedWeekdayButtonContainer: {
     ...sharedStyles.weekdayButtonContainer,
-    backgroundColor: "grey",
+    backgroundColor: "grey"
   },
   unselectedWeekdayButton: {
     ...sharedStyles.weekdayButton
@@ -64,5 +67,5 @@ const styles = StyleSheet.create({
   selectedWeekdayButton: {
     ...sharedStyles.weekdayButton,
     color: "white"
-  },
+  }
 })

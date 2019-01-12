@@ -62,8 +62,9 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
       <View>
         <NavigationBar title={titleConfig} rightButton={rightButtonConfig} />
         <FlatList
-          style={styles.list}
           data={this.state.habits}
+          keyExtractor={(item, {}) => item.name}
+          style={styles.list}
           renderItem={({ item }) => (
             <Text style={styles.habit} onPress={({}) => this.onSelectHabit(item)}>
               {item.name}
