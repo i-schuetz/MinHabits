@@ -9,7 +9,7 @@ export default class Repo {
       console.log("Initializing db")
       return db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
-          "create table if not exists habits (id integer primary key not null, name text, time text);",
+          "create table if not exists habits (id integer primary key not null, name text unique, time text);",
           [],
           () => {
             console.log("Create habits if not exist success")
@@ -57,7 +57,7 @@ export default class Repo {
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
-          `insert into habits (name, time) values (?, ?)`,
+          `insert or replace into habits (name, time) values (?, ?)`,
           [habit.name, JSON.stringify(TimeRule.toJSON(habit.time))],
           () => {
             resolve()
