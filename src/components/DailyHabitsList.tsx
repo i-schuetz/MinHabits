@@ -1,21 +1,35 @@
-import React, { Component } from "react"
+import React, { Component, Dispatch } from "react"
 
 import { FlatList, Modal, StyleSheet, Text, View } from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
 import Repo from "../Repo"
 import EditHabitView from "./EditHabitView"
+import { ApplicationState } from "../redux/reducers/RootReducer"
+import { openEditHabitModalAction, ViewsActionTypes } from "../redux/reducers/ViewsReducer"
+import { connect } from "react-redux"
+import { PayloadAction } from "typesafe-actions/dist/types"
+
+interface PropsFromState {
+  editHabitModalOpen: boolean
+}
+
+interface PropsFromDispatch {
+  setEditHabitModalOpen: typeof openEditHabitModalAction
+}
+
+interface OwnProps {}
+
+type DailyHabitsLayoutContainerProps = PropsFromState & PropsFromDispatch & OwnProps
 
 export interface DailyHabitsState {
   habits: Habit[]
-  modalVisible: boolean
   selectedHabit?: Habit
 }
 
-export default class DailyHabitsList extends Component<any, DailyHabitsState> {
+class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHabitsState> {
   state: DailyHabitsState = {
-    habits: [],
-    modalVisible: false
+    habits: []
   }
 
   componentWillMount() {
@@ -41,7 +55,8 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
   }
 
   private setModalVisible(visible: boolean) {
-    this.setState({ modalVisible: visible, selectedHabit: visible ? this.state.selectedHabit : undefined })
+    this.props.setEditHabitModalOpen(visible)
+    this.setState({ selectedHabit: visible ? this.state.selectedHabit : undefined })
   }
 
   private onSelectHabit(habit: Habit) {
@@ -51,7 +66,7 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
   render() {
     const rightButtonConfig = {
       title: "+",
-      handler: () => this.setModalVisible(!this.state.modalVisible)
+      handler: () => this.setModalVisible(!this.props.editHabitModalOpen)
     }
 
     const titleConfig = {
@@ -75,7 +90,7 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
         <Modal
           animationType="slide"
           transparent={false}
-          visible={this.state.modalVisible}
+          visible={this.props.editHabitModalOpen}
           onRequestClose={() => {
             this.setModalVisible(false)
           }}
@@ -95,6 +110,23 @@ export default class DailyHabitsList extends Component<any, DailyHabitsState> {
     )
   }
 }
+
+const mapStateToProps = ({ views }: ApplicationState) => ({
+  editHabitModalOpen: views.editHabitModalOpen
+})
+
+const mapDispatchToProps: (
+  dispatch: Dispatch<PayloadAction<ViewsActionTypes, boolean>>
+) => { setEditHabitModalOpen: (open: boolean) => void } = (
+  dispatch: Dispatch<PayloadAction<ViewsActionTypes, boolean>>
+) => ({
+  setEditHabitModalOpen: (open: boolean) => dispatch(openEditHabitModalAction(open))
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DailyHabitsList)
 
 const styles = StyleSheet.create({
   list: {},

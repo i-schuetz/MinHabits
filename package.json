@@ -23,6 +23,8 @@
     "@types/jest": "^23.3.11",
     "@types/react-native-datepicker": "^1.7.0",
     "@types/react-native-navbar": "^2.1.1",
+    "@types/react-redux": "^6.0.12",
+    "@types/redux": "^3.6.0",
     "expo": "^31.0.6",
     "moment": "^2.23.0",
     "moment-timezone": "^0.5.23",
@@ -30,8 +32,11 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
     "react-native-datepicker": "^1.7.2",
     "react-native-navbar": "^2.1.0",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
     "ts-node": "^7.0.1",
     "ts-optchain": "^0.1.2",
+    "typesafe-actions": "^3.0.0",
     "typescript": "^3.2.2"
   },
   "devDependencies": {
