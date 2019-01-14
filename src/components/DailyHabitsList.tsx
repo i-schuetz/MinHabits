@@ -7,28 +7,29 @@ import Repo from "../Repo"
 import EditHabitView from "./EditHabitView"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { PayloadAction } from "typesafe-actions/dist/types"
-import { DailyHabitsListActionTypes } from '../redux/reducers/ui/DailyHabitsListReducer';
-import { openEditHabitModalAction } from "../redux/reducers/ui/DailyHabitsListReducer";
+import { addNewHabitAction, setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/DailyHabitsListReducer"
+import { Action } from "redux";
 
 interface PropsFromState {
   editHabitModalOpen: boolean
+  editingHabit?: Habit
 }
 
 interface PropsFromDispatch {
-  setEditHabitModalOpen: typeof openEditHabitModalAction
+  addNewHabit: typeof addNewHabitAction
+  editHabit: typeof setEditingHabitAction
+  exitEditingHabit: typeof exitEditingHabitAction
 }
 
 interface OwnProps {}
 
-type DailyHabitsLayoutContainerProps = PropsFromState & PropsFromDispatch & OwnProps
+type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 
 export interface DailyHabitsState {
   habits: Habit[]
-  selectedHabit?: Habit
 }
 
-class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHabitsState> {
+class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   state: DailyHabitsState = {
     habits: []
   }
@@ -50,24 +51,27 @@ class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHa
 
   private submitHabit = async (habit: Habit) => {
     console.log("Submitting habit: " + JSON.stringify(habit))
-    this.setModalVisible(false)
+    this.closeModal()
     await Repo.addHabit(habit)
     this.updateHabits()
   }
 
-  private setModalVisible(visible: boolean) {
-    this.props.setEditHabitModalOpen(visible)
-    this.setState({ selectedHabit: visible ? this.state.selectedHabit : undefined })
+  private addNewHabit() {
+    this.props.addNewHabit()
+  }
+
+  private closeModal() {
+    this.props.exitEditingHabit()
   }
 
   private onSelectHabit(habit: Habit) {
-    this.setState({ selectedHabit: habit }, () => this.setModalVisible(true))
+    this.props.editHabit(habit)
   }
 
   render() {
     const rightButtonConfig = {
       title: "+",
-      handler: () => this.setModalVisible(!this.props.editHabitModalOpen)
+      handler: () => this.addNewHabit()
     }
 
     const titleConfig = {
@@ -93,17 +97,13 @@ class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHa
           transparent={false}
           visible={this.props.editHabitModalOpen}
           onRequestClose={() => {
-            this.setModalVisible(false)
+            this.closeModal()
           }}
         >
           <EditHabitView
-            habit={this.state.selectedHabit}
             onSubmit={(habit: Habit) => {
-              this.setModalVisible(false)
+              this.closeModal()
               this.submitHabit(habit)
-            }}
-            onClose={() => {
-              this.setModalVisible(false)
             }}
           />
         </Modal>
@@ -111,19 +111,6 @@ class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHa
     )
   }
 }
-
-const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
-  editHabitModalOpen: dailyHabitsList.editHabitModalOpen
-})
-
-const mapDispatchToProps = (dispatch: Dispatch<PayloadAction<DailyHabitsListActionTypes, boolean>>) => ({
-  setEditHabitModalOpen: (open: boolean) => dispatch(openEditHabitModalAction(open))
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DailyHabitsList)
 
 const styles = StyleSheet.create({
   list: {},
@@ -133,3 +120,18 @@ const styles = StyleSheet.create({
     height: 44
   }
 })
+
+const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
+  editHabitModalOpen: dailyHabitsList.editHabitModalOpen,
+  editingHabit: dailyHabitsList.editingHabit
+})
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
+  addNewHabit: () => dispatch(addNewHabitAction()),
+  editHabit: (habit: Habit) => dispatch(setEditingHabitAction(habit)),
+  exitEditingHabit: () => dispatch(exitEditingHabitAction())
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DailyHabitsList)

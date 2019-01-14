@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { Component, Dispatch } from "react"
 import { Button, StyleSheet, TextInput, View } from "react-native"
 import NavigationBar from "react-native-navbar"
 import WeekdayPicker from "./WeekdayPicker"
@@ -8,31 +8,42 @@ import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
 import MyDatePicker from "./MyDatePicker"
 import { DateUtils } from "../utils/DateUtils"
-import { TimeRule } from "../models/TimeRule";
+import { ApplicationState } from '../redux/reducers/RootReducer';
+import { Action } from "redux";
+import { connect } from "react-redux"
+import { exitEditingHabitAction } from '../redux/reducers/ui/DailyHabitsListReducer';
 
-export interface EditHabitViewProps {
-  habit?: Habit
-  onClose: () => void
+interface PropsFromState {
+  editingHabit?: Habit
+}
+interface PropsFromDispatch {
+  exitEditingHabit: typeof exitEditingHabitAction
+}
+
+export interface OwnProps {
   onSubmit: (habit: Habit) => void
 }
+
+type AllProps = PropsFromState & PropsFromDispatch & OwnProps
+
 export interface EditHabitViewState {
   name?: string
   timeRuleValue?: TimeRuleValue
   startDate?: DayDate
 }
 
-export default class EditHabitView extends Component<EditHabitViewProps, EditHabitViewState> {
+class EditHabitView extends Component<AllProps, EditHabitViewState> {
   private textInput: React.RefObject<TextInput>
 
-  constructor(props: EditHabitViewProps) {
+  constructor(props: AllProps) {
     super(props)
 
-    console.log("Editing habit: " + JSON.stringify(props.habit));
+    console.log("Editing habit: " + JSON.stringify(props.editingHabit));
     
     this.state = {
-      name: props.habit ? props.habit.name : undefined,
-      timeRuleValue: props.habit ? props.habit.time.value : undefined,
-      startDate: props.habit ? props.habit.time.start : undefined
+      name: props.editingHabit ? props.editingHabit.name : undefined,
+      timeRuleValue: props.editingHabit ? props.editingHabit.time.value : undefined,
+      startDate: props.editingHabit ? props.editingHabit.time.start : undefined
     }
 
     this.textInput = React.createRef()
@@ -97,7 +108,7 @@ export default class EditHabitView extends Component<EditHabitViewProps, EditHab
   render() {
     const leftButtonConfig = {
       title: "x",
-      handler: () => this.props.onClose()
+      handler: () => this.props.exitEditingHabit()
     }
 
     const titleConfig = {
@@ -147,3 +158,15 @@ const styles = StyleSheet.create({
     height: 50
   }
 })
+
+const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
+  editingHabit: dailyHabitsList.editingHabit
+})
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
+  exitEditingHabit: () => dispatch(exitEditingHabitAction())
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditHabitView)

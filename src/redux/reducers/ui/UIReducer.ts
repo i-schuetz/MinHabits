@@ -1,6 +1,5 @@
 import { combineReducers } from "redux"
-import dailyHabitsListReducer from "./DailyHabitsListReducer"
-import { DailyHabitsListState } from './DailyHabitsListReducer';
+import { DailyHabitsListState, dailyHabitsListReducer } from './DailyHabitsListReducer';
 
 export interface UIState {
   dailyHabitsList: DailyHabitsListState
