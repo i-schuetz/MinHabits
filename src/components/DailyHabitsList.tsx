@@ -6,9 +6,10 @@ import NavigationBar from "react-native-navbar"
 import Repo from "../Repo"
 import EditHabitView from "./EditHabitView"
 import { ApplicationState } from "../redux/reducers/RootReducer"
-import { openEditHabitModalAction, ViewsActionTypes } from "../redux/reducers/ViewsReducer"
 import { connect } from "react-redux"
 import { PayloadAction } from "typesafe-actions/dist/types"
+import { DailyHabitsListActionTypes } from '../redux/reducers/ui/DailyHabitsListReducer';
+import { openEditHabitModalAction } from "../redux/reducers/ui/DailyHabitsListReducer";
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -111,15 +112,11 @@ class DailyHabitsList extends Component<DailyHabitsLayoutContainerProps, DailyHa
   }
 }
 
-const mapStateToProps = ({ views }: ApplicationState) => ({
-  editHabitModalOpen: views.editHabitModalOpen
+const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
+  editHabitModalOpen: dailyHabitsList.editHabitModalOpen
 })
 
-const mapDispatchToProps: (
-  dispatch: Dispatch<PayloadAction<ViewsActionTypes, boolean>>
-) => { setEditHabitModalOpen: (open: boolean) => void } = (
-  dispatch: Dispatch<PayloadAction<ViewsActionTypes, boolean>>
-) => ({
+const mapDispatchToProps = (dispatch: Dispatch<PayloadAction<DailyHabitsListActionTypes, boolean>>) => ({
   setEditHabitModalOpen: (open: boolean) => dispatch(openEditHabitModalAction(open))
 })
 

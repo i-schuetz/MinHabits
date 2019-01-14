@@ -10,7 +10,7 @@ export enum HabitsActionTypes {
 
 const initialState: HabitsState = {}
 
-const habitsReducer: Reducer<HabitsState> = (state = initialState, action) => {
+export const habitsReducer: Reducer<HabitsState> = (state = initialState, action) => {
   console.log("reducer returning state: " + JSON.stringify(state))
   switch (action.type) {
     // case HabitsActionTypes.FETCH_REQUEST: {
@@ -26,5 +26,3 @@ const habitsReducer: Reducer<HabitsState> = (state = initialState, action) => {
       return state
   }
 }
-
-export default habitsReducer

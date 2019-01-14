@@ -1,17 +1,18 @@
 import { combineReducers } from "redux"
-import habits, { HabitsState } from "./HabitsReducer"
-import views from "./ViewsReducer"
-import { ViewsState } from "./ViewsReducer"
+import { HabitsState } from "./HabitsReducer"
 import { ApplicationState } from "./RootReducer"
+import { UIState } from "./ui/UIReducer"
+import { habitsReducer } from "./HabitsReducer"
+import { uiReducer } from "./ui/UIReducer"
 
 export interface ApplicationState {
   habits: HabitsState
-  views: ViewsState
+  ui: UIState
 }
 
 const rootReducer = combineReducers<ApplicationState>({
-  habits: habits,
-  views: views
+  habits: habitsReducer,
+  ui: uiReducer
 })
 
 export default rootReducer
