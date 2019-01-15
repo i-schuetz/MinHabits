@@ -3,31 +3,35 @@ import React, { Component, Dispatch } from "react"
 import { FlatList, Modal, StyleSheet, Text, View } from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
-import Repo from "../Repo"
 import EditHabitView from "./EditHabitView"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { addNewHabitAction, setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/DailyHabitsListReducer"
-import { Action } from "redux";
+import {
+  addNewHabitAction,
+  setEditingHabitAction,
+  exitEditingHabitAction,
+  retrieveHabitsAction,
+  MyThunkDispatch
+} from "../redux/reducers/ui/DailyHabitsListReducer"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
   editingHabit?: Habit
+  habits: Habit[]
 }
 
 interface PropsFromDispatch {
   addNewHabit: typeof addNewHabitAction
   editHabit: typeof setEditingHabitAction
   exitEditingHabit: typeof exitEditingHabitAction
+  retrieveHabits: typeof retrieveHabitsAction
 }
 
 interface OwnProps {}
 
 type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 
-export interface DailyHabitsState {
-  habits: Habit[]
-}
+export interface DailyHabitsState {}
 
 class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   state: DailyHabitsState = {
@@ -35,25 +39,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   }
 
   componentWillMount() {
-    this.updateHabits()
-  }
-
-  private updateHabits = async () => {
-    try {
-      await Repo.init() // TODO only at app init (but async...), or prebundled db?
-      const habits = await Repo.loadItems()
-      console.log("updating list with items: " + JSON.stringify(habits))
-      this.setState({ habits: habits })
-    } catch (error) {
-      console.error("Error loading habits. ", error)
-    }
-  }
-
-  private submitHabit = async (habit: Habit) => {
-    console.log("Submitting habit: " + JSON.stringify(habit))
-    this.closeModal()
-    await Repo.addHabit(habit)
-    this.updateHabits()
+    this.props.retrieveHabits()
   }
 
   private addNewHabit() {
@@ -82,7 +68,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
       <View>
         <NavigationBar title={titleConfig} rightButton={rightButtonConfig} />
         <FlatList
-          data={this.state.habits}
+          data={this.props.habits}
           keyExtractor={(item, {}) => item.name}
           style={styles.list}
           renderItem={({ item }) => (
@@ -100,12 +86,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
             this.closeModal()
           }}
         >
-          <EditHabitView
-            onSubmit={(habit: Habit) => {
-              this.closeModal()
-              this.submitHabit(habit)
-            }}
-          />
+          <EditHabitView />
         </Modal>
       </View>
     )
@@ -123,12 +104,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
   editHabitModalOpen: dailyHabitsList.editHabitModalOpen,
-  editingHabit: dailyHabitsList.editingHabit
+  editingHabit: dailyHabitsList.editingHabit,
+  habits: dailyHabitsList.habits
 })
-const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
+const mapDispatchToProps = (dispatch: MyThunkDispatch) => ({
   addNewHabit: () => dispatch(addNewHabitAction()),
   editHabit: (habit: Habit) => dispatch(setEditingHabitAction(habit)),
-  exitEditingHabit: () => dispatch(exitEditingHabitAction())
+  exitEditingHabit: () => dispatch(exitEditingHabitAction()),
+  retrieveHabits: () => dispatch(retrieveHabitsAction())
 })
 
 export default connect(

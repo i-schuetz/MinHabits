@@ -8,21 +8,19 @@ import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
 import MyDatePicker from "./MyDatePicker"
 import * as DateUtils from "../utils/DateUtils"
-import { ApplicationState } from '../redux/reducers/RootReducer';
-import { Action } from "redux";
+import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { exitEditingHabitAction } from '../redux/reducers/ui/DailyHabitsListReducer';
+import { exitEditingHabitAction, submitHabitAction, MyThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
 
 interface PropsFromState {
   editingHabit?: Habit
 }
 interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
+  submitHabit: typeof submitHabitAction
 }
 
-export interface OwnProps {
-  onSubmit: (habit: Habit) => void
-}
+export interface OwnProps {}
 
 type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 
@@ -38,8 +36,8 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
   constructor(props: AllProps) {
     super(props)
 
-    console.log("Editing habit: " + JSON.stringify(props.editingHabit));
-    
+    console.log("Editing habit: " + JSON.stringify(props.editingHabit))
+
     this.state = {
       name: props.editingHabit ? props.editingHabit.name : undefined,
       timeRuleValue: props.editingHabit ? props.editingHabit.time.value : undefined,
@@ -140,7 +138,7 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
             onPress={() => {
               const habit = this.toHabit(this.state)
               if (habit) {
-                this.props.onSubmit(habit)
+                this.props.submitHabit(habit)
               }
             }}
           />
@@ -162,8 +160,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
   editingHabit: dailyHabitsList.editingHabit
 })
-const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
-  exitEditingHabit: () => dispatch(exitEditingHabitAction())
+const mapDispatchToProps = (dispatch: MyThunkDispatch) => ({
+  exitEditingHabit: () => dispatch(exitEditingHabitAction()),
+  submitHabit: (habit: Habit) => dispatch(submitHabitAction(habit))
 })
 
 export default connect(
