@@ -1,7 +1,7 @@
 import { Habit } from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
-import { GetHabitsForDate } from "../../logic/GetHabitsForDate"
+import * as GetHabitsForDate from "../../logic/GetHabitsForDate"
 import { Weekday } from "../../models/Weekday"
 
 const wakeUpWeekdaysHabit: Habit = {

@@ -1,4 +1,5 @@
 import { Habit, HabitJSON } from "../../models/Habit"
+import * as HabitHelpers from "../../models/Habit"
 import { Month } from "../../models/Month"
 import { TimeUnit } from "../../models/TimeUnit"
 import { Weekday } from "../../models/Weekday"
@@ -6,7 +7,7 @@ import { Weekday } from "../../models/Weekday"
 describe("Habit", () => {
   it("Generates correct JSON", () => {
     expect(
-      Habit.toJSON({
+      HabitHelpers.toJSON({
         name: "My habit",
         time: {
           value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
@@ -23,7 +24,7 @@ describe("Habit", () => {
     } as HabitJSON)
 
     expect(
-      Habit.toJSON({
+      HabitHelpers.toJSON({
         name: "My habit",
         time: {
           value: { kind: "each", value: 2, unit: TimeUnit.Month },
@@ -42,7 +43,7 @@ describe("Habit", () => {
 
   it("Parses JSON correctly", () => {
     expect(
-      Habit.parse({
+      HabitHelpers.parse({
         name: "My habit",
         time: {
           type: "w",
@@ -59,7 +60,7 @@ describe("Habit", () => {
     } as Habit)
 
     expect(
-      Habit.parse({
+      HabitHelpers.parse({
         name: "My habit",
         time: {
           type: "e",

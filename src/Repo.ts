@@ -1,6 +1,7 @@
 import { SQLite, HashMap } from "expo"
 import { Habit } from "./models/Habit"
-import { TimeRule } from "./models/TimeRule"
+import * as TimeRuleHelpers from "./models/TimeRule"
+
 const db = SQLite.openDatabase("db.db")
 
 export default class Repo {
@@ -37,7 +38,7 @@ export default class Repo {
               const timeString: string = map["time"]
               return {
                 name: nameString,
-                time: TimeRule.parse(JSON.parse(timeString))
+                time: TimeRuleHelpers.parse(JSON.parse(timeString))
               }
             })
             console.log(`mapped habits: ${habits}`)
@@ -58,7 +59,7 @@ export default class Repo {
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
           `insert or replace into habits (name, time) values (?, ?)`,
-          [habit.name, JSON.stringify(TimeRule.toJSON(habit.time))],
+          [habit.name, JSON.stringify(TimeRuleHelpers.toJSON(habit.time))],
           () => {
             resolve()
           },

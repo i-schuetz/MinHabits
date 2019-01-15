@@ -1,6 +1,9 @@
 import { DayDate } from './DayDate';
+import * as DayDateHelpers from './DayDate';
 import { TimeRuleValue, EachTimeRuleValueJSON } from './TimeRuleValue';
 import { TimeRuleValueDescriptor } from './TimeRuleTypeDescriptor';
+import * as TimeRuleValueDescriptorHelpers from "./TimeRuleTypeDescriptor"
+import * as TimeRuleValueHelpers from "./TimeRuleValue"
 
 export type TimeRule = {
   readonly value: TimeRuleValue;
@@ -13,29 +16,27 @@ export interface TimeRuleJSON {
   readonly start: string;
 }
 
-export namespace TimeRule {
-  export function toJSON(timeRule: TimeRule): TimeRuleJSON {
-    return {
-      type: TimeRuleValueDescriptor.toJSON(toTimeRuleValueDescriptor(timeRule.value)),
-      value: TimeRuleValue.toJSON(timeRule.value),
-      start: DayDate.toJSON(timeRule.start)
-    }
+export function toJSON(timeRule: TimeRule): TimeRuleJSON {
+  return {
+    type: TimeRuleValueDescriptorHelpers.toJSON(toTimeRuleValueDescriptor(timeRule.value)),
+    value: TimeRuleValueHelpers.toJSON(timeRule.value),
+    start: DayDateHelpers.toJSON(timeRule.start)
   }
+}
 
-  export function parse(json: TimeRuleJSON): TimeRule {
-    const valueDescriptor: TimeRuleValueDescriptor = TimeRuleValueDescriptor.parse(json["type"]);
-    const value: TimeRuleValue = TimeRuleValue.parse(valueDescriptor, json["value"]);
-    const start: DayDate = DayDate.parse(json["start"]);
-    return {
-      value: value,
-      start: start
-    }
+export function parse(json: TimeRuleJSON): TimeRule {
+  const valueDescriptor: TimeRuleValueDescriptor = TimeRuleValueDescriptorHelpers.parse(json["type"]);
+  const value: TimeRuleValue = TimeRuleValueHelpers.parse(valueDescriptor, json["value"]);
+  const start: DayDate = DayDateHelpers.parse(json["start"]);
+  return {
+    value: value,
+    start: start
   }
+}
 
-  function toTimeRuleValueDescriptor(value: TimeRuleValue): TimeRuleValueDescriptor {
-    switch (value.kind) {
-      case "weekday": return TimeRuleValueDescriptor.Weekday
-      case "each": return TimeRuleValueDescriptor.Each
-    }
+function toTimeRuleValueDescriptor(value: TimeRuleValue): TimeRuleValueDescriptor {
+  switch (value.kind) {
+    case "weekday": return TimeRuleValueDescriptor.Weekday
+    case "each": return TimeRuleValueDescriptor.Each
   }
 }

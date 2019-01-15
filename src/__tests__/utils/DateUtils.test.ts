@@ -1,9 +1,8 @@
-import { DateUtils } from "../../utils/DateUtils"
+import * as DateUtils from "../../utils/DateUtils"
 import { Weekday } from "../../models/Weekday"
 import { Month } from "../../models/Month"
 import { DayDate } from "../../models/DayDate"
 import { TimeUnit } from "../../models/TimeUnit"
-import TimeInterval from "../../models/TimeInterval"
 
 describe("DateUtils", () => {
   it("Gets weekday from DayDate", () => {

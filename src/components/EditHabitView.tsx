@@ -7,7 +7,7 @@ import { Weekday } from "../models/Weekday"
 import { WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
 import MyDatePicker from "./MyDatePicker"
-import { DateUtils } from "../utils/DateUtils"
+import * as DateUtils from "../utils/DateUtils"
 import { ApplicationState } from '../redux/reducers/RootReducer';
 import { Action } from "redux";
 import { connect } from "react-redux"

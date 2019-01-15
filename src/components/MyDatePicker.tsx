@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import DatePicker from "react-native-datepicker"
 import { DayDate } from "../models/DayDate"
-import { DateUtils } from "../utils/DateUtils"
+import * as DateUtils from "../utils/DateUtils"
 
 export interface MyDatePickerProps {
   date: DayDate

@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { FlatList, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Weekday } from "../models/Weekday"
-import { FullWeekday } from "../models/FullWeekday"
+import * as FullWeekdayHelpers from "../models/FullWeekday"
 
 export interface WeekdayPickerProps {
   onSelect: (Weekday: Weekday) => void
@@ -14,7 +14,7 @@ export default class WeekdayPicker extends Component<WeekdayPickerProps> {
     return (
       <View>
         <FlatList
-          data={FullWeekday.array()}
+          data={FullWeekdayHelpers.array()}
           horizontal={true}
           keyExtractor={(item, {}) => item.weekday.toString()}
           renderItem={({ item }) => {
