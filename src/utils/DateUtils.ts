@@ -7,6 +7,9 @@ import TimeInterval from "../models/TimeInterval"
 import { Weekday } from "../models/Weekday"
 
 const dayDateFormat = "DD-MM-YYYY"
+const dayDateDailyHabitListDateSelectorFormat = "dddd Do MMM"
+const weekdayDateFormat = "dddd"
+
 const timezone = "UTC" // Use always UTC to prevent timezone convertion.
 
 export function getWeekday(date: DayDate): Weekday {
@@ -32,8 +35,9 @@ export function isInStartEnd(date: DayDate, start: DayDate, end: DayDate): boole
 }
 
 /**
- * @param dayDate date to convert
- * @returns typle with string representation and format string.
+ * Returns internal DayDate representation, used for serialization
+ * @param dayDate date to be formatted
+ * @returns tuple with formatted date and format string.
  */
 export function toDayDateString(dayDate: DayDate): { formatted: string; format: string } {
   return {
@@ -58,10 +62,57 @@ export function parseDayDate(str: string): DayDate {
 }
 
 /**
+ * Format currently used in daily habit list date selector
+ * @param dayDate to be formatted
+ * @returns formatted date
+ * TODO unit test
+ */
+export function formatDayDateWeekdayDayTextualMonth(dayDate: DayDate): string {
+  return toMomentFromDayDate(dayDate).format(dayDateDailyHabitListDateSelectorFormat)
+}
+
+export function formatWeekday(dayDate: DayDate): string {
+  return toMomentFromDayDate(dayDate).format(weekdayDateFormat)
+}
+
+/**
+ * @return dates for Monday - Sunday of dayDate's week
+ */
+export function getDayDatesInWeek(dayDate: DayDate): DayDate[] {
+  const weekday: Weekday = getWeekday(dayDate)
+  const weekdayIndex = to0BasedIndexWeekday(weekday)
+
+  var dayDates: DayDate[] = []
+  for (var weekdayOffset = -weekdayIndex; weekdayOffset < -weekdayIndex + 7; weekdayOffset += 1) {
+    const weekDayMoment = toMomentFromDayDate(dayDate).add(weekdayOffset, toMomentUnitString(TimeUnit.Day)) 
+    dayDates.push(toDayDateFromMoment(weekDayMoment))
+  }
+  return dayDates
+}
+
+/**
  * Converts moment lib month index to Month
  */
 function parseMonth(index: number): Month {
   return MonthHelpers.parseNumber(index)
+}
+
+/**
+ * Note: Completely unrelated with all other weekday <-> number mapping functions.
+ * In this case we want to convert to number for calculatory purposes.
+ * @param weekday to be converted
+ * @return weekday's index, 0 based, starting with Monday
+ */
+function to0BasedIndexWeekday(weekday: Weekday): number {
+  switch(weekday) {
+    case Weekday.Monday: return 0;
+    case Weekday.Tuesday: return 1;
+    case Weekday.Wednesday: return 2;
+    case Weekday.Thursday: return 3;
+    case Weekday.Friday: return 4;
+    case Weekday.Saturday: return 5;
+    case Weekday.Sunday: return 6;
+  }; 
 }
 
 function toWeekday(momentIsoWeekday: number): Weekday {

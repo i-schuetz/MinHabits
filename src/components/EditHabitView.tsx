@@ -24,6 +24,7 @@ export interface OwnProps {}
 
 type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 
+// TODO move to redux
 export interface EditHabitViewState {
   name?: string
   timeRuleValue?: TimeRuleValue
@@ -49,7 +50,7 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
 
   state: EditHabitViewState = { name: undefined, timeRuleValue: undefined }
 
-  private toggleWeekday(weekdays: Array<Weekday>, weekday: Weekday): Array<Weekday> {
+  private toggleWeekday(weekdays: Array<Weekday>, weekday: Weekday): Weekday[] {
     // TODO generic extension function? possible?
     if (weekdays.indexOf(weekday) != -1) {
       return weekdays.filter(element => element != weekday)

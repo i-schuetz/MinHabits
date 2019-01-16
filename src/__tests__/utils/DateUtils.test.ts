@@ -146,4 +146,67 @@ describe("DateUtils", () => {
       )
     ).toEqual(false)
   })
+
+  it("Get day dates in week returns expected values", () => {
+
+    // Week starts in the past year
+    expect(
+      DateUtils.getDayDatesInWeek(
+        { day: 2, month: Month.January, year: 2019 } // Wednesday
+      )
+    ).toEqual([
+      { day: 31, month: Month.December, year: 2018 }, // Monday
+      { day: 1, month: Month.January, year: 2019 },
+      { day: 2, month: Month.January, year: 2019 },
+      { day: 3, month: Month.January, year: 2019 },
+      { day: 4, month: Month.January, year: 2019 },
+      { day: 5, month: Month.January, year: 2019 },
+      { day: 6, month: Month.January, year: 2019 } // Sunday
+    ] as DayDate[])
+
+    // In year, at the start of a week. Also leap year.
+    expect(
+      DateUtils.getDayDatesInWeek(
+        { day: 29, month: Month.February, year: 2016 } // Monday
+      )
+    ).toEqual([
+      { day: 29, month: Month.February, year: 2016 }, // Monday
+      { day: 1, month: Month.March, year: 2016 },
+      { day: 2, month: Month.March, year: 2016 },
+      { day: 3, month: Month.March, year: 2016 },
+      { day: 4, month: Month.March, year: 2016 },
+      { day: 5, month: Month.March, year: 2016 },
+      { day: 6, month: Month.March, year: 2016 } // Sunday
+    ] as DayDate[])
+
+    // In year, at the end of a week
+    expect(
+      DateUtils.getDayDatesInWeek(
+        { day: 28, month: Month.April, year: 2019 } // Sunday
+      )
+    ).toEqual([
+      { day: 22, month: Month.April, year: 2019 }, // Monday
+      { day: 23, month: Month.April, year: 2019 },
+      { day: 24, month: Month.April, year: 2019 },
+      { day: 25, month: Month.April, year: 2019 },
+      { day: 26, month: Month.April, year: 2019 },
+      { day: 27, month: Month.April, year: 2019 },
+      { day: 28, month: Month.April, year: 2019 } // Sunday
+    ] as DayDate[])
+
+    // Week ends in next year
+    expect(
+      DateUtils.getDayDatesInWeek(
+        { day: 31, month: Month.December, year: 2019 } // Tuesday
+      )
+    ).toEqual([
+      { day: 30, month: Month.December, year: 2019 }, // Monday
+      { day: 31, month: Month.December, year: 2019 },
+      { day: 1, month: Month.January, year: 2020 },
+      { day: 2, month: Month.January, year: 2020 },
+      { day: 3, month: Month.January, year: 2020 },
+      { day: 4, month: Month.January, year: 2020 },
+      { day: 5, month: Month.January, year: 2020 } // Sunday
+    ] as DayDate[])
+  })
 })

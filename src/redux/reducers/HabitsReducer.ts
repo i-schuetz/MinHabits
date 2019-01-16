@@ -11,7 +11,6 @@ export enum HabitsActionTypes {
 const initialState: HabitsState = {}
 
 export const habitsReducer: Reducer<HabitsState> = (state = initialState, action) => {
-  console.log("reducer returning state: " + JSON.stringify(state))
   switch (action.type) {
     // case HabitsActionTypes.FETCH_REQUEST: {
     //   return { ...state, loading: true }

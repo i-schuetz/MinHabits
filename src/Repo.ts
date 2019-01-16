@@ -41,8 +41,6 @@ export default class Repo {
                 time: TimeRuleHelpers.parse(JSON.parse(timeString))
               }
             })
-            console.log(`mapped habits: ${habits}`)
-
             resolve(habits)
           },
           ({}, error) => {
