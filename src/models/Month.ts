@@ -21,6 +21,23 @@ export function parse(string: string): Month {
   return parseNumber(parseInt(string));
 }
 
+export function array(): Month[] {
+  return [
+    Month.January,
+    Month.February,
+    Month.March,
+    Month.April,
+    Month.May,
+    Month.June,
+    Month.July,
+    Month.August,
+    Month.September,
+    Month.October,
+    Month.November,
+    Month.December
+  ]
+}
+
 export function parseNumber(number: number): Month {
   switch (number) {
     case 0: return Month.January;

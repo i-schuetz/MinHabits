@@ -9,6 +9,9 @@ import { WholePercentage } from "../models/helpers/WholePercentage"
 import * as WholePercentageHelpers from "../models/helpers/WholePercentage"
 import { MonthPercentage } from "../models/helpers/MonthPercentage"
 import { fetchAllStatsAction, StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
+import { VictoryBar, VictoryChart } from "victory-native"
+import * as MonthHelpers from "../models/Month"
+import * as DateUtils from "../utils/DateUtils"
 
 interface PropsFromState {
   totalDonePercentage?: WholePercentage
@@ -51,7 +54,20 @@ class StatsView extends Component<AllProps, StatsViewState> {
             <Text>{this.formatTotalDonePercentage(this.props.totalDonePercentage)}</Text>
           </View>
           <View>
-            <Text>{JSON.stringify(this.props.monthDonePercentages)}</Text>
+            <VictoryChart domainPadding={25}>
+              <VictoryBar
+                categories={{
+                  x: MonthHelpers.array().map(month => DateUtils.monthShortName(month)),
+                  y: []
+                }}
+                data={this.props.monthDonePercentages.map(monthPercentage => {
+                  return {
+                    x: DateUtils.monthShortName(monthPercentage.month),
+                    y: WholePercentageHelpers.toNumber(monthPercentage.percentage)
+                  }
+                })}
+              />
+            </VictoryChart>
           </View>
           <View>
             <Text>{"Need attention: " + this.needAttentionHabitsString(this.props.needAttentionHabits)}</Text>

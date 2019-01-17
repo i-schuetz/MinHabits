@@ -9,6 +9,8 @@ import { Weekday } from "../models/Weekday"
 const dayDateFormat = "DD-MM-YYYY"
 const dayDateDailyHabitListDateSelectorFormat = "dddd Do MMM"
 const weekdayDateFormat = "dddd"
+const monthNameFormat = "MMMM"
+const monthShortNameFormat = "MMM"
 
 const timezone = "UTC" // Use always UTC to prevent timezone convertion.
 
@@ -95,6 +97,21 @@ export function getDayDatesInWeek(dayDate: DayDate): DayDate[] {
  */
 function parseMonth(index: number): Month {
   return MonthHelpers.parseNumber(index)
+}
+
+export function monthName(month: Month): string {
+  return toMomentWithMonth(month).format(monthNameFormat)
+}
+
+export function monthShortName(month: Month): string {
+  return toMomentWithMonth(month).format(monthShortNameFormat)
+}
+
+/**
+ * @returns moment with specified month. The rest of the date is irrelevant. This is used only to get month names.
+ */
+function toMomentWithMonth(month: Month): moment.Moment {
+  return moment.tz(timezone).month(toMomentMonth(month))
 }
 
 /**
