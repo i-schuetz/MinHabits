@@ -10,7 +10,7 @@ import {
   addNewHabitAction,
   setEditingHabitAction,
   exitEditingHabitAction,
-  MyThunkDispatch,
+  DailyHabitsListThunkDispatch,
   setSelectDateModalOpenAction
 } from "../redux/reducers/ui/DailyHabitsListReducer"
 import SelectDailyHabitsDateView from "./SelectDailyHabitsDateView"
@@ -18,7 +18,7 @@ import * as DateUtils from "../utils/DateUtils"
 import { initSelectedDateAction } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { DayDate } from "../models/DayDate"
 import * as DayDateHelpers from "../models/DayDate"
-import { Order } from "../models/Order"
+import { Order } from "../models/helpers/Order"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -145,7 +145,7 @@ const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
   selectedDate: dailyHabitsList.selectedDate,
   title: dailyHabitsList.title
 })
-const mapDispatchToProps = (dispatch: MyThunkDispatch) => ({
+const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   addNewHabit: () => dispatch(addNewHabitAction()),
   editHabit: (habit: Habit) => dispatch(setEditingHabitAction(habit)),
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),

@@ -1,4 +1,4 @@
-import { Weekday } from "./Weekday";
+import { Weekday } from "../Weekday";
 
 export type FullWeekday = {
   weekday: Weekday,

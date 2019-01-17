@@ -8,7 +8,8 @@ import * as DayDateHelpers from "../../../models/DayDate";
 import * as DateUtils from "../../../utils/DateUtils";
 import * as GetHabitsForDate from "../../../logic/GetHabitsForDate";
 import Preferences, { PreferencesKey } from '../../../Preferences';
-import { Order } from "../../../models/Order";
+import { Order } from "../../../models/helpers/Order";
+import { EditHabitInputs } from "../../../models/helpers/EditHabitInputs";
 
 export interface DailyHabitsListState {
   readonly editHabitModalOpen: boolean
@@ -49,18 +50,18 @@ export const onFetchHabitsSuccessAction = (habits: Habit[]) => action(DailyHabit
 export const onSubmitHabitSuccessAction = () => action(DailyHabitsListActionTypes.SUBMIT_HABIT_SUCCESS)
 const setSelectedDateAction = (date: DayDate) => action(DailyHabitsListActionTypes.SET_SELECTED_DATE, date)
 
-type MyThunkResult<R> = ThunkAction<R, DailyHabitsListState, undefined, Action>;
-export type MyThunkDispatch = ThunkDispatch<DailyHabitsListState, undefined, Action>;
+type ThunkResult<R> = ThunkAction<R, DailyHabitsListState, undefined, Action>;
+export type DailyHabitsListThunkDispatch = ThunkDispatch<DailyHabitsListState, undefined, Action>;
 
-const retrieveHabitsAction = (dayDate: DayDate): MyThunkResult<{}> => async (dispatch) => {
+const retrieveHabitsAction = (dayDate: DayDate): ThunkResult<{}> => async (dispatch) => {
   await Repo.init()
-  const habits = await Repo.loadItems()
+  const habits = await Repo.loadHabits()
   const filteredHabits = GetHabitsForDate.getHabitsForDate(dayDate, habits)
   dispatch(onFetchHabitsSuccessAction(filteredHabits))
 };
 
-export const submitHabitAction = (habit: Habit): MyThunkResult<{}> => async (dispatch, state) => {
-  await Repo.addHabit(habit)
+export const submitHabitInputsAction = (inputs: EditHabitInputs): ThunkResult<{}> => async (dispatch, state) => {
+  await Repo.addHabit(inputs)
   dispatch(onSubmitHabitSuccessAction())
   
   // Update in-memory habits
@@ -74,7 +75,7 @@ export const submitHabitAction = (habit: Habit): MyThunkResult<{}> => async (dis
  * Inits selected date.
  * If there's a selection stored in preferences, uses it, otherwise uses today.
  */
-export const initSelectedDateAction = (): MyThunkResult<{}> => async (dispatch) => {
+export const initSelectedDateAction = (): ThunkResult<{}> => async (dispatch) => {
   const dayDateJSON: any = await Preferences.loadJSON(PreferencesKey.SELECTED_DAILY_LIST_DATE)
   const dayDate: DayDate | null = dayDateJSON !== null ? DayDateHelpers.parse(dayDateJSON) : null
   const selectedDayDate: DayDate = dayDate !== null ? dayDate : DateUtils.today()
@@ -85,7 +86,7 @@ export const initSelectedDateAction = (): MyThunkResult<{}> => async (dispatch) 
 /**
  * Sets selected date in state, retrieves habits for it and closes select date modal.
  */
-export const selectDateAction = (dayDate: DayDate): MyThunkResult<{}> => async (dispatch) => {
+export const selectDateAction = (dayDate: DayDate): ThunkResult<{}> => async (dispatch) => {
   dispatch(setSelectedDateAction(dayDate))
   dispatch(retrieveHabitsAction(dayDate))
   dispatch(setSelectDateModalOpenAction(false))

@@ -7,13 +7,13 @@ import * as DateUtils from "../utils/DateUtils"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import {
-  MyThunkDispatch,
+  DailyHabitsListThunkDispatch,
   setSelectDateModalOpenAction,
   selectDateAction
 } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { DailyListDayDateViewData } from "../models/view_data/DailyListFormattedDayDate"
 import * as DailyListFormattedDayDateHelpers from "../models/view_data/DailyListFormattedDayDate"
-import { Order } from "../models/Order"
+import { Order } from "../models/helpers/Order"
 
 interface PropsFromState {}
 
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({})
-const mapPropsToDispatch = (dispatch: MyThunkDispatch) => ({
+const mapPropsToDispatch = (dispatch: DailyHabitsListThunkDispatch) => ({
   setSelectDateModalOpen: (open: boolean) => dispatch(setSelectDateModalOpenAction(open)),
   selectDate: (dayDate: DayDate) => dispatch(selectDateAction(dayDate))
 })

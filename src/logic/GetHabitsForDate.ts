@@ -4,7 +4,7 @@ import TimeInterval from "../models/TimeInterval"
 import { EachTimeRuleValue, WeekdayTimeRuleValue, TimeRuleValue } from "../models/TimeRuleValue"
 import * as DateUtils from "../utils/DateUtils"
 import { Weekday } from '../models/Weekday';
-import { Order } from "../models/Order";
+import { Order } from "../models/helpers/Order";
 import * as DayDateHelpers from "../models/DayDate"
 
 export function getHabitsForDate(date: DayDate, habits: Habit[]): Habit[] {

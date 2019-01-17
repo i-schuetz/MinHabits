@@ -8,6 +8,7 @@ describe("Habit", () => {
   it("Generates correct JSON", () => {
     expect(
       HabitHelpers.toJSON({
+        id: 0,
         name: "My habit",
         time: {
           value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
@@ -15,6 +16,7 @@ describe("Habit", () => {
         }
       })
     ).toEqual({
+      id: 0,
       name: "My habit",
       time: {
         type: "w",
@@ -25,6 +27,7 @@ describe("Habit", () => {
 
     expect(
       HabitHelpers.toJSON({
+        id: 0,
         name: "My habit",
         time: {
           value: { kind: "each", value: 2, unit: TimeUnit.Month },
@@ -32,6 +35,7 @@ describe("Habit", () => {
         }
       })
     ).toEqual({
+      id: 0,
       name: "My habit",
       time: {
         type: "e",
@@ -44,6 +48,7 @@ describe("Habit", () => {
   it("Parses JSON correctly", () => {
     expect(
       HabitHelpers.parse({
+        id: 0,
         name: "My habit",
         time: {
           type: "w",
@@ -52,6 +57,7 @@ describe("Habit", () => {
         }
       })
     ).toEqual({
+      id: 0,
       name: "My habit",
       time: {
         value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
@@ -61,6 +67,7 @@ describe("Habit", () => {
 
     expect(
       HabitHelpers.parse({
+        id: 0,
         name: "My habit",
         time: {
           type: "e",
@@ -69,6 +76,7 @@ describe("Habit", () => {
         }
       })
     ).toEqual({
+      id: 0,
       name: "My habit",
       time: {
         value: { kind: "each", value: 2, unit: TimeUnit.Month },

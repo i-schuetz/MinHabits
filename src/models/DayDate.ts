@@ -1,6 +1,6 @@
 import * as DateUtils from '../utils/DateUtils';
 import { Month } from './Month';
-import { Order } from './Order';
+import { Order } from './helpers/Order';
 
 export type DayDate = {
   day: number,

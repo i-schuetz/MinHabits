@@ -1,7 +1,7 @@
 import { DayDate } from "../../models/DayDate"
 import * as DayDateHelpers from "../../models/DayDate"
 import { Month } from "../../models/Month"
-import { Order } from "../../models/Order"
+import { Order } from "../../models/helpers/Order"
 
 describe("DayDate", () => {
   it("Parses day date string correctly", () => {

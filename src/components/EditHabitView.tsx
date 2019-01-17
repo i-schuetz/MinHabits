@@ -1,4 +1,4 @@
-import React, { Component, Dispatch } from "react"
+import React, { Component } from "react"
 import { Button, StyleSheet, TextInput, View } from "react-native"
 import NavigationBar from "react-native-navbar"
 import WeekdayPicker from "./WeekdayPicker"
@@ -10,14 +10,15 @@ import MyDatePicker from "./MyDatePicker"
 import * as DateUtils from "../utils/DateUtils"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { exitEditingHabitAction, submitHabitAction, MyThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
+import { EditHabitInputs } from "../models/helpers/EditHabitInputs"
+import { exitEditingHabitAction, submitHabitInputsAction, DailyHabitsListThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
 
 interface PropsFromState {
   editingHabit?: Habit
 }
 interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
-  submitHabit: typeof submitHabitAction
+  submitInputs: typeof submitHabitInputsAction
 }
 
 export interface OwnProps {}
@@ -48,7 +49,7 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
     this.textInput = React.createRef()
   }
 
-  state: EditHabitViewState = { name: undefined, timeRuleValue: undefined }
+  // state: EditHabitViewState = { name: undefined, timeRuleValue: undefined }
 
   private toggleWeekday(weekdays: Array<Weekday>, weekday: Weekday): Weekday[] {
     // TODO generic extension function? possible?
@@ -60,17 +61,15 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
     }
   }
 
-  private toHabit(habitInputs: EditHabitViewState): Habit | null {
-    if (!habitInputs.name || !habitInputs.timeRuleValue || !habitInputs.startDate) {
-      console.log("Input validation failed: " + JSON.stringify(habitInputs))
+  private toInputs(state: EditHabitViewState): EditHabitInputs | null {
+    if (!state.name || !state.timeRuleValue || !state.startDate) {
+      console.log("Input validation failed: " + JSON.stringify(state))
       return null
     }
     return {
-      name: habitInputs.name,
-      time: {
-        value: habitInputs.timeRuleValue,
-        start: habitInputs.startDate
-      }
+      name: state.name,
+      timeRuleValue: state.timeRuleValue,
+      startDate: state.startDate
     }
   }
 
@@ -137,9 +136,9 @@ class EditHabitView extends Component<AllProps, EditHabitViewState> {
           <Button
             title="Submit"
             onPress={() => {
-              const habit = this.toHabit(this.state)
-              if (habit) {
-                this.props.submitHabit(habit)
+              const inputs = this.toInputs(this.state)
+              if (inputs) {
+                this.props.submitInputs(inputs)
               }
             }}
           />
@@ -161,9 +160,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
   editingHabit: dailyHabitsList.editingHabit
 })
-const mapDispatchToProps = (dispatch: MyThunkDispatch) => ({
+const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
-  submitHabit: (habit: Habit) => dispatch(submitHabitAction(habit))
+  submitInputs: (inputs: EditHabitInputs) => dispatch(submitHabitInputsAction(inputs))
 })
 
 export default connect(
