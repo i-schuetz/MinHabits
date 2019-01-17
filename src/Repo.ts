@@ -4,6 +4,7 @@ import * as TimeRuleHelpers from "./models/TimeRule"
 import * as DayDateHelpers from "./models/DayDate"
 import { EditHabitInputs } from "./models/helpers/EditHabitInputs"
 import { Task } from "./models/Task"
+import PrefillRepo from './PrefillRepo';
 
 const db = SQLite.openDatabase("db.db")
 
@@ -17,26 +18,26 @@ export default class Repo {
           [],
           () => {
             console.log("Create habits if not exist success")
-            resolve()
           },
           ({}, error) => {
             console.log(`Create table error: ${error}`)
-            reject()
           }
         )
         tx.executeSql(
-          "create table if not exists tasks (id integer primary key not null, habitId integer, done integer, " +
+          "create table if not exists tasks (id integer primary key not null, habitId integer, done integer, date text, " +
             "foreign key(habitId) references habits(id));",
           [],
           () => {
             console.log("Create tasks if not exist success")
-            resolve()
           },
           ({}, error) => {
             console.log(`Create table error: ${error}`)
-            reject()
           }
         )
+
+        PrefillRepo.prefill(tx)
+
+        resolve()
       })
     })
   }
@@ -48,7 +49,7 @@ export default class Repo {
           `select * from habits`,
           [],
           (_, { rows: { _array } }) => {
-            console.log(`Loaded habits from db: ${JSON.stringify(_array)}`)
+            // console.log(`Loaded habits from db: ${JSON.stringify(_array)}`)
             const habits: Habit[] = _array.map((map: HashMap) => {
               const id: number = map["id"]
               const nameString: string = map["name"]
@@ -77,18 +78,15 @@ export default class Repo {
           `select * from tasks`,
           [],
           (_, { rows: { _array } }) => {
-            console.log(`Loaded tasks from db: ${JSON.stringify(_array)}`)
             const tasks: Task[] = _array.map((map: HashMap) => {
               const habitId: number = map["habitId"]
               const doneNumber: number = map["done"]
               const dateString: string = map["date"]
 
-              console.log("datestring: " + dateString)
-
               return {
                 habitId: habitId,
                 done: doneNumber == 1 ? true : false,
-                date: DayDateHelpers.parse(JSON.parse(dateString))
+                date: DayDateHelpers.parse(dateString)
               }
             })
             resolve(tasks)
