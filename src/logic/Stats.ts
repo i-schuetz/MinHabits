@@ -1,4 +1,4 @@
-import { Task } from "../models/Task"
+import { ResolvedTask } from "../models/ResolvedTask"
 import { MonthPercentage } from "../models/helpers/MonthPercentage"
 import { WholePercentage } from "../models/helpers/WholePercentage"
 import * as WholePercentageHelpers from "../models/helpers/WholePercentage"
@@ -8,7 +8,7 @@ import { Habit } from "../models/Habit"
 /**
  * @returns done percentage of tasks. 0% if tasks is empty.
  */
-export function getDonePercentage(tasks: Task[]): WholePercentage {
+export function getDonePercentage(tasks: ResolvedTask[]): WholePercentage {
   if (tasks.length == 0) {
     // If there are no tasks, we have done nothing
     // This may be counter intuitive - if there are no tasks we rather should say we did everything
@@ -21,7 +21,7 @@ export function getDonePercentage(tasks: Task[]): WholePercentage {
   return WholePercentageHelpers.toWholePercentage(percentage)
 }
 
-export function getDoneMonthlyPercentage(tasks: Task[]): MonthPercentage[] {
+export function getDoneMonthlyPercentage(tasks: ResolvedTask[]): MonthPercentage[] {
   const groupedTasks = groupBy(task => task.date.month, tasks)
   return Array.from(groupedTasks.entries()).map(entry => ({ month: entry[0], percentage: getDonePercentage(entry[1]) }))
 }
@@ -36,7 +36,7 @@ export function getDoneMonthlyPercentage(tasks: Task[]): MonthPercentage[] {
 export function groupHabitsByDonePercentageRange(
   ranges: WholePercentage[],
   habits: Habit[],
-  tasks: Task[]
+  tasks: ResolvedTask[]
 ): Map<number, Habit[]> {
   const tasksGroupedByHabit = groupBy(task => task.habitId, tasks)
   const habitsMap = associateBy(habit => habit.id, habits)
@@ -51,7 +51,7 @@ export function groupHabitsByDonePercentageRange(
     }
 
     // Calculate done percentage
-    const tasks: Task[] = entry[1]
+    const tasks: ResolvedTask[] = entry[1]
     const percentage: WholePercentage = getDonePercentage(tasks)
     const numberPercentage = WholePercentageHelpers.toNumber(percentage)
 

@@ -3,7 +3,7 @@ import { Habit } from "./models/Habit"
 import * as TimeRuleHelpers from "./models/TimeRule"
 import * as DayDateHelpers from "./models/DayDate"
 import { EditHabitInputs } from "./models/helpers/EditHabitInputs"
-import { Task } from "./models/Task"
+import { ResolvedTask } from "./models/ResolvedTask"
 import PrefillRepo from './PrefillRepo';
 
 const db = SQLite.openDatabase("db.db")
@@ -71,19 +71,21 @@ export default class Repo {
     )
   }
 
-  static loadTasks: () => Promise<Task[]> = async () => {
+  static loadTasks: () => Promise<ResolvedTask[]> = async () => {
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
           `select * from tasks`,
           [],
           (_, { rows: { _array } }) => {
-            const tasks: Task[] = _array.map((map: HashMap) => {
+            const tasks: ResolvedTask[] = _array.map((map: HashMap) => {
+              const id: number = map["id"]
               const habitId: number = map["habitId"]
               const doneNumber: number = map["done"]
               const dateString: string = map["date"]
 
               return {
+                id: id,
                 habitId: habitId,
                 done: doneNumber == 1 ? true : false,
                 date: DayDateHelpers.parse(dateString)
