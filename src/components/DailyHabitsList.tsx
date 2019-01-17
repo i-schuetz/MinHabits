@@ -44,10 +44,6 @@ type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 export interface DailyHabitsState {}
 
 class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
-  state: DailyHabitsState = {
-    habits: []
-  }
-
   componentWillMount() {
     this.props.initSelectedDate()
   }
