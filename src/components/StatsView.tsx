@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import { StyleSheet, Text, View, ScrollView } from "react-native"
+import { Text, View, ScrollView } from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
 import { ApplicationState } from "../redux/reducers/RootReducer"
