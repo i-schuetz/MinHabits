@@ -77,4 +77,15 @@ describe("WholePercentage", () => {
     expect(WholePercentageHelpers.toDecimalNumber({ digit1: 0, digit2: 5, digit3: 4 })).toEqual(0.54)
     expect(WholePercentageHelpers.toDecimalNumber({ digit1: 9, digit2: 9, digit3: 9 })).toEqual(9.99)
   })
+
+  it("Converts whole percentage to string", () => {
+    expect(WholePercentageHelpers.toString({ digit1: 0, digit2: 0, digit3: 0 })).toEqual("0")
+    expect(WholePercentageHelpers.toString({ digit1: 0, digit2: 1, digit3: 0 })).toEqual("10")
+    expect(WholePercentageHelpers.toString({ digit1: 1, digit2: 0, digit3: 0 })).toEqual("100")
+    expect(WholePercentageHelpers.toString({ digit1: 1, digit2: 1, digit3: 0 })).toEqual("110")
+    expect(WholePercentageHelpers.toString({ digit1: 0, digit2: 0, digit3: 1 })).toEqual("1")
+    expect(WholePercentageHelpers.toString({ digit1: 1, digit2: 0, digit3: 1 })).toEqual("101")
+    expect(WholePercentageHelpers.toString({ digit1: 9, digit2: 0, digit3: 1 })).toEqual("901")
+    expect(WholePercentageHelpers.toString({ digit1: 9, digit2: 3, digit3: 1 })).toEqual("931")
+  })
 })

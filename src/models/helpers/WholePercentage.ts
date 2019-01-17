@@ -11,7 +11,7 @@ export type WholePercentage = {
 
 export function toString(wholePercentage: WholePercentage): string {
   const part1 = wholePercentage.digit1 == 0 ? "" : wholePercentage.digit1
-  const part2 = wholePercentage.digit2 == 0 ? "" : wholePercentage.digit2
+  const part2 = wholePercentage.digit1 == 0 && wholePercentage.digit2 == 0 ? "" : wholePercentage.digit2
   return `${part1}${part2}${wholePercentage.digit3}`
 }
 
