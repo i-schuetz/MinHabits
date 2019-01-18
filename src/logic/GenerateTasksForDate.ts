@@ -5,6 +5,7 @@ import { Task } from "../models/helpers/Task";
 import { associateBy } from "../utils/ArrayUtils";
 import { TaskDoneStatus } from '../models/helpers/Task';
 import { ResolvedTaskWithHabit } from "../models/join/ResolvedTaskWithHabit";
+import * as TaskHelpers from "../models/helpers/Task";
 
 // TODO unit tests
 // TODO add unique to DB for task (habitId, date)
@@ -53,7 +54,7 @@ function generateTaskForHabit(date: DayDate, habit: Habit): Task {
 
 function generateTaskForResolvedTask(resolvedTask: ResolvedTaskWithHabit): Task {
   return {
-    doneStatus: mapToDoneStatus(resolvedTask.task.done),
+    doneStatus: TaskHelpers.toDoneStatus(resolvedTask.task.done),
     date: resolvedTask.task.date,
     habit: resolvedTask.habit
   }
@@ -63,7 +64,7 @@ function mergeTasksWithSameDate(tasks: Task[], resolvedTasks: ResolvedTaskWithHa
   const resolvedTasksByHabitId = associateBy((task) => task.task.habitId, resolvedTasks)
   return tasks.map((task) => {
     const resolvedTask = resolvedTasksByHabitId.get(task.habit.id)
-    return { ...task, done: mapMaybeResolvedTaskToDoneStatus(resolvedTask) }
+    return { ...task, doneStatus: mapMaybeResolvedTaskToDoneStatus(resolvedTask) }
   })
 }
 
@@ -71,13 +72,5 @@ function mapMaybeResolvedTaskToDoneStatus(resolvedTask: ResolvedTaskWithHabit | 
   if (resolvedTask === undefined) {
     return TaskDoneStatus.OPEN
   }
-  return mapToDoneStatus(resolvedTask.task.done)
-}
-
-function mapToDoneStatus(done: boolean): TaskDoneStatus {
-  if (done) {
-    return TaskDoneStatus.DONE
-  } else {
-    return TaskDoneStatus.MISSED
-  }
+  return TaskHelpers.toDoneStatus(resolvedTask.task.done)
 }

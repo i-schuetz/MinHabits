@@ -7,8 +7,14 @@ import { EditHabitInputs } from "./models/helpers/EditHabitInputs"
 import { ResolvedTask } from "./models/ResolvedTask"
 import PrefillRepo from "./PrefillRepo"
 import { ResolvedTaskWithHabit } from "./models/join/ResolvedTaskWithHabit"
+import { ResolvedTaskInput } from "./models/helpers/ResolvedTaskInput"
 
 const db = SQLite.openDatabase("db.db")
+
+export type ResolvedTaskUnique = {
+  habitId: number
+  date: DayDate
+}
 
 export default class Repo {
   static init = () => {
@@ -39,7 +45,7 @@ export default class Repo {
           }
         )
         tx.executeSql(
-          "create unique index if not exists tasks_date_index ON resolved_tasks (date);",
+          "create index if not exists tasks_date_index ON resolved_tasks (date);",
           [],
           () => {
             console.log("Create tasks_date_index success")
@@ -64,7 +70,7 @@ export default class Repo {
           [],
           (_, { rows: { _array } }) => {
             // console.log(`Loaded habits from db: ${JSON.stringify(_array)}`)
-            resolve( _array.map((map: HashMap) => Repo.toHabit(map)))
+            resolve(_array.map((map: HashMap) => Repo.toHabit(map)))
           },
           ({}, error) => {
             console.log(`Loading error: ${error}`)
@@ -90,6 +96,43 @@ export default class Repo {
           },
           ({}, error) => {
             console.log(`Loading error: ${error}`)
+            reject()
+          }
+        )
+      })
+    )
+  }
+
+  static upsertResolvedTask = async (input: ResolvedTaskInput) => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          // `insert or replace into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
+          `insert into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
+          [input.habitId.toString(), input.done ? "1" : "0", DayDateHelpers.toJSON(input.date)],
+          () => {
+            resolve()
+          },
+          ({}, error) => {
+            console.log(`Add habit error: ${error}`)
+            reject()
+          }
+        )
+      })
+    )
+  }
+
+  static removeResolvedTask = async (unique: ResolvedTaskUnique) => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `delete from resolved_tasks where habitId=? and date=?`,
+          [unique.habitId.toString(), DayDateHelpers.toJSON(unique.date)],
+          () => {
+            resolve()
+          },
+          ({}, error) => {
+            console.log(`Add habit error: ${error}`)
             reject()
           }
         )

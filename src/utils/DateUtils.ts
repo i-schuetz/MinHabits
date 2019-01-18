@@ -5,6 +5,8 @@ import * as MonthHelpers from "../models/Month"
 import { TimeUnit } from "../models/TimeUnit"
 import TimeInterval from "../models/TimeInterval"
 import { Weekday } from "../models/Weekday"
+import * as DayDateHelpers from "../models/DayDate"
+import { Order } from '../models/helpers/Order';
 
 const dayDateFormat = "DD-MM-YYYY"
 const dayDateDailyHabitListDateSelectorFormat = "dddd Do MMM"
@@ -20,6 +22,10 @@ export function getWeekday(date: DayDate): Weekday {
 
 export function today(): DayDate {
   return toDayDateFromMoment(moment.tz(timezone))
+}
+
+export function isPast(dayDate: DayDate): boolean {
+  return DayDateHelpers.compare(dayDate, today()) == Order.LT
 }
 
 export function getEnd(start: DayDate, interval: TimeInterval): DayDate {

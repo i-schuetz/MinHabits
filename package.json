@@ -19,6 +19,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "8.0.0",
     "@types/expo": "^31.0.5",
     "@types/jest": "^23.3.11",
     "@types/react-native-datepicker": "^1.7.0",
@@ -46,6 +47,7 @@
     "victory-native": "^31.0.0"
   },
   "devDependencies": {
+    "@types/expo__vector-icons": "^8.0.0",
     "@types/moment-timezone": "^0.5.10",
     "@types/react": "^16.7.18",
     "@types/react-dom": "^16.0.11",

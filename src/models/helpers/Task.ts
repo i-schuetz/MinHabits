@@ -10,3 +10,17 @@ export type Task = {
   readonly date: DayDate;
   readonly habit: Habit;
 }
+
+// TODO unit tests
+
+export function toBoolean(doneOrMissedStatus: TaskDoneStatus.DONE | TaskDoneStatus.MISSED): boolean {
+  return doneOrMissedStatus == TaskDoneStatus.DONE ? true : false
+}
+
+export function toDoneStatus(done: boolean): TaskDoneStatus {
+  if (done) {
+    return TaskDoneStatus.DONE
+  } else {
+    return TaskDoneStatus.MISSED
+  }
+}
