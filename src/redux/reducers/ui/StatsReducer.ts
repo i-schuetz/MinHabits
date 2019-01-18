@@ -44,23 +44,11 @@ export const fetchAllStatsAction = (): ThunkResult<{}> => async dispatch => {
 
   const totalDonePercentage: WholePercentage = Stats.getDonePercentage(tasks)
   const donePercentageByMonth: MonthPercentage[] = Stats.getDoneMonthlyPercentage(tasks)
-  console.log("habits1: " + habits.length);
-  console.log("tasks1: " + tasks.length);
   const needAttentionHabits: Habit[] = Stats.groupHabitsByDonePercentageRange(
     [{ digit1: 0, digit2: 4, digit3: 0 }],
     habits,
     tasks
   ).get(40) || []
-
-  console.log("habits: " + habits.length);
-  console.log("tasks: " + tasks.length);
-  
-
-  const foo: Map<number, Habit[]> = Stats.groupHabitsByDonePercentageRange(
-    [{ digit1: 0, digit2: 4, digit3: 0 }],
-    habits,
-    tasks
-  )
 
   dispatch(setTotalPercentageAction(totalDonePercentage))
   dispatch(setMonthDonePercentagesAction(donePercentageByMonth))
