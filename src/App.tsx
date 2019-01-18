@@ -4,6 +4,7 @@ import { ApplicationState } from "./redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import StatsView from './components/StatsView';
+import SettingsView from './components/SettingsView';
 
 interface PropsFromState {}
 interface PropsFromDispatch {}
@@ -21,9 +22,17 @@ class StatsScreen extends React.Component {
   }
 }
 
+class SettingsScreen extends React.Component {
+  render() {
+    return <SettingsView />
+  }
+}
+
+
 const TabNavigator = createBottomTabNavigator({
-  Home: DailyHabitsListScreen,
-  Stats: StatsScreen
+  Tasks: DailyHabitsListScreen,
+  Stats: StatsScreen,
+  Settings: SettingsScreen
 });
 
 const mapStateToProps = (state: ApplicationState) => ({})
