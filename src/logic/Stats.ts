@@ -10,9 +10,9 @@ import { Habit } from "../models/Habit"
  */
 export function getDonePercentage(tasks: ResolvedTask[]): WholePercentage {
   if (tasks.length == 0) {
-    // If there are no tasks, we have done nothing
-    // This may be counter intuitive - if there are no tasks we rather should say we did everything
-    // but the current purpose of this method is presentation and it sounds better to tell the users that they have done nothing yet.
+    // If there are no tasks, we have done nothing.
+    // This may be counter intuitive. If there are no tasks we rather should say we did everything.
+    // But the current purpose of this method is presentation and it sounds better to tell the users that they have done nothing yet.
     // If more purposes are added, we agree on 0% as convention anyway.
     return { digit1: 0, digit2: 0, digit3: 0 }
   }

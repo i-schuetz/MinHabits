@@ -1,8 +1,13 @@
 import { DayDate } from "./DayDate";
-import * as DayDateHelpers from "../models/DayDate"
+import * as DayDateHelpers from "./DayDate"
 
 // TODO unit tests
 
+/**
+ * A resolved task is a task that can be done or missed, i.e. which isn't open anymore.
+ * A done resolved task can be in any point of time (past/today/future). The status is resolved when user marks it as done.
+ * A missed resolved task is always in the past. Only at the end of the day the tasks are marked (automatically) as missed. 
+ */
 export type ResolvedTask = {
   readonly id: number;
   readonly habitId: number;

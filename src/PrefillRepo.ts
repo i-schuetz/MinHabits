@@ -59,7 +59,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["0", "1", "01-06-2018"],
       () => {
       },
@@ -69,7 +69,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["1", "1", "01-07-2018"],
       () => {
       },
@@ -79,7 +79,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["1", "0", "04-07-2018"],
       () => {
       },
@@ -89,7 +89,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["1", "0", "01-08-2018"],
       () => {
       },
@@ -99,7 +99,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["2", "1", "01-09-2018"],
       () => {
       },
@@ -109,7 +109,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["2", "1", "01-10-2018"],
       () => {
       },
@@ -119,7 +119,7 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into tasks (habitId, done, date) values (?, ?, ?)`,
+      `insert or ignore into resolved_tasks (habitId, done, date) values (?, ?, ?)`,
       ["3", "0", "01-11-2018"],
       () => {
       },

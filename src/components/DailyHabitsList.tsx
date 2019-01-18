@@ -19,11 +19,12 @@ import { initSelectedDateAction } from "../redux/reducers/ui/DailyHabitsListRedu
 import { DayDate } from "../models/DayDate"
 import * as DayDateHelpers from "../models/DayDate"
 import { Order } from "../models/helpers/Order"
+import { Task } from "../models/helpers/Task";
 
 interface PropsFromState {
   editHabitModalOpen: boolean
   editingHabit?: Habit
-  habits: Habit[]
+  tasks: Task[]
   selectDateModalOpen: boolean
   selectedDate?: DayDate
   title: string
@@ -43,6 +44,7 @@ type AllProps = PropsFromState & PropsFromDispatch & OwnProps
 
 export interface DailyHabitsState {}
 
+// TODO rename DailyTasksList
 class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   componentWillMount() {
     this.props.initSelectedDate()
@@ -52,8 +54,8 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
     this.props.addNewHabit()
   }
 
-  private onSelectHabit(habit: Habit) {
-    this.props.editHabit(habit)
+  private onSelectTask(task: Task) {
+    this.props.editHabit(task.habit)
   }
 
   private isTodaySelected(): boolean {
@@ -83,12 +85,12 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
           rightButton={rightButtonConfig}
         />
         <FlatList
-          data={this.props.habits}
-          keyExtractor={(item, {}) => item.name}
+          data={this.props.tasks}
+          keyExtractor={(item, {}) => item.habit.name}
           style={styles.list}
           renderItem={({ item }) => (
-            <Text style={styles.habit} onPress={({}) => this.onSelectHabit(item)}>
-              {item.name}
+            <Text style={styles.habit} onPress={({}) => this.onSelectTask(item)}>
+              {item.habit.name}
             </Text>
           )}
         />
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({
   editHabitModalOpen: dailyHabitsList.editHabitModalOpen,
   editingHabit: dailyHabitsList.editingHabit,
-  habits: dailyHabitsList.habits,
+  tasks: dailyHabitsList.tasks,
   selectDateModalOpen: dailyHabitsList.selectDateModalOpen,
   selectedDate: dailyHabitsList.selectedDate,
   title: dailyHabitsList.title

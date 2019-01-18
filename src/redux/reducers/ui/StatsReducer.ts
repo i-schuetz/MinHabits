@@ -40,7 +40,7 @@ export const fetchAllStatsAction = (): ThunkResult<{}> => async dispatch => {
   const habits = await Repo.loadHabits()
 
   // TODO task only in the past - see if this can be queried directly with sqlite?
-  const tasks = await Repo.loadTasks()
+  const tasks = await Repo.loadResolvedTasks(null)
 
   const totalDonePercentage: WholePercentage = Stats.getDonePercentage(tasks)
   const donePercentageByMonth: MonthPercentage[] = Stats.getDoneMonthlyPercentage(tasks)

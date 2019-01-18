@@ -6,15 +6,16 @@ import { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { DayDate } from "../../../models/DayDate";
 import * as DayDateHelpers from "../../../models/DayDate";
 import * as DateUtils from "../../../utils/DateUtils";
-import * as GetHabitsForDate from "../../../logic/GetHabitsForDate";
 import Preferences, { PreferencesKey } from '../../../Preferences';
 import { Order } from "../../../models/helpers/Order";
 import { EditHabitInputs } from "../../../models/helpers/EditHabitInputs";
+import { generateTasksForPresentOrFuture, generateTasksForPast } from '../../../logic/GenerateTasksForDate';
+import { Task } from "../../../models/helpers/Task";
 
 export interface DailyHabitsListState {
   readonly editHabitModalOpen: boolean
   readonly editingHabit?: Habit
-  readonly habits: Habit[]
+  readonly tasks: Task[]
   readonly selectDateModalOpen: boolean
   selectedDate?: DayDate
   title: String
@@ -24,7 +25,7 @@ export enum DailyHabitsListActionTypes {
   SET_EDITING_HABIT_EXISTING = "@@DailyHabitsListActions/SET_EDITING_HABIT_EXISTING",
   SET_EDITING_HABIT_NEW = "@@DailyHabitsListActions/SET_EDITING_HABIT_NEW",
   EXIT_EDITING_HABIT = "@@DailyHabitsListActions/EXIT_EDITING_HABIT",
-  HABITS_FETCH_SUCCESS = "@@DailyHabitsListActions/HABITS_FETCH_SUCCESS",
+  TASKS_GENERATE_SUCCESS = "@@DailyHabitsListActions/TASKS_GENERATE_SUCCESS",
   SUBMIT_HABIT_SUCCESS = "@@DailyHabitsListActions/SUBMIT_HABIT_SUCCESS",
   SET_SELECT_DATE_MODAL_OPEN = "@@DailyHabitsListActions/SET_SELECT_DATE_MODAL_OPEN",
   INIT_SELECTED_DATE = "@@DailyHabitsListActions/INIT_SELECTED_DATE",
@@ -34,7 +35,7 @@ export enum DailyHabitsListActionTypes {
 const initialState: DailyHabitsListState = {
   editHabitModalOpen: false,
   editingHabit: undefined,
-  habits: [],
+  tasks: [],
   selectDateModalOpen: false,
   selectedDate: undefined,
   title: ""
@@ -46,18 +47,31 @@ export const setSelectDateModalOpenAction = (open: boolean) =>
   action(DailyHabitsListActionTypes.SET_SELECT_DATE_MODAL_OPEN, open)
 export const addNewHabitAction = () => action(DailyHabitsListActionTypes.SET_EDITING_HABIT_NEW)
 export const exitEditingHabitAction = () => action(DailyHabitsListActionTypes.EXIT_EDITING_HABIT)
-export const onFetchHabitsSuccessAction = (habits: Habit[]) => action(DailyHabitsListActionTypes.HABITS_FETCH_SUCCESS, habits)
+
+export const onGenerateTasksSuccessAction = (tasks: Task[]) => action(DailyHabitsListActionTypes.TASKS_GENERATE_SUCCESS, tasks)
+
 export const onSubmitHabitSuccessAction = () => action(DailyHabitsListActionTypes.SUBMIT_HABIT_SUCCESS)
 const setSelectedDateAction = (date: DayDate) => action(DailyHabitsListActionTypes.SET_SELECTED_DATE, date)
 
 type ThunkResult<R> = ThunkAction<R, DailyHabitsListState, undefined, Action>;
 export type DailyHabitsListThunkDispatch = ThunkDispatch<DailyHabitsListState, undefined, Action>;
 
-const retrieveHabitsAction = (dayDate: DayDate): ThunkResult<{}> => async (dispatch) => {
-  await Repo.init()
-  const habits = await Repo.loadHabits()
-  const filteredHabits = GetHabitsForDate.getHabitsForDate(dayDate, habits)
-  dispatch(onFetchHabitsSuccessAction(filteredHabits))
+const generateTasks: (dayDate: DayDate) => Promise<Task[]> = async (dayDate: DayDate) => {
+  const resolvedTasks = await Repo.loadResolvedTasksWithHabits(dayDate)
+  const isPast = DayDateHelpers.compare(dayDate, DateUtils.today()) == Order.LT
+  if (isPast) {
+    return generateTasksForPast(dayDate, resolvedTasks)
+  } else {
+    const habits = await Repo.loadHabits()
+    return generateTasksForPresentOrFuture(dayDate, habits, resolvedTasks)
+  }
+}
+
+const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async (dispatch) => {
+  await Repo.init() // TODO put this somewhere else - works now because the first thing we do when starting app is loading tasks 
+
+  const tasks = await generateTasks(dayDate)
+  dispatch(onGenerateTasksSuccessAction(tasks))
 };
 
 export const submitHabitInputsAction = (inputs: EditHabitInputs): ThunkResult<{}> => async (dispatch, state) => {
@@ -67,7 +81,7 @@ export const submitHabitInputsAction = (inputs: EditHabitInputs): ThunkResult<{}
   // Update in-memory habits
   const selectedDate = state().selectedDate
   if (selectedDate !== undefined) {
-    dispatch(retrieveHabitsAction(selectedDate))
+    dispatch(retrieveTasksAction(selectedDate))
   }
 };
 
@@ -80,7 +94,7 @@ export const initSelectedDateAction = (): ThunkResult<{}> => async (dispatch) =>
   const dayDate: DayDate | null = dayDateJSON !== null ? DayDateHelpers.parse(dayDateJSON) : null
   const selectedDayDate: DayDate = dayDate !== null ? dayDate : DateUtils.today()
   dispatch(setSelectedDateAction(selectedDayDate))
-  dispatch(retrieveHabitsAction(selectedDayDate))
+  dispatch(retrieveTasksAction(selectedDayDate))
 };
 
 /**
@@ -88,7 +102,7 @@ export const initSelectedDateAction = (): ThunkResult<{}> => async (dispatch) =>
  */
 export const selectDateAction = (dayDate: DayDate): ThunkResult<{}> => async (dispatch) => {
   dispatch(setSelectedDateAction(dayDate))
-  dispatch(retrieveHabitsAction(dayDate))
+  dispatch(retrieveTasksAction(dayDate))
   dispatch(setSelectDateModalOpenAction(false))
 };
 
@@ -109,8 +123,8 @@ export const dailyHabitsListReducer: Reducer<DailyHabitsListState> = (state = in
     }
     case DailyHabitsListActionTypes.EXIT_EDITING_HABIT:
       return { ...state, editingHabit: undefined, editHabitModalOpen: false }
-    case DailyHabitsListActionTypes.HABITS_FETCH_SUCCESS:
-      return { ...state, habits: action.payload }
+    case DailyHabitsListActionTypes.TASKS_GENERATE_SUCCESS:
+      return { ...state, tasks: action.payload }
     case DailyHabitsListActionTypes.SUBMIT_HABIT_SUCCESS:
       return { ...state, editingHabit: undefined, editHabitModalOpen: false }
     case DailyHabitsListActionTypes.SET_SELECT_DATE_MODAL_OPEN:
