@@ -108,7 +108,7 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   render() {
     return (
       <View>
-        <NavigationBar title={<Text>{"Stats"}</Text>} />
+        <NavigationBar title={<Text>{"Settings"}</Text>} />
         <FlatList
           data={this.settings}
           keyExtractor={(item, {}) => item.name}
