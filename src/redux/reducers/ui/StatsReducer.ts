@@ -1,10 +1,11 @@
 import { Reducer, Action } from "redux"
 import { ThunkAction, ThunkDispatch } from "redux-thunk"
-import Repo from "../../../Repo"
+import Repo, { ResolvedTaskDateFilterType } from "../../../Repo"
 import * as Stats from "../../../logic/Stats"
-import { WholePercentage } from "../../../models/helpers/WholePercentage";
-import { MonthPercentage } from "../../../models/helpers/MonthPercentage";
-import { Habit } from "../../../models/Habit";
+import { WholePercentage } from "../../../models/helpers/WholePercentage"
+import { MonthPercentage } from "../../../models/helpers/MonthPercentage"
+import { Habit } from "../../../models/Habit"
+import * as DateUtils from "../../../utils/DateUtils"
 import { action } from "typesafe-actions"
 
 export interface StatsState {
@@ -16,7 +17,7 @@ export interface StatsState {
 export enum StatsActionTypes {
   SET_TOTAL_DONE_PERCENTAGE = "@@StatsActions/SET_TOTAL_DONE_PERCENTAGE",
   SET_MONTHLY_DONE_PERCENTAGES = "@@StatsActions/SET_MONTHLY_DONE_PERCENTAGES",
-  SET_NEED_ATTENTION_HABITS = "@@StatsActions/SET_NEED_ATTENTION_HABITS",
+  SET_NEED_ATTENTION_HABITS = "@@StatsActions/SET_NEED_ATTENTION_HABITS"
 }
 
 const initialState: StatsState = {
@@ -38,17 +39,15 @@ export const setNeedAttentionHabitsAction = (habits: Habit[]) =>
 export const fetchAllStatsAction = (): ThunkResult<{}> => async dispatch => {
   await Repo.init()
   const habits = await Repo.loadHabits()
+  const resolvedTasks = await Repo.loadResolvedTasks({
+    type: ResolvedTaskDateFilterType.BEFORE,
+    date: DateUtils.today()
+  })
 
-  // TODO task only in the past - see if this can be queried directly with sqlite?
-  const tasks = await Repo.loadResolvedTasks(null)
-
-  const totalDonePercentage: WholePercentage = Stats.getDonePercentage(tasks)
-  const donePercentageByMonth: MonthPercentage[] = Stats.getDoneMonthlyPercentage(tasks)
-  const needAttentionHabits: Habit[] = Stats.groupHabitsByDonePercentageRange(
-    [{ digit1: 0, digit2: 4, digit3: 0 }],
-    habits,
-    tasks
-  ).get(40) || []
+  const totalDonePercentage: WholePercentage = Stats.getDonePercentage(resolvedTasks)
+  const donePercentageByMonth: MonthPercentage[] = Stats.getDoneMonthlyPercentage(resolvedTasks)
+  const needAttentionHabits: Habit[] =
+    Stats.groupHabitsByDonePercentageRange([{ digit1: 0, digit2: 4, digit3: 0 }], habits, resolvedTasks).get(40) || []
 
   dispatch(setTotalPercentageAction(totalDonePercentage))
   dispatch(setMonthDonePercentagesAction(donePercentageByMonth))

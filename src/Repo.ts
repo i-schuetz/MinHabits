@@ -81,12 +81,23 @@ export default class Repo {
     )
   }
 
-  static loadResolvedTasks: (date: DayDate | null) => Promise<ResolvedTask[]> = async (date: DayDate | null) => {
+
+  static loadResolvedTasks: (dateFilter: ResolvedTaskDateFilter | null) => Promise<ResolvedTask[]> = async (dateFilter: ResolvedTaskDateFilter | null) => {
+
+    const sign = (dateFilter: ResolvedTaskDateFilter) => {
+      switch (dateFilter.type) {
+        case ResolvedTaskDateFilterType.MATCH: 
+          return "="
+        case ResolvedTaskDateFilterType.BEFORE: 
+          return "<"
+      }
+    }
+
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         const selectAll = `select * from resolved_tasks`
         const [query, filter] =
-          date === null ? [selectAll, []] : [selectAll + ` where date=?`, [DayDateHelpers.toJSON(date)]]
+          dateFilter === null ? [selectAll, []] : [selectAll + ` where date${sign(dateFilter)}?`, [DayDateHelpers.toJSON(dateFilter.date)]]
 
         tx.executeSql(
           query,
@@ -237,5 +248,13 @@ export default class Repo {
       time: TimeRuleHelpers.parse(JSON.parse(timeString))
     }
   }
+}
 
+export enum ResolvedTaskDateFilterType {
+  BEFORE, MATCH
+}
+
+export type ResolvedTaskDateFilter = {
+  type: ResolvedTaskDateFilterType
+  date: DayDate
 }
