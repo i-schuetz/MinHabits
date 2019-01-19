@@ -14,6 +14,7 @@ const initialState: SettingsState = {
 }
 
 export enum SettingsScreenEntry {
+  FEEDBACK,
   MANAGE_HABITS,
   ABOUT,
 }

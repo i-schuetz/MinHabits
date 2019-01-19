@@ -6,6 +6,7 @@ import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import { StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
 import { SettingsScreenEntry, setModalOpenAction } from "../redux/reducers/ui/SettingsReducer"
+import * as EmailUtils from "../utils/EmailUtils"
 
 interface PropsFromState {
   modalOpen?: SettingsScreenEntry
@@ -29,6 +30,7 @@ type SettingEntryData = {
 class SettingsView extends Component<AllProps, StatsViewState> {
   private settings: SettingEntryData[] = [
     { entry: SettingsScreenEntry.MANAGE_HABITS, name: "Manage habits" },
+    { entry: SettingsScreenEntry.FEEDBACK, name: "Feedback" },
     { entry: SettingsScreenEntry.ABOUT, name: "About" }
   ]
 
@@ -40,7 +42,13 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   }
 
   private onPressSetting(setting: SettingsScreenEntry) {
-    this.props.setModalOpen(setting, true)
+    switch (setting) {
+      case SettingsScreenEntry.FEEDBACK:
+        EmailUtils.openFeedbackEmail() // open directly, without redux
+        break
+      default:     
+        this.props.setModalOpen(setting, true)
+    }
   }
 
   // TODO review if this is proper way to generate modals on demand (variable content):
@@ -79,7 +87,6 @@ class SettingsView extends Component<AllProps, StatsViewState> {
       if (entryData !== undefined) {
         return this.wrapInModal(entryData, this.createSettingsView(entryData))
       } else {
-        console.log(`Forgot to add entry data for entry?: ${entryData}`);
         return undefined
       }
     } else {
@@ -87,12 +94,14 @@ class SettingsView extends Component<AllProps, StatsViewState> {
     }
   }
 
-  private createSettingsView(entryData: SettingEntryData): ReactNode {
+  private createSettingsView(entryData: SettingEntryData): ReactNode | undefined {
     switch (entryData.entry) {
       case SettingsScreenEntry.MANAGE_HABITS:
         return <Text>{"TODO MANAGE HABITS"}</Text>
       case SettingsScreenEntry.ABOUT:
         return <Text>{"TODO ABOUT"}</Text>
+      case SettingsScreenEntry.FEEDBACK:
+        return undefined
     }
   }
 
