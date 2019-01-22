@@ -9,7 +9,7 @@ import * as DateUtils from "../../../utils/DateUtils"
 import Preferences, { PreferencesKey } from "../../../Preferences"
 import { Order } from "../../../models/helpers/Order"
 import { EditHabitInputs } from "../../../models/helpers/EditHabitInputs"
-import { generateTasksForPresentOrFuture, generateTasksForPast } from "../../../logic/GenerateTasksForDate"
+import { generateTasksForOpenDate, generateTasksForResolvedDate } from "../../../logic/GenerateTasksForDate"
 import { Task, TaskDoneStatus } from "../../../models/helpers/Task"
 import * as TaskHelpers from "../../../models/helpers/Task";
 
@@ -58,12 +58,12 @@ type ThunkResult<R> = ThunkAction<R, DailyHabitsListState, undefined, Action>
 export type DailyHabitsListThunkDispatch = ThunkDispatch<DailyHabitsListState, undefined, Action>
 
 const generateTasks: (dayDate: DayDate) => Promise<Task[]> = async (dayDate: DayDate) => {
-  const resolvedTasks = await Repo.loadResolvedTasksWithHabits(dayDate)
+  const resolvedTasks = await Repo.loadResolvedTasksWithHabits({ kind: "match", date: dayDate })
   if (DateUtils.isPast(dayDate)) {
-    return generateTasksForPast(dayDate, resolvedTasks)
+    return generateTasksForResolvedDate(dayDate, resolvedTasks)
   } else {
     const habits = await Repo.loadHabits()
-    return generateTasksForPresentOrFuture(dayDate, habits, resolvedTasks)
+    return generateTasksForOpenDate(dayDate, habits, resolvedTasks)
   }
 }
 
