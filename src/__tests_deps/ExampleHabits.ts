@@ -1,7 +1,7 @@
-import { Habit } from "../../models/Habit"
-import { Month } from "../../models/Month"
-import { TimeUnit } from "../../models/TimeUnit"
-import { Weekday } from "../../models/Weekday"
+import { Habit } from "../models/Habit"
+import { Month } from "../models/Month"
+import { TimeUnit } from "../models/TimeUnit"
+import { Weekday } from "../models/Weekday"
 
 export const wakeUpWeekdaysHabit: Habit = {
   id: 0,

@@ -1,6 +1,6 @@
 import { Month } from "../../models/Month"
 import { TaskDoneStatus } from "../../models/helpers/Task"
-import { wakeUpWeekdaysHabit, meditateHabit, sendPreliminaryTaxes } from "./ExampleHabits"
+import { wakeUpWeekdaysHabit, meditateHabit, sendPreliminaryTaxes } from "../../__tests_deps/ExampleHabits"
 import { generateTasksForResolvedDate, generateTasksForOpenDate } from "../../logic/GenerateTasksForDate"
 
 describe("Generates tasks for resolved date", () => {

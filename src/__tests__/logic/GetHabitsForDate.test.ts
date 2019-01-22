@@ -1,6 +1,6 @@
 import { Month } from "../../models/Month"
 import * as GetHabitsForDate from "../../logic/GetHabitsForDate"
-import { wakeUpWeekdaysHabit, makeSportHabit, meditateHabit, sendVATHabit, sendPreliminaryTaxes } from "./ExampleHabits"
+import { wakeUpWeekdaysHabit, makeSportHabit, meditateHabit, sendVATHabit, sendPreliminaryTaxes } from "../../__tests_deps/ExampleHabits"
 
 describe("GetHabitsForDate", () => {
   it("Matches weekday habits", () => {

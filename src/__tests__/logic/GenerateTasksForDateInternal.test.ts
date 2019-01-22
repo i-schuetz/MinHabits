@@ -1,15 +1,6 @@
 import { Month } from "../../models/Month"
-import {
-  determineResolveTasksAction,
-  ResolveTasksAction,
-  toResolvedTaskInput,
-  filterMissedTasks
-} from "../../logic/ResolveDaysInternal"
 import { TaskDoneStatus, Task } from "../../models/helpers/Task"
-import { wakeUpWeekdaysHabit, meditateHabit, makeSportHabit } from "./ExampleHabits"
-import { ResolvedTaskInput } from "../../models/helpers/ResolvedTaskInput"
-import { tasks, resolvedTasks } from "./ExampleTasks"
-import { generateTasksSinceLastResolvedDate } from "../../logic/ResolveDaysInternal"
+import { wakeUpWeekdaysHabit, meditateHabit, makeSportHabit } from "../../__tests_deps/ExampleHabits"
 import {
   mapMaybeResolvedTaskToDoneStatusForOpenDate,
   mergeTasksWithSameOpenDate,

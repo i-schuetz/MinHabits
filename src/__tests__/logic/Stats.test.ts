@@ -1,7 +1,7 @@
 import { Month } from "../../models/Month"
 import * as Stats from "../../logic/Stats"
-import { resolvedTasks, resolvedTasksWithManyFailed } from "./ExampleTasks"
-import { habits, wakeUpWeekdaysHabit, makeSportHabit, meditateHabit } from "./ExampleHabits"
+import { resolvedTasks, resolvedTasksWithManyFailed } from "../../__tests_deps/ExampleTasks"
+import { habits, wakeUpWeekdaysHabit, makeSportHabit, meditateHabit } from "../../__tests_deps/ExampleHabits"
 
 describe("Stats", () => {
   it("Calculate total percentage", () => {

@@ -8,9 +8,9 @@ import {
   resolveUnresolvedDaysDeps
 } from "../../logic/ResolveDaysInternal"
 import { TaskDoneStatus, Task } from "../../models/helpers/Task"
-import { wakeUpWeekdaysHabit, sendVATHabit, sendPreliminaryTaxes, makeSportHabit } from "./ExampleHabits"
+import { wakeUpWeekdaysHabit, sendVATHabit, sendPreliminaryTaxes, makeSportHabit } from "../../__tests_deps/ExampleHabits"
 import { ResolvedTaskInput } from "../../models/helpers/ResolvedTaskInput"
-import { tasks, resolvedTasks } from "./ExampleTasks"
+import { tasks } from "../../__tests_deps/ExampleTasks"
 import { generateTasksSinceLastResolvedDate, determineIntervalStartDate } from "../../logic/ResolveDaysInternal"
 
 describe("Resolve days", () => {

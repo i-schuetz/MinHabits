@@ -1,6 +1,6 @@
-import { ResolvedTask } from "../../models/ResolvedTask"
-import { Month } from "../../models/Month"
-import { Task, TaskDoneStatus } from "../../models/helpers/Task";
+import { ResolvedTask } from "../models/ResolvedTask"
+import { Month } from "../models/Month"
+import { Task, TaskDoneStatus } from "../models/helpers/Task";
 import { wakeUpWeekdaysHabit, makeSportHabit, meditateHabit, sendVATHabit, sendPreliminaryTaxes } from "./ExampleHabits"
 
 export const tasks: Task[] = [
