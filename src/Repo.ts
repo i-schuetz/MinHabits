@@ -81,27 +81,35 @@ export default class Repo {
     )
   }
 
-
-  static loadResolvedTasks: (dateFilter: ResolvedTaskDateFilter | null) => Promise<ResolvedTask[]> = async (dateFilter: ResolvedTaskDateFilter | null) => {
-
-    const sign = (dateFilter: ResolvedTaskDateFilter) => {
-      switch (dateFilter.type) {
-        case ResolvedTaskDateFilterType.MATCH: 
-          return "="
-        case ResolvedTaskDateFilterType.BEFORE: 
-          return "<"
-      }
+  private static generateDateQuery: (dateFilter: ResolvedTaskDateFilter) => [string, string[]] = (
+    dateFilter: ResolvedTaskDateFilter
+  ) => {
+    switch (dateFilter.kind) {
+      case "match":
+        return [` where date=?`, [DayDateHelpers.toJSON(dateFilter.date)]]
+      case "before":
+        return [` where date<?`, [DayDateHelpers.toJSON(dateFilter.date)]]
+      case "between":
+        return [
+          ` where date>=? and date<=?`,
+          [DayDateHelpers.toJSON(dateFilter.startDate), DayDateHelpers.toJSON(dateFilter.endDate)]
+        ]
+      case "none":
+        return [``, []]
     }
+  }
+
+  static loadResolvedTasks: (dateFilter: ResolvedTaskDateFilter) => Promise<ResolvedTask[]> = async (
+    dateFilter: ResolvedTaskDateFilter
+  ) => {
+    const [dateQuery, dateQueryFilters] = Repo.generateDateQuery(dateFilter)
 
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         const selectAll = `select * from resolved_tasks`
-        const [query, filter] =
-          dateFilter === null ? [selectAll, []] : [selectAll + ` where date${sign(dateFilter)}?`, [DayDateHelpers.toJSON(dateFilter.date)]]
-
         tx.executeSql(
-          query,
-          filter,
+          selectAll + dateQuery,
+          dateQueryFilters,
           (_, { rows: { _array } }) => {
             resolve(_array.map((map: HashMap) => Repo.toResolvedTask(map)))
           },
@@ -151,18 +159,17 @@ export default class Repo {
     )
   }
 
-  static loadResolvedTasksWithHabits: (date: DayDate | null) => Promise<ResolvedTaskWithHabit[]> = async (
-    date: DayDate | null
+  static loadResolvedTasksWithHabits: (dateFilter: ResolvedTaskDateFilter) => Promise<ResolvedTaskWithHabit[]> = async (
+    dateFilter: ResolvedTaskDateFilter
   ) => {
+    const [dateQuery, dateQueryFilters] = Repo.generateDateQuery(dateFilter)
+
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         const selectAll = `select *, resolved_tasks.id as taskId from resolved_tasks join habits on resolved_tasks.habitId = habits.id`
-        let [query, filter] =
-          date === null ? [selectAll, []] : [selectAll + ` where date=?`, [DayDateHelpers.toJSON(date)]]
-
         tx.executeSql(
-          query,
-          filter,
+          selectAll + dateQuery,
+          dateQueryFilters,
           (_, { rows: { _array } }) => {
             const tasks: ResolvedTaskWithHabit[] = _array.map((map: HashMap) => {
               const taskId: number = map["taskId"]
@@ -250,11 +257,28 @@ export default class Repo {
   }
 }
 
-export enum ResolvedTaskDateFilterType {
-  BEFORE, MATCH
+export type ResolvedTaskDateFilter =
+  | ResolvedTaskDateFilterBefore
+  | ResolvedTaskDateFilterMatch
+  | ResolvedTaskDateFilterBetween
+  | ResolvedTaskDateFilterNone
+
+export interface ResolvedTaskDateFilterBefore {
+  kind: "before"
+  date: DayDate
 }
 
-export type ResolvedTaskDateFilter = {
-  type: ResolvedTaskDateFilterType
+export interface ResolvedTaskDateFilterMatch {
+  kind: "match"
   date: DayDate
+}
+
+export interface ResolvedTaskDateFilterBetween {
+  kind: "between"
+  startDate: DayDate
+  endDate: DayDate
+}
+
+export interface ResolvedTaskDateFilterNone {
+  kind: "none"
 }

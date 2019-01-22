@@ -12,7 +12,12 @@ export function groupBy<T, U>(keyExtractor: (object: T) => U, objects: T[]): Map
 
 export function associateBy<T, U>(keyExtractor: (object: T) => U, objects: T[]): Map<U, T> {
   return objects.reduce((rv: Map<U, T>, object: T) => {
-    rv.set(keyExtractor(object), object)
+    const key = keyExtractor(object)
+    if (rv.has(key)) {
+      // Associate by expect the objects to be unique by their key.
+      throw Error("Array has multiple values for key: " + key)
+    }
+    rv.set(key, object)
     return rv
   }, new Map())
 }

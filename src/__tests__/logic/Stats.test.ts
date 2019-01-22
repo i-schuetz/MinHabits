@@ -1,18 +1,18 @@
 import { Month } from "../../models/Month"
 import * as Stats from "../../logic/Stats"
-import { tasks, tasksWithManyFailed } from "./ExampleTasks"
+import { resolvedTasks, resolvedTasksWithManyFailed } from "./ExampleTasks"
 import { habits, wakeUpWeekdaysHabit, makeSportHabit, meditateHabit } from "./ExampleHabits"
 
 describe("Stats", () => {
   it("Calculate total percentage", () => {
-    expect(Stats.getDonePercentage(tasks)).toEqual({ digit1: 0, digit2: 7, digit3: 5 })
+    expect(Stats.getDonePercentage(resolvedTasks)).toEqual({ digit1: 0, digit2: 7, digit3: 5 })
     
     // No tasks, it means the user did nothing(0%) (see explanation in getDonePercentage)
     expect(Stats.getDonePercentage([])).toEqual({ digit1: 0, digit2: 0, digit3: 0 })
   })
 
   it("Calculate monthly percentage", () => {
-    expect(Stats.getDoneMonthlyPercentage(tasks)).toEqual([
+    expect(Stats.getDoneMonthlyPercentage(resolvedTasks)).toEqual([
       { month: Month.January, percentage: { digit1: 0, digit2: 8, digit3: 3 } },
       { month: Month.February, percentage: { digit1: 0, digit2: 3, digit3: 3 } },
       { month: Month.March, percentage: { digit1: 1, digit2: 0, digit3: 0 } }
@@ -27,7 +27,7 @@ describe("Stats", () => {
       Stats.groupHabitsByDonePercentageRange(
         [{ digit1: 0, digit2: 5, digit3: 0 }, { digit1: 1, digit2: 0, digit3: 0 }],
         habits,
-        tasks
+        resolvedTasks
       )
     ).toEqual(new Map([[100, [wakeUpWeekdaysHabit, makeSportHabit, meditateHabit]]]))
 
@@ -35,7 +35,7 @@ describe("Stats", () => {
       Stats.groupHabitsByDonePercentageRange(
         [{ digit1: 0, digit2: 5, digit3: 0 }, { digit1: 1, digit2: 0, digit3: 0 }],
         habits,
-        tasksWithManyFailed
+        resolvedTasksWithManyFailed
       )
     ).toEqual(new Map([[50, [makeSportHabit, meditateHabit]], [100, [wakeUpWeekdaysHabit]]]))
 
@@ -59,7 +59,7 @@ describe("Stats", () => {
       Stats.groupHabitsByDonePercentageRange(
         [{ digit1: 0, digit2: 5, digit3: 0 }, { digit1: 1, digit2: 0, digit3: 0 }],
         [],
-        tasks
+        resolvedTasks
       )
     ).toThrow()
 
@@ -78,7 +78,7 @@ describe("Stats", () => {
       Stats.groupHabitsByDonePercentageRange(
         [],
         habits,
-        tasksWithManyFailed
+        resolvedTasksWithManyFailed
       )
       ).toEqual(new Map([[100, [wakeUpWeekdaysHabit, makeSportHabit, meditateHabit]]]))
     })

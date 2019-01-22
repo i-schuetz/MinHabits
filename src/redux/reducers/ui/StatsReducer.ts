@@ -1,6 +1,6 @@
 import { Reducer, Action } from "redux"
 import { ThunkAction, ThunkDispatch } from "redux-thunk"
-import Repo, { ResolvedTaskDateFilterType } from "../../../Repo"
+import Repo from "../../../Repo"
 import * as Stats from "../../../logic/Stats"
 import { WholePercentage } from "../../../models/helpers/WholePercentage"
 import { MonthPercentage } from "../../../models/helpers/MonthPercentage"
@@ -40,7 +40,7 @@ export const fetchAllStatsAction = (): ThunkResult<{}> => async dispatch => {
   await Repo.init()
   const habits = await Repo.loadHabits()
   const resolvedTasks = await Repo.loadResolvedTasks({
-    type: ResolvedTaskDateFilterType.BEFORE,
+    kind: "before",
     date: DateUtils.today()
   })
 

@@ -138,6 +138,7 @@ describe("DateUtils", () => {
     ).toEqual(false)
 
     // Exclusive interval - day is not in previous month + 1 month interval!
+    // TODO this test sometimes fails. moment.js fault?
     expect(
       DateUtils.isInStartEnd(
         { day: 1, month: Month.February, year: 2019 },

@@ -21,7 +21,7 @@ describe("Habit", () => {
       time: {
         type: "w",
         value: [1, 2],
-        start: "01-01-2019"
+        start: "2019-01-01"
       }
     } as HabitJSON)
 
@@ -40,7 +40,7 @@ describe("Habit", () => {
       time: {
         type: "e",
         value: { value: 2, unit: "m" },
-        start: "01-01-2019"
+        start: "2019-01-01"
       }
     } as HabitJSON)
   })
@@ -53,7 +53,7 @@ describe("Habit", () => {
         time: {
           type: "w",
           value: [1, 2],
-          start: "01-01-2019"
+          start: "2019-01-01"
         }
       })
     ).toEqual({
@@ -72,7 +72,7 @@ describe("Habit", () => {
         time: {
           type: "e",
           value: { value: 2, unit: "m" },
-          start: "01-01-2019"
+          start: "2019-01-01"
         }
       })
     ).toEqual({

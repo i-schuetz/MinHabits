@@ -2,10 +2,8 @@ import { DayDate } from "../models/DayDate"
 import { Habit } from "../models/Habit"
 import { getHabitsForDate } from "./GetHabitsForDate";
 import { Task } from "../models/helpers/Task";
-import { associateBy } from "../utils/ArrayUtils";
-import { TaskDoneStatus } from '../models/helpers/Task';
 import { ResolvedTaskWithHabit } from "../models/join/ResolvedTaskWithHabit";
-import * as TaskHelpers from "../models/helpers/Task";
+import { generateTaskForHabit, mergeTasksWithSameOpenDate, generateTaskForResolvedTask } from "./GenerateTasksForDateInternal";
 
 // TODO unit tests
 // TODO add unique to DB for task (habitId, date)
@@ -22,55 +20,21 @@ import * as TaskHelpers from "../models/helpers/Task";
  * @param habits all habits. Used to generate tasks.
  * @param resolvedTasksForDate already resolved tasks for date.
  * 
- * This applies only to present or future because here have to generate the tasks using habits.
- * The only tasks that can be resolved already are those marked as done 
- * (a user can mark tasks as done today and even in the future).
+ * NOTE: Open date means that its tasks haven't been resolved yet. This date can be in the past, present or future.
+ * 
+ * IMPORTANT: The date of all the resolved tasks is assumed to be equal to @param date.
+ * TODO can we make this safer? either ensure somehow the tasks really have the same date or handle case where they don't, or general refactoring/review of why this is needed.
  */
-export function generateTasksForPresentOrFuture(date: DayDate, habits: Habit[], resolvedTasksForDate: ResolvedTaskWithHabit[]): Task[] {
+export function generateTasksForOpenDate(date: DayDate, habits: Habit[], resolvedTasksForDate: ResolvedTaskWithHabit[]): Task[] {
   const habitsForDate: Habit[] = getHabitsForDate(date, habits)
   const tasksForHabits = habitsForDate.map((habit) => generateTaskForHabit(date, habit))
-  return mergeTasksWithSameDate(tasksForHabits, resolvedTasksForDate)
+  return mergeTasksWithSameOpenDate(tasksForHabits, resolvedTasksForDate)
 }
 
 /**
- * Generates tasks for a past date.
+ * Generates tasks for a resolved date (i.e. where all tasks were marked as done/not done)
+ * TODO date parameter not used?
  */
-export function generateTasksForPast(date: DayDate, resolvedTasksForDate: ResolvedTaskWithHabit[]): Task[] {
+export function generateTasksForResolvedDate(date: DayDate, resolvedTasksForDate: ResolvedTaskWithHabit[]): Task[] {
   return resolvedTasksForDate.map((resolvedTask) => generateTaskForResolvedTask(resolvedTask))
-}
-
-/**
- * Generates task for habit at given date.
- * Assumes that habit was already matched with date.
- * Also, for simplicity, there can be only one task per habit per date.
- */
-function generateTaskForHabit(date: DayDate, habit: Habit): Task {
-  return { 
-    doneStatus: TaskDoneStatus.OPEN,
-    date: date,
-    habit: habit
-  }
-}
-
-function generateTaskForResolvedTask(resolvedTask: ResolvedTaskWithHabit): Task {
-  return {
-    doneStatus: TaskHelpers.toDoneStatus(resolvedTask.task.done),
-    date: resolvedTask.task.date,
-    habit: resolvedTask.habit
-  }
-}
-
-function mergeTasksWithSameDate(tasks: Task[], resolvedTasks: ResolvedTaskWithHabit[]): Task[] {
-  const resolvedTasksByHabitId = associateBy((task) => task.task.habitId, resolvedTasks)
-  return tasks.map((task) => {
-    const resolvedTask = resolvedTasksByHabitId.get(task.habit.id)
-    return { ...task, doneStatus: mapMaybeResolvedTaskToDoneStatus(resolvedTask) }
-  })
-}
-
-function mapMaybeResolvedTaskToDoneStatus(resolvedTask: ResolvedTaskWithHabit | undefined): TaskDoneStatus {
-  if (resolvedTask === undefined) {
-    return TaskDoneStatus.OPEN
-  }
-  return TaskHelpers.toDoneStatus(resolvedTask.task.done)
 }

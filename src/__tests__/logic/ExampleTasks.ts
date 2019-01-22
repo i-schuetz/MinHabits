@@ -1,7 +1,17 @@
 import { ResolvedTask } from "../../models/ResolvedTask"
 import { Month } from "../../models/Month"
+import { Task, TaskDoneStatus } from "../../models/helpers/Task";
+import { wakeUpWeekdaysHabit, makeSportHabit, meditateHabit, sendVATHabit, sendPreliminaryTaxes } from "./ExampleHabits"
 
-export const tasks: ResolvedTask[] = [
+export const tasks: Task[] = [
+  { doneStatus: TaskDoneStatus.OPEN, date: { day: 1, month: Month.January, year: 2019}, habit: wakeUpWeekdaysHabit },
+  { doneStatus: TaskDoneStatus.DONE, date: { day: 1, month: Month.January, year: 2019}, habit: makeSportHabit },
+  { doneStatus: TaskDoneStatus.MISSED, date: { day: 1, month: Month.January, year: 2019}, habit: meditateHabit },
+  { doneStatus: TaskDoneStatus.DONE, date: { day: 1, month: Month.January, year: 2019}, habit: sendVATHabit },
+  { doneStatus: TaskDoneStatus.MISSED, date: { day: 1, month: Month.January, year: 2019}, habit: sendPreliminaryTaxes }
+]
+
+export const resolvedTasks: ResolvedTask[] = [
   { id: 0, habitId: 0, done: true, date: { day: 1, month: Month.January, year: 2019} },
   { id: 1, habitId: 1, done: true, date: { day: 1, month: Month.January, year: 2019} },
   { id: 2, habitId: 2, done: true, date: { day: 1, month: Month.January, year: 2019} },
@@ -19,7 +29,7 @@ export const tasks: ResolvedTask[] = [
   { id: 11, habitId: 2, done: true, date: { day: 7, month: Month.March, year: 2019} },
 ]
 
-export const tasksWithManyFailed: ResolvedTask[] = [
+export const resolvedTasksWithManyFailed: ResolvedTask[] = [
   { id: 0, habitId: 0, done: true, date: { day: 1, month: Month.January, year: 2019} },
   { id: 1, habitId: 1, done: false, date: { day: 1, month: Month.January, year: 2019} },
   { id: 2, habitId: 2, done: false, date: { day: 1, month: Month.January, year: 2019} },

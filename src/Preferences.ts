@@ -1,7 +1,8 @@
 import { AsyncStorage } from "react-native"
 
 export enum PreferencesKey {
-  SELECTED_DAILY_LIST_DATE = "SELECTED_DAILY_LIST_DATE"
+  SELECTED_DAILY_LIST_DATE = "SELECTED_DAILY_LIST_DATE",
+  LAST_RESOLVED_DATE = "LAST_RESOLVED_DATE"
 }
 
 export default class Preferences {

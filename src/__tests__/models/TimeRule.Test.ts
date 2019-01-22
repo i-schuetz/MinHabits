@@ -10,7 +10,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "w",
         value: [0],
-        start: "01-01-2019"
+        start: "2019-01-01"
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "weekday", weekdays: [Weekday.Monday] },
@@ -21,7 +21,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "w",
         value: [0, 1, 3, 5],
-        start: "28-02-2016" // leap year
+        start: "2016-02-28" // leap year
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "weekday", weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Thursday, Weekday.Saturday] },
@@ -32,7 +32,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "w",
         value: [123],
-        start: "01-01-2019"
+        start: "2019-01-01"
       } as TimeRuleJSON)
     ).toThrow()
   })
@@ -46,7 +46,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "w",
       value: [0],
-      start: "01-01-2019"
+      start: "2019-01-01"
     } as TimeRuleJSON)
 
     expect(
@@ -57,7 +57,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "w",
       value: [0, 1, 3, 5],
-      start: "28-02-2016"
+      start: "2016-02-28"
     } as TimeRuleJSON)
   })
 
@@ -66,7 +66,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "e",
         value: { value: 1, unit: "d" }, // Each day
-        start: "01-01-2019"
+        start: "2019-01-01"
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "each", value: 1, unit: TimeUnit.Day },
@@ -77,7 +77,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "e",
         value: { value: 2, unit: "w" }, // Each 2 weeks
-        start: "28-02-2016" // leap year
+        start: "2016-02-28" // leap year
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "each", value: 2, unit: TimeUnit.Week },
@@ -88,7 +88,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "e",
         value: { value: 3, unit: "m" }, // Each 3 months
-        start: "01-01-2019"
+        start: "2019-01-01"
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "each", value: 3, unit: TimeUnit.Month },
@@ -99,7 +99,7 @@ describe("TimeRule", () => {
       TimeRuleHelpers.parse({
         type: "e",
         value: { value: 4, unit: "y" }, // Each 4 years
-        start: "01-01-2019"
+        start: "2019-01-01"
       } as TimeRuleJSON)
     ).toEqual({
       value: { kind: "each", value: 4, unit: TimeUnit.Year },
@@ -116,7 +116,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "e",
       value: { value: 1, unit: "d" }, // Each day
-      start: "01-01-2019"
+      start: "2019-01-01"
     } as TimeRuleJSON)
 
     expect(
@@ -127,7 +127,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "e",
       value: { value: 2, unit: "w" }, // Each 2 weeks
-      start: "28-02-2016" // leap year
+      start: "2016-02-28" // leap year
     } as TimeRuleJSON)
 
     expect(
@@ -138,7 +138,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "e",
       value: { value: 3, unit: "m" }, // Each 3 months
-      start: "01-01-2019"
+      start: "2019-01-01"
     } as TimeRuleJSON)
 
     expect(
@@ -149,7 +149,7 @@ describe("TimeRule", () => {
     ).toEqual({
       type: "e",
       value: { value: 4, unit: "y" }, // Each 4 years
-      start: "01-01-2019"
+      start: "2019-01-01"
     } as TimeRuleJSON)
   })
 })

@@ -11,8 +11,6 @@ export type Task = {
   readonly habit: Habit;
 }
 
-// TODO unit tests
-
 export function toBoolean(doneOrMissedStatus: TaskDoneStatus.DONE | TaskDoneStatus.MISSED): boolean {
   return doneOrMissedStatus == TaskDoneStatus.DONE ? true : false
 }

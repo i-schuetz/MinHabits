@@ -5,21 +5,21 @@ import { Order } from "../../models/helpers/Order"
 
 describe("DayDate", () => {
   it("Parses day date string correctly", () => {
-    expect(DayDateHelpers.parse("01-01-2019")).toEqual({ day: 1, month: Month.January, year: 2019 } as DayDate)
-    expect(DayDateHelpers.parse("20-02-1983")).toEqual({ day: 20, month: Month.February, year: 1983 } as DayDate)
-    expect(DayDateHelpers.parse("29-02-2016")).toEqual({ day: 29, month: Month.February, year: 2016 } as DayDate)
-    expect(DayDateHelpers.parse("15-10-2500")).toEqual({ day: 15, month: Month.October, year: 2500 } as DayDate)
-    expect(DayDateHelpers.parse("31-12-2016")).toEqual({ day: 31, month: Month.December, year: 2016 } as DayDate)
-    expect(DayDateHelpers.parse("04-04-1000")).toEqual({ day: 4, month: Month.April, year: 1000 } as DayDate)
+    expect(DayDateHelpers.parse("2019-01-01")).toEqual({ day: 1, month: Month.January, year: 2019 } as DayDate)
+    expect(DayDateHelpers.parse("1983-02-20")).toEqual({ day: 20, month: Month.February, year: 1983 } as DayDate)
+    expect(DayDateHelpers.parse("2016-02-29")).toEqual({ day: 29, month: Month.February, year: 2016 } as DayDate)
+    expect(DayDateHelpers.parse("2500-10-15")).toEqual({ day: 15, month: Month.October, year: 2500 } as DayDate)
+    expect(DayDateHelpers.parse("2016-12-31")).toEqual({ day: 31, month: Month.December, year: 2016 } as DayDate)
+    expect(DayDateHelpers.parse("1000-04-04")).toEqual({ day: 4, month: Month.April, year: 1000 } as DayDate)
   })
 
   it("Generates correct string", () => {
-    expect(DayDateHelpers.toJSON({ day: 1, month: Month.January, year: 2019 })).toEqual("01-01-2019")
-    expect(DayDateHelpers.toJSON({ day: 20, month: Month.February, year: 1983 })).toEqual("20-02-1983")
-    expect(DayDateHelpers.toJSON({ day: 29, month: Month.February, year: 2016 })).toEqual("29-02-2016")
-    expect(DayDateHelpers.toJSON({ day: 15, month: Month.October, year: 2500 })).toEqual("15-10-2500")
-    expect(DayDateHelpers.toJSON({ day: 31, month: Month.December, year: 2016 })).toEqual("31-12-2016")
-    expect(DayDateHelpers.toJSON({ day: 4, month: Month.April, year: 1000 })).toEqual("04-04-1000")
+    expect(DayDateHelpers.toJSON({ day: 1, month: Month.January, year: 2019 })).toEqual("2019-01-01")
+    expect(DayDateHelpers.toJSON({ day: 20, month: Month.February, year: 1983 })).toEqual("1983-02-20")
+    expect(DayDateHelpers.toJSON({ day: 29, month: Month.February, year: 2016 })).toEqual("2016-02-29")
+    expect(DayDateHelpers.toJSON({ day: 15, month: Month.October, year: 2500 })).toEqual("2500-10-15")
+    expect(DayDateHelpers.toJSON({ day: 31, month: Month.December, year: 2016 })).toEqual("2016-12-31")
+    expect(DayDateHelpers.toJSON({ day: 4, month: Month.April, year: 1000 })).toEqual("1000-04-04")
   })
 
   it("Can compare 2 day dates", () => {

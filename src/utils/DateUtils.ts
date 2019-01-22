@@ -6,9 +6,9 @@ import { TimeUnit } from "../models/TimeUnit"
 import TimeInterval from "../models/TimeInterval"
 import { Weekday } from "../models/Weekday"
 import * as DayDateHelpers from "../models/DayDate"
-import { Order } from '../models/helpers/Order';
+import { Order } from "../models/helpers/Order"
 
-const dayDateFormat = "DD-MM-YYYY"
+const dayDateFormat = "YYYY-MM-DD" // Internal
 const dayDateDailyHabitListDateSelectorFormat = "dddd Do MMM"
 const weekdayDateFormat = "dddd"
 const monthNameFormat = "MMMM"
@@ -22,6 +22,10 @@ export function getWeekday(date: DayDate): Weekday {
 
 export function today(): DayDate {
   return toDayDateFromMoment(moment.tz(timezone))
+}
+
+export function yesterday(): DayDate {
+  return addDay(today(), -1)
 }
 
 export function isPast(dayDate: DayDate): boolean {
@@ -40,6 +44,35 @@ export function isInInterval(date: DayDate, start: DayDate, timeInterval: TimeIn
 
 export function isInStartEnd(date: DayDate, start: DayDate, end: DayDate): boolean {
   return toMomentFromDayDate(date).isBetween(toMomentFromDayDate(start), toMomentFromDayDate(end))
+}
+
+/**
+ * @returns day dates between start and end (inclusive on both ends).
+ */
+export function generateDateRange(start: DayDate, end: DayDate): DayDate[] {
+  const startEndComparison = DayDateHelpers.compare(start, end)
+
+  if (startEndComparison == Order.GT) {
+    throw Error(`Start: ${JSON.stringify(start)} must be smaller or equal than/to end: ${JSON.stringify(end)}`)
+  }
+
+  const momentStart = toMomentFromDayDate(start)
+  const momentEnd = toMomentFromDayDate(end)
+  var dates = [start]
+  while (momentStart.add(1, "days").diff(momentEnd, "days", false) < 0) {
+    const momentBetween = momentStart.clone()
+    dates.push(toDayDateFromMoment(momentBetween))
+  }
+
+  if (startEndComparison != Order.EQ) {
+    dates.push(end)
+  }
+
+  return dates
+}
+
+export function addDay(start: DayDate, number: number): DayDate {
+  return toDayDateFromMoment(toMomentFromDayDate(start).add(number, "days"))
 }
 
 /**
@@ -92,7 +125,7 @@ export function getDayDatesInWeek(dayDate: DayDate): DayDate[] {
 
   var dayDates: DayDate[] = []
   for (var weekdayOffset = -weekdayIndex; weekdayOffset < -weekdayIndex + 7; weekdayOffset += 1) {
-    const weekDayMoment = toMomentFromDayDate(dayDate).add(weekdayOffset, toMomentUnitString(TimeUnit.Day)) 
+    const weekDayMoment = toMomentFromDayDate(dayDate).add(weekdayOffset, toMomentUnitString(TimeUnit.Day))
     dayDates.push(toDayDateFromMoment(weekDayMoment))
   }
   return dayDates
@@ -127,15 +160,22 @@ function toMomentWithMonth(month: Month): moment.Moment {
  * @return weekday's index, 0 based, starting with Monday
  */
 function to0BasedIndexWeekday(weekday: Weekday): number {
-  switch(weekday) {
-    case Weekday.Monday: return 0;
-    case Weekday.Tuesday: return 1;
-    case Weekday.Wednesday: return 2;
-    case Weekday.Thursday: return 3;
-    case Weekday.Friday: return 4;
-    case Weekday.Saturday: return 5;
-    case Weekday.Sunday: return 6;
-  }; 
+  switch (weekday) {
+    case Weekday.Monday:
+      return 0
+    case Weekday.Tuesday:
+      return 1
+    case Weekday.Wednesday:
+      return 2
+    case Weekday.Thursday:
+      return 3
+    case Weekday.Friday:
+      return 4
+    case Weekday.Saturday:
+      return 5
+    case Weekday.Sunday:
+      return 6
+  }
 }
 
 function toWeekday(momentIsoWeekday: number): Weekday {
@@ -243,7 +283,7 @@ function toMomentFromDayDate(dayDate: DayDate): moment.Moment {
 }
 
 function toDayDateFromMoment(moment: moment.Moment): DayDate {
-  return { day: moment.date(), month: toMonth(moment.month()), year: moment.year()}
+  return { day: moment.date(), month: toMonth(moment.month()), year: moment.year() }
 }
 
 function toMomentFromString(formatted: string, format: string): moment.Moment {
