@@ -28,6 +28,10 @@ export function getDoneMonthlyPercentage(tasks: ResolvedTask[]): MonthPercentage
 
 /**
  * Maps percentages to array of habits which have been done less or equal than each percentage.
+ * 
+ * @param ranges
+ * @param habits complete habits list, used to retrieve habits referenced by resolved tasks. 
+ * @param tasks resolved tasks used to generate the tasks.
  * @returns Map with percentage (0..100) -> habits.
  * If there are tasks percentages that don't fall under the passed ranges, they are grouped under a new 100% key.
  * Consequently with above, if no ranges are passed, all the tasks are grouped under a 100% key.
@@ -47,7 +51,7 @@ export function groupHabitsByDonePercentageRange(
     const habit: Habit | undefined = habitsMap.get(habitId)
     if (habit === undefined) {
       // The habits array are assumed to be all existent habits, and tasks has a foreign key to habits so this is invalid state.
-      throw Error("Task habit id was not found in habits array")
+      throw Error("Task habit id was not found in habits map")
     }
 
     // Calculate done percentage
