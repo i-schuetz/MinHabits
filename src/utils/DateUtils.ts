@@ -75,6 +75,10 @@ export function addDay(start: DayDate, number: number): DayDate {
   return toDayDateFromMoment(toMomentFromDayDate(start).add(number, "days"))
 }
 
+export function addWeek(start: DayDate, number: number): DayDate {
+  return toDayDateFromMoment(toMomentFromDayDate(start).add(number, "week"))
+}
+
 /**
  * Returns internal DayDate representation, used for serialization
  * @param dayDate date to be formatted

@@ -8,6 +8,7 @@ import { ResolvedTask } from "./models/ResolvedTask"
 import PrefillRepo from "./PrefillRepo"
 import { ResolvedTaskWithHabit } from "./models/join/ResolvedTaskWithHabit"
 import { ResolvedTaskInput } from "./models/helpers/ResolvedTaskInput"
+import { WaitingNeedAttentionHabit } from "./models/WaitingNeedAttentionHabit"
 
 const db = SQLite.openDatabase("db.db")
 
@@ -15,6 +16,8 @@ export type ResolvedTaskUnique = {
   habitId: number
   date: DayDate
 }
+
+// TODO cascade delete (habit -> resolved tasks and habit -> habits_attention_waiting)
 
 export default class Repo {
   static init = () => {
@@ -39,6 +42,16 @@ export default class Repo {
           [],
           () => {
             console.log("Create resolved_tasks if not exist success")
+          },
+          ({}, error) => {
+            console.log(`Create table error: ${error}`)
+          }
+        )
+        tx.executeSql(
+          "create table if not exists habits_attention_waiting (habitId integer primary key not null, date text);",
+          [],
+          () => {
+            console.log("Create habits_attention_waiting if not exist success")
           },
           ({}, error) => {
             console.log(`Create table error: ${error}`)
@@ -74,6 +87,107 @@ export default class Repo {
           },
           ({}, error) => {
             console.log(`Loading error: ${error}`)
+            reject()
+          }
+        )
+      })
+    )
+  }
+
+  static loadHabitsAttentionWaiting: () => Promise<WaitingNeedAttentionHabit[]> = async () => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `select * from habits_attention_waiting`,
+          [],
+          (_, { rows: { _array } }) => {
+            resolve(
+              _array.map((map: HashMap) => {
+                const habitId: number = map["habitId"]
+                const dateString: string = map["date"]
+                return {
+                  habitId: habitId,
+                  date: DayDateHelpers.parse(dateString)
+                }
+              })
+            )
+          },
+          ({}, error) => {
+            console.log(`Loading error: ${error}`)
+            reject()
+          }
+        )
+      })
+    )
+  }
+
+  static addHabitAttentionWaiting = async (habit: WaitingNeedAttentionHabit) => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        Repo.addHabitAttentionWaitingInTransaction(habit, tx, () => resolve(), () => reject())
+      })
+    )
+  }
+
+  private static addHabitAttentionWaitingInTransaction = (
+    habit: WaitingNeedAttentionHabit,
+    tx: SQLite.Transaction,
+    resolve: () => void,
+    reject: () => void
+  ) => {
+    tx.executeSql(
+      `insert or replace into habits_attention_waiting (habitId, date) values (?, ?)`,
+      [habit.habitId.toString(), DayDateHelpers.toJSON(habit.date)],
+      () => {
+        console.log(`Added habit id attention waiting: ${habit.habitId}`)
+        resolve()
+      },
+      ({}, error) => {
+        console.log(`Add habit id attention waiting error: ${error}`)
+        reject()
+      }
+    )
+  }
+
+  static overwriteHabitsAttentionWaiting = async (habits: WaitingNeedAttentionHabit[]) => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        // Delete all entries
+        tx.executeSql(
+          `delete from habits_attention_waiting`,
+          [],
+          () => {
+            console.log(`Deleted all entries from habits_attention_waiting`)
+            resolve()
+          },
+          ({}, error) => {
+            console.log(`Deleting all entries from habits_attention_waiting error: ${error}`)
+            reject()
+          }
+        )
+
+        // Add new entries
+        for (const habit of habits) {
+          Repo.addHabitAttentionWaitingInTransaction(habit, tx, () => resolve(), () => reject())
+        }
+      })
+    )
+  }
+
+  // TODO test (manual)
+  static deleteHabits = async (habits: Habit[]) => {
+    const habitIds = habits.map(habit => habit.id)
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `delete from habits where (id) in (?)`,
+          habitIds,
+          () => {
+            console.log(`Deleted habits with ids: ${habitIds}`)
+            resolve()
+          },
+          ({}, error) => {
+            console.log(`Deleting habits error: ${error}`)
             reject()
           }
         )

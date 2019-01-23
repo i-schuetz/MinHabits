@@ -3,6 +3,7 @@ import { Habit } from "../models/Habit"
 import { groupHabitsByDonePercentageRange } from "./Stats"
 import { WholePercentage } from "../models/helpers/WholePercentage";
 import * as WholePercentageHelpers from "../models/helpers/WholePercentage";
+import { WaitingNeedAttentionHabit } from "../models/WaitingNeedAttentionHabit";
 
 export const retrieveUnfilteredNeedAttentionHabits = (habits: Habit[], resolvedTasks: ResolvedTask[]): Habit[] => {
   if (resolvedTasks.length == 0) {
@@ -27,8 +28,8 @@ export const retrieveUnfilteredNeedAttentionHabits = (habits: Habit[], resolvedT
   return groupedByPercentage.get(WholePercentageHelpers.toNumber(threshold)) || []
 }
 
-export const filterNeedAttentionHabits = (habits: Habit[], habitIdsInWaitingList: number[]): Habit[] => {
+export const filterNeedAttentionHabits = (habits: Habit[], habitIdsInWaitingList: WaitingNeedAttentionHabit[]): Habit[] => {
   return habits.filter(
-    habit => habitIdsInWaitingList.find(id => id === habit.id) === undefined
+    habit => habitIdsInWaitingList.find(waitingHabit => waitingHabit.habitId === habit.id) === undefined
   ) 
 }

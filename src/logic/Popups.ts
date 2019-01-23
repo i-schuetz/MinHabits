@@ -2,11 +2,14 @@ import { ResolvedTask } from "../models/ResolvedTask"
 import { Habit } from "../models/Habit"
 import { filterNeedAttentionHabits, retrieveUnfilteredNeedAttentionHabits } from "./PopupsInternal"
 import { getDonePercentage } from "./Stats"
+import { WaitingNeedAttentionHabit } from "../models/WaitingNeedAttentionHabit"
+import * as DateUtils from "../utils/DateUtils"
 
 // TODO unit tests
 
+// TODO for first release limit result to only one habit (the worst) for easier UI
 export const showHabitNeedsAttentionPopup = async (
-  loadHabitsInWaitingList: () => Promise<number[]>,
+  loadHabitsInWaitingList: () => Promise<WaitingNeedAttentionHabit[]>,
   resolvedTasksInLastWeek: ResolvedTask[],
   habits: Habit[]
 ): Promise<NeedsAttentionPopupAction> => {
@@ -28,10 +31,26 @@ export const showHabitNeedsAttentionPopup = async (
 export function showCongratulationsPopup(resolvedTasksInLastWeek: ResolvedTask[]): CongratulationsPopupAction {
   // Check whether user has completed a week with 100% on a non empty task list.
   if (getDonePercentage(resolvedTasksInLastWeek) == { digit1: 1, digit2: 0, digit3: 0 }) {
-    return CongratulationsPopupAction.SHOW_WEEKLY 
+    return CongratulationsPopupAction.SHOW_WEEKLY
   } else {
-    return CongratulationsPopupAction.NONE 
+    return CongratulationsPopupAction.NONE
   }
+}
+
+/**
+ * Updates waiting habit list, by removing entries that are older than a week.
+ * 
+ * @param waitingNeedingAttentionHabits current waiting habit entries
+ * @returns updated waiting habits list
+ * 
+ * TODO unit test
+ */
+export function updateNeedAttentionWaitingHabits(
+  waitingNeedingAttentionHabits: WaitingNeedAttentionHabit[]
+): WaitingNeedAttentionHabit[] {
+  const today = DateUtils.today()
+  const weekAgo = DateUtils.addWeek(today, -1)
+  return waitingNeedingAttentionHabits.filter(habit => DateUtils.isInStartEnd(habit.date, weekAgo, today))
 }
 
 export type NeedsAttentionPopupAction = NeedsAttentionPopupActionShow | NeedsAttentionPopupActionNone
