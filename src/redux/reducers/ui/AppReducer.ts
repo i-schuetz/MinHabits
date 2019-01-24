@@ -29,7 +29,7 @@ export enum AppActionTypes {
 
 const initialState: AppState = {
   congratsPopupState: { kind: "closed" },
-  // needAttentionPopupState: { kind: "closed" },
+  needAttentionPopupState: { kind: "closed" },
 
   // Dummy data
   // congratsPopupState: {
@@ -41,18 +41,18 @@ const initialState: AppState = {
   //     okButtonLabel: "Yeah!"
   //   }
   // }
-  needAttentionPopupState: {
-    kind: "open",
-    contents: {
-      title: "Attention!",
-      introduction: "There habits are feeling abandoned",
-      habitsNamesString: "Fishing, Hunting, Sleeping",
-      callToAction: "What do you want to do with them?",
-      willDoButtonLabel: "I'll do them!",
-      removeHabitsButtonLabel: "Remove",
-      habits: []
-    }
-  }
+  // needAttentionPopupState: {
+  //   kind: "open",
+  //   contents: {
+  //     title: "Attention!",
+  //     introduction: "There habits are feeling abandoned",
+  //     habitsNamesString: "Fishing, Hunting, Sleeping",
+  //     callToAction: "What do you want to do with them?",
+  //     willDoButtonLabel: "I'll do them!",
+  //     removeHabitsButtonLabel: "Remove",
+  //     habits: []
+  //   }
+  // }
 }
 
 export const onAppComesToForegroundAction = async () => {
