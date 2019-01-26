@@ -66,11 +66,10 @@ export const setEditingHabitAction = (habit: Habit) => action(EditHabitActionTyp
 export const addNewHabitAction = () => action(EditHabitActionTypes.SET_EDITING_HABIT_NEW)
 export const exitEditingHabitAction = () => action(EditHabitActionTypes.EXIT_EDITING_HABIT)
 export const onSubmitHabitSuccessAction = () => action(EditHabitActionTypes.SUBMIT_HABIT_SUCCESS)
-// export const onBackInTimeRulePopupAction = () => action(EditHabitActionTypes.BACK_IN_TIME_RULE_POPUP_ACTION)
 
 // Inputs
 export const setNameInputAction = (name: string) => action(EditHabitActionTypes.SET_NAME_INPUT, name)
-export const setStartDateInputAction = (date: DayDate) => action(EditHabitActionTypes.SET_NAME_INPUT, name)
+export const setStartDateInputAction = (date: DayDate) => action(EditHabitActionTypes.SET_START_DATE_INPUT, date)
 
 // Inputs - Time rule
 export const setTimeRuleModalOpenAction = (open: boolean) => action(EditHabitActionTypes.SET_TIME_RULE_MODAL_OPEN, open)

@@ -3,7 +3,7 @@ import { Button, StyleSheet, TextInput, View, Text, FlatList } from "react-nativ
 import NavigationBar from "react-native-navbar"
 import { Habit } from "../models/Habit"
 import { Weekday } from "../models/Weekday"
-import { WeekdayTimeRuleValue, TimeRuleValue, EachTimeRuleValue } from "../models/TimeRuleValue"
+import { TimeRuleValue, EachTimeRuleValue } from "../models/TimeRuleValue"
 import { DayDate } from "../models/DayDate"
 import MyDatePicker from "./MyDatePicker"
 import * as DateUtils from "../utils/DateUtils"
@@ -15,11 +15,12 @@ import {
   trySubmitHabitInputsAction,
   EditHabitThunkDispatch,
   EditHabitTemporaryInputs,
-  setTimeRuleModalOpenAction
+  setTimeRuleModalOpenAction,
+  setNameInputAction,
+  setStartDateInputAction
 } from "../redux/reducers/ui/EditHabitReducer"
 import Modal from "react-native-modal"
 import EditTimeRuleView from "./EditTimeRuleView"
-import { FullWeekday } from "../models/helpers/FullWeekday"
 import * as FullWeekdayHelpers from "../models/helpers/FullWeekday"
 import * as FullTimeRuleUnitHelpers from "../models/helpers/FullTimeUnit"
 import { FullTimeUnit } from "../models/helpers/FullTimeUnit"
@@ -36,6 +37,8 @@ interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
   trySubmitInputs: typeof trySubmitHabitInputsAction
   setTimeRuleModalOpen: typeof setTimeRuleModalOpenAction
+  setNameInput: typeof setNameInputAction,
+  setStartDateInput: typeof setStartDateInputAction
 }
 
 export interface OwnProps {}
@@ -59,42 +62,6 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
 
     this.textInput = React.createRef()
-  }
-
-  private toggleWeekday(weekdays: Array<Weekday>, weekday: Weekday): Weekday[] {
-    // TODO generic extension function? possible?
-    if (weekdays.indexOf(weekday) != -1) {
-      return weekdays.filter(element => element != weekday)
-    } else {
-      weekdays.push(weekday)
-      return weekdays
-    }
-  }
-
-  private selectedWeekdays(): Weekday[] {
-    if (this.props.inputs.timeRuleValue === undefined) {
-      // No time has been selected yet
-      return []
-    }
-    switch (this.props.inputs.timeRuleValue.kind) {
-      case "weekday":
-        return this.props.inputs.timeRuleValue.weekdays
-      case "each":
-        return []
-    }
-  }
-
-  private selectStartDate(daydate: DayDate) {
-    this.setState({ startDate: daydate })
-  }
-
-  private onSelectWeekday(weekday: Weekday) {
-    const selectedWeekdays = this.selectedWeekdays()
-    const updatedWeekdays = this.toggleWeekday(selectedWeekdays, weekday)
-    const timeRuleValue: WeekdayTimeRuleValue = { kind: "weekday", weekdays: updatedWeekdays }
-    this.setState({ timeRuleValue: timeRuleValue }, () => {
-      console.log("State changed: " + JSON.stringify(this.state))
-    })
   }
 
   private startDate(): DayDate {
@@ -143,19 +110,6 @@ class EditHabitView extends Component<AllProps, OwnState> {
     return fullWeekdays.map(fullWeekday => fullWeekday.name).join(", ")
   }
 
-  private toFullWeekdays(weekdays: Weekday[]): FullWeekdayHelpers.FullWeekday[] {
-    const fullWeekdays = FullWeekdayHelpers.array()
-    const fullWeekdaysMap = associateBy(fullWeekday => fullWeekday.weekday, fullWeekdays)
-    return weekdays.map(weekday => {
-      const fullWeekdayMaybe = fullWeekdaysMap.get(weekday)
-      // TODO (low prio) enforce this check at compile time?
-      if (fullWeekdayMaybe === undefined) {
-        throw Error("There must exist a full week day object for each weekday. Weekday: " + weekday)
-      }
-      return fullWeekdayMaybe
-    })
-  }
-
   private toFullTimeUnit(timeUnit: TimeUnit): FullTimeUnit {
     const fullTimeUnits = FullTimeRuleUnitHelpers.array()
     const fullTimeUnitsMap = associateBy(fullTimeUnit => fullTimeUnit.unit, fullTimeUnits)
@@ -198,13 +152,16 @@ class EditHabitView extends Component<AllProps, OwnState> {
             placeholder="Name"
             defaultValue={this.props.inputs.name}
             onChangeText={text => {
-              this.setState({ name: text }, () => {
-                console.log("Habit name changed: " + JSON.stringify(this.state))
-              })
+              this.props.setNameInput(text)
             }}
           />
           <Text onPress={() => this.onPressTimeRule()}>{this.timeText()}</Text>
-          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => this.selectStartDate(date)} />
+          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => 
+            
+            
+            this.props.setStartDateInput(date)
+            
+            } />
           <Button
             title="Submit"
             onPress={() => {
@@ -237,7 +194,9 @@ const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
 const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
   trySubmitInputs: (inputs: EditHabitInputs) => dispatch(trySubmitHabitInputsAction()),
-  setTimeRuleModalOpen: (open: boolean) => dispatch(setTimeRuleModalOpenAction(open))
+  setTimeRuleModalOpen: (open: boolean) => dispatch(setTimeRuleModalOpenAction(open)),
+  setNameInput: (name: string) => dispatch(setNameInputAction(name)),
+  setStartDateInput: (date: DayDate) => dispatch(setStartDateInputAction(date)),
 })
 
 export default connect(
