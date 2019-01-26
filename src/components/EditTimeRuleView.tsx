@@ -186,7 +186,14 @@ class TimeRuleView extends Component<AllProps, OwnState> {
           keyExtractor={(item, {}) => item.name}
           renderItem={({ item }) => (
             <View style={styles.popupRow}>
-              <Text style={this.isWeekdaySelected(item.weekday) ? styles.selectedPopupRowContent : styles.unSelectedPopupRowContent} onPress={({}) => this.onWeekdaySelected(item)}>
+              <Text
+                style={
+                  this.isWeekdaySelected(item.weekday)
+                    ? styles.selectedPopupRowContent
+                    : styles.unSelectedPopupRowContent
+                }
+                onPress={({}) => this.onWeekdaySelected(item)}
+              >
                 {item.name}
               </Text>
             </View>
@@ -255,10 +262,18 @@ class TimeRuleView extends Component<AllProps, OwnState> {
       title: "x",
       handler: () => this.props.setTimeRuleModalOpen(false)
     }
+    const backButtonConfig = {
+      title: "<",
+      handler: () => this.props.setTimeRuleModalStep(EditTimeRuleModalStep.STEP1)
+    }
 
     return (
       <View style={styles.container}>
-        <NavigationBar title={{ title: "Scheduling" }} rightButton={closeButtonConfig} />
+        <NavigationBar
+          title={{ title: "Scheduling" }}
+          leftButton={this.props.editTimeRuleModalStep == EditTimeRuleModalStep.STEP1 ? undefined : backButtonConfig}
+          rightButton={closeButtonConfig}
+        />
         {this.step1ViewMaybe()}
         {this.weekdaysSelectionViewMaybe()}
         {this.eachTimeRuleSelectionViewMaybe()}
@@ -308,7 +323,8 @@ const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   setTimeRuleOptionType: (optionType: TimeRuleOptionType) => dispatch(setTimeRuleOptionTypeAction(optionType)),
   setWeekdaysTimeRule: (value: WeekdayTimeRuleValue) => dispatch(setWeekdaysTimeRuleAction(value)),
   setEachTimeRule: (value: EachTimeRuleValue) => dispatch(setEachTimeRuleAction(value)),
-  submitTimeRule: () => dispatch(submitTimeRuleAction())
+  submitTimeRule: () => dispatch(submitTimeRuleAction()),
+  goBack: () => dispatch(setTimeRuleModalStepAction(EditTimeRuleModalStep.STEP1)) // There's only step 1 and 2
 })
 
 export default connect(

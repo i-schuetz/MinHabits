@@ -24,8 +24,9 @@ export interface EditHabitState {
   readonly editingHabit?: Habit
   readonly editTimeRuleModalOpen: boolean
   readonly inputs: EditHabitTemporaryInputs
-  readonly editTimeRuleModalStep: EditTimeRuleModalStep.STEP1
+  readonly editTimeRuleModalStep: EditTimeRuleModalStep
   readonly timeRuleOptionType?: TimeRuleOptionType
+  readonly editTimeRuleModalBackButtonVisible: boolean
 }
 
 export type EditHabitTemporaryInputs = {
@@ -56,7 +57,8 @@ const initialState: EditHabitState = {
   editTimeRuleModalOpen: false,
   inputs: { name: "", timeRuleValue: undefined, startDate: undefined },
   editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
-  timeRuleOptionType: undefined
+  timeRuleOptionType: undefined,
+  editTimeRuleModalBackButtonVisible: false
 }
 
 // General
@@ -64,6 +66,7 @@ export const setEditingHabitAction = (habit: Habit) => action(EditHabitActionTyp
 export const addNewHabitAction = () => action(EditHabitActionTypes.SET_EDITING_HABIT_NEW)
 export const exitEditingHabitAction = () => action(EditHabitActionTypes.EXIT_EDITING_HABIT)
 export const onSubmitHabitSuccessAction = () => action(EditHabitActionTypes.SUBMIT_HABIT_SUCCESS)
+// export const onBackInTimeRulePopupAction = () => action(EditHabitActionTypes.BACK_IN_TIME_RULE_POPUP_ACTION)
 
 // Inputs
 export const setNameInputAction = (name: string) => action(EditHabitActionTypes.SET_NAME_INPUT, name)
@@ -167,7 +170,12 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         }
       }
     case EditHabitActionTypes.SET_TIME_RULE_MODAL_STEP:
-      return { ...state, editTimeRuleModalStep: action.payload }
+      const step: EditTimeRuleModalStep = action.payload
+      return {
+        ...state,
+        editTimeRuleModalStep: step,
+        editTimeRuleModalBackButtonVisible: step != EditTimeRuleModalStep.STEP1
+      }
     case EditHabitActionTypes.SET_TIME_RULE_OPTION_TYPE:
       return { ...state, timeRuleOptionType: action.payload }
     case EditHabitActionTypes.SET_WEEKDAYS_TIME_RULE:
