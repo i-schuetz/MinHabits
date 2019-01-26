@@ -180,7 +180,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
   }
 
   render() {
-    const leftButtonConfig = {
+    const closeButtonConfig = {
       title: "x",
       handler: () => this.props.exitEditingHabit()
     }
@@ -190,7 +190,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
     return (
       <View>
-        <NavigationBar title={titleConfig} leftButton={leftButtonConfig} />
+        <NavigationBar title={titleConfig} rightButton={closeButtonConfig} />
         <View>
           <TextInput
             style={styles.nameInput}

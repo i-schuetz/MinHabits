@@ -251,14 +251,14 @@ class TimeRuleView extends Component<AllProps, OwnState> {
   }
 
   render() {
-    const leftButtonConfig = {
+    const closeButtonConfig = {
       title: "x",
       handler: () => this.props.setTimeRuleModalOpen(false)
     }
 
     return (
       <View style={styles.container}>
-        <NavigationBar title={{ title: "Scheduling" }} leftButton={leftButtonConfig} />
+        <NavigationBar title={{ title: "Scheduling" }} rightButton={closeButtonConfig} />
         {this.step1ViewMaybe()}
         {this.weekdaysSelectionViewMaybe()}
         {this.eachTimeRuleSelectionViewMaybe()}
