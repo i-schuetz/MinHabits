@@ -5,6 +5,10 @@ import * as DateUtils from "../utils/DateUtils"
 
 export interface MyDatePickerProps {
   date: DayDate
+
+  // Show clickable icon/input. If false nothing will be visible and picker has to be opened manually (calling open())
+  showSelector: boolean 
+  
   onSelectDate: (dayDate: DayDate) => void
 }
 
@@ -13,9 +17,20 @@ export interface MyDatePickerState {
 }
 
 export default class MyDatePicker extends Component<MyDatePickerProps, MyDatePickerState> {
+  private datePicker: React.RefObject<DatePicker>
+
   constructor(props: MyDatePickerProps) {
     super(props)
+    this.datePicker = React.createRef()
     this.state = { date: props.date }
+  }
+
+  open = () => {
+    if (this.datePicker.current !== null) {
+      this.datePicker.current.onPressDate()
+    } else {
+      console.log("Can't open picker: Ref is null")
+    }
   }
 
   private selectedStringDate(): { formatted: string; format: string } {
@@ -23,9 +38,8 @@ export default class MyDatePicker extends Component<MyDatePickerProps, MyDatePic
   }
 
   private onSelectDate(dateString: string) {
-    const dayDate = this.parseDateString(dateString)
-    this.setState({ date: dayDate })
-    this.props.onSelectDate(dayDate)
+    const date = this.parseDateString(dateString)
+    this.props.onSelectDate(date)
   }
 
   private minDateString(): string {
@@ -54,6 +68,8 @@ export default class MyDatePicker extends Component<MyDatePickerProps, MyDatePic
         format={this.selectedStringDate().format}
         minDate={this.minDateString()}
         maxDate={this.maxDateString()}
+        showIcon={this.props.showSelector}
+        hideText={!this.props.showSelector}
         confirmBtnText="Confirm"
         cancelBtnText="Cancel"
         customStyles={{
@@ -61,12 +77,13 @@ export default class MyDatePicker extends Component<MyDatePickerProps, MyDatePic
             position: "absolute",
             left: 0,
             top: 4,
-            marginLeft: 0
+            marginLeft: 0,
           },
           dateInput: {
-            marginLeft: 36
-          }
+            marginLeft: 36,
+          },
         }}
+        ref={this.datePicker}
         onDateChange={date => {
           this.onSelectDate(date)
         }}

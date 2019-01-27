@@ -10,14 +10,15 @@ import { Order } from "../../../models/helpers/Order"
 import { generateTasksForOpenDate, generateTasksForResolvedDate } from "../../../logic/GenerateTasksForDate"
 import { Task, TaskDoneStatus } from "../../../models/helpers/Task"
 import * as TaskHelpers from "../../../models/helpers/Task"
-import { UIState } from "./UIReducer"
-import { ApplicationState } from '../RootReducer';
+import { ApplicationState } from "../RootReducer"
+import { InteractionManager } from "react-native"
 
 export interface DailyHabitsListState {
   readonly tasks: Task[]
   readonly selectDateModalOpen: boolean
-  selectedDate?: DayDate
-  title: String
+  readonly selectedDate?: DayDate
+  readonly title: String
+  readonly enterCustomDateModalOpen: boolean
 }
 
 export enum DailyHabitsListActionTypes {
@@ -25,14 +26,16 @@ export enum DailyHabitsListActionTypes {
   SET_SELECT_DATE_MODAL_OPEN = "@@DailyHabitsListActions/SET_SELECT_DATE_MODAL_OPEN",
   INIT_SELECTED_DATE = "@@DailyHabitsListActions/INIT_SELECTED_DATE",
   SET_SELECTED_DATE = "@@DailyHabitsListActions/SET_SELECTED_DATE",
-  SET_TASK_DONE = "@@DailyHabitsListActions/SET_TASK_DONE"
+  SET_TASK_DONE = "@@DailyHabitsListActions/SET_TASK_DONE",
+  SET_ENTER_CUSTOM_DATE_MODAL_OPEN = "@@DailyHabitsListActions/SET_ENTER_CUSTOM_DATE_MODAL_OPEN",
 }
 
 const initialState: DailyHabitsListState = {
   tasks: [],
   selectDateModalOpen: false,
   selectedDate: undefined,
-  title: ""
+  title: "",
+  enterCustomDateModalOpen: false,
 }
 
 export const setSelectDateModalOpenAction = (open: boolean) =>
@@ -40,6 +43,8 @@ export const setSelectDateModalOpenAction = (open: boolean) =>
 export const onGenerateTasksSuccessAction = (tasks: Task[]) =>
   action(DailyHabitsListActionTypes.TASKS_GENERATE_SUCCESS, tasks)
 const setSelectedDateAction = (date: DayDate) => action(DailyHabitsListActionTypes.SET_SELECTED_DATE, date)
+export const setEnterCustomDateModalOpenAction = (open: boolean) =>
+  action(DailyHabitsListActionTypes.SET_ENTER_CUSTOM_DATE_MODAL_OPEN, open)
 
 type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
 export type DailyHabitsListThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
@@ -63,8 +68,8 @@ const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatc
 export const updateTasksForCurrentDate = (): ThunkResult<{}> => async (dispatch, state) => {
   // Update in-memory habits
   const selectedDate = state().ui.dailyHabitsList.selectedDate
-  console.log("updating with selected date: " + JSON.stringify(selectedDate));
-  
+  console.log("updating with selected date: " + JSON.stringify(selectedDate))
+
   if (selectedDate !== undefined) {
     dispatch(retrieveTasksAction(selectedDate))
   }
@@ -88,7 +93,12 @@ export const initSelectedDateAction = (): ThunkResult<{}> => async dispatch => {
 export const selectDateAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
   dispatch(setSelectedDateAction(dayDate))
   dispatch(retrieveTasksAction(dayDate))
-  dispatch(setSelectDateModalOpenAction(false))
+  dispatch(setEnterCustomDateModalOpenAction(false))
+  // When selecting a custom date, runAfterInteractions is necessary, otherwise the app freezes.
+  // It's not good to have this here as it's purely UI related but letting it for now. TODO (low prio)
+  InteractionManager.runAfterInteractions(() => {
+    dispatch(setSelectDateModalOpenAction(false))
+  })
 }
 
 export const setTaskDoneStatusAction = (task: Task, doneStatus: TaskDoneStatus): ThunkResult<{}> => async dispatch => {
@@ -120,6 +130,8 @@ export const dailyHabitsListReducer: Reducer<DailyHabitsListState> = (state = in
       return { ...state, selectDateModalOpen: action.payload }
     case DailyHabitsListActionTypes.SET_SELECTED_DATE:
       return { ...state, selectedDate: action.payload, title: title(action.payload) }
+    case DailyHabitsListActionTypes.SET_ENTER_CUSTOM_DATE_MODAL_OPEN:
+      return { ...state, enterCustomDateModalOpen: action.payload }
     default:
       return state
   }

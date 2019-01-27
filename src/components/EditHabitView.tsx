@@ -156,7 +156,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
             }}
           />
           <Text onPress={() => this.onPressTimeRule()}>{this.timeText()}</Text>
-          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)} />
+          <MyDatePicker showSelector={true} date={this.startDate()} onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)}/>
           <Button
             title="Submit"
             onPress={() => {
