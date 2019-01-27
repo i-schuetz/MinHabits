@@ -56,7 +56,7 @@ class SelectDailyHabitsDateView extends Component<AllProps> {
   }
 
   render() {
-    const leftButtonConfig = {
+    const closeButtonConfig = {
       title: "x",
       handler: () => this.props.setSelectDateModalOpen(false)
     }
@@ -67,7 +67,7 @@ class SelectDailyHabitsDateView extends Component<AllProps> {
 
     return (
       <View>
-        <NavigationBar title={titleConfig} leftButton={leftButtonConfig} />
+        <NavigationBar title={titleConfig} rightButton={closeButtonConfig} />
         <FlatList
           data={this.generateWeekDayDatesViewData(this.props.referenceDate)}
           keyExtractor={(item: DailyListDayDateViewData, {}) => item.formatted}
