@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = ({ ui: { dailyHabitsList } }: ApplicationState) => ({})
+const mapStateToProps = ({}: ApplicationState) => ({})
 const mapPropsToDispatch = (dispatch: DailyHabitsListThunkDispatch) => ({
   setSelectDateModalOpen: (open: boolean) => dispatch(setSelectDateModalOpenAction(open)),
   selectDate: (dayDate: DayDate) => dispatch(selectDateAction(dayDate))
