@@ -17,7 +17,7 @@ import {
   EditHabitTemporaryInputs,
   setTimeRuleModalOpenAction,
   setNameInputAction,
-  setStartDateInputAction
+  setStartDateInputAction,
 } from "../redux/reducers/ui/EditHabitReducer"
 import Modal from "react-native-modal"
 import EditTimeRuleView from "./EditTimeRuleView"
@@ -25,8 +25,8 @@ import * as FullWeekdayHelpers from "../models/helpers/FullWeekday"
 import * as FullTimeRuleUnitHelpers from "../models/helpers/FullTimeUnit"
 import { FullTimeUnit } from "../models/helpers/FullTimeUnit"
 import { associateBy } from "../utils/ArrayUtils"
-import { TimeUnit } from "../models/TimeUnit";
-var deepEqual = require('fast-deep-equal');
+import { TimeUnit } from "../models/TimeUnit"
+var deepEqual = require("fast-deep-equal")
 
 interface PropsFromState {
   editingHabit?: Habit
@@ -37,7 +37,7 @@ interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
   trySubmitInputs: typeof trySubmitHabitInputsAction
   setTimeRuleModalOpen: typeof setTimeRuleModalOpenAction
-  setNameInput: typeof setNameInputAction,
+  setNameInput: typeof setNameInputAction
   setStartDateInput: typeof setStartDateInputAction
 }
 
@@ -58,7 +58,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
     this.state = {
       name: props.editingHabit ? props.editingHabit.name : undefined,
       timeRuleValue: props.editingHabit ? props.editingHabit.time.value : undefined,
-      startDate: props.editingHabit ? props.editingHabit.time.start : undefined
+      startDate: props.editingHabit ? props.editingHabit.time.start : undefined,
     }
 
     this.textInput = React.createRef()
@@ -78,9 +78,9 @@ class EditHabitView extends Component<AllProps, OwnState> {
   }
 
   private toEachTimeRuleText(timeRuleValue: EachTimeRuleValue) {
-        const fullTimeUnit = this.toFullTimeUnit(timeRuleValue.unit)
-        const timeUnitName = timeRuleValue.value == 1 ? fullTimeUnit.nameSingular: fullTimeUnit.namePlural
-        return "Each " + timeRuleValue.value + " " + timeUnitName
+    const fullTimeUnit = this.toFullTimeUnit(timeRuleValue.unit)
+    const timeUnitName = timeRuleValue.value == 1 ? fullTimeUnit.nameSingular : fullTimeUnit.namePlural
+    return "Each " + timeRuleValue.value + " " + timeUnitName
   }
 
   private toWeekdaysTimeRuleText(weekdays: Weekday[]) {
@@ -93,9 +93,9 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
 
     // Every day
-    if (deepEqual(weekdays, allFullWeekdays.map((fullWeekday) => fullWeekday.weekday))) {
+    if (deepEqual(weekdays, allFullWeekdays.map(fullWeekday => fullWeekday.weekday))) {
       return "Every day"
-    } 
+    }
 
     const fullWeekdays = weekdays.map(weekday => {
       const fullWeekdayMaybe = fullWeekdaysMap.get(weekday)
@@ -136,11 +136,11 @@ class EditHabitView extends Component<AllProps, OwnState> {
   render() {
     const closeButtonConfig = {
       title: "x",
-      handler: () => this.props.exitEditingHabit()
+      handler: () => this.props.exitEditingHabit(),
     }
 
     const titleConfig = {
-      title: "Add habit"
+      title: "Add habit",
     }
     return (
       <View>
@@ -156,12 +156,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
             }}
           />
           <Text onPress={() => this.onPressTimeRule()}>{this.timeText()}</Text>
-          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => 
-            
-            
-            this.props.setStartDateInput(date)
-            
-            } />
+          <MyDatePicker date={this.startDate()} onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)} />
           <Button
             title="Submit"
             onPress={() => {
@@ -179,17 +174,17 @@ class EditHabitView extends Component<AllProps, OwnState> {
 
 const styles = StyleSheet.create({
   nameInput: {
-    height: 40
+    height: 40,
   },
   weekdayPicker: {
-    height: 50
-  }
+    height: 50,
+  },
 })
 
 const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
   inputs: editHabit.inputs,
   editingHabit: editHabit.editingHabit,
-  editTimeRuleModalOpen: editHabit.editTimeRuleModalOpen
+  editTimeRuleModalOpen: editHabit.editTimeRuleModalOpen,
 })
 const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
