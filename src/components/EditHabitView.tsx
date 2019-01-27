@@ -193,7 +193,7 @@ const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
 })
 const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
-  trySubmitInputs: (inputs: EditHabitInputs) => dispatch(trySubmitHabitInputsAction()),
+  trySubmitInputs: () => dispatch(trySubmitHabitInputsAction()),
   setTimeRuleModalOpen: (open: boolean) => dispatch(setTimeRuleModalOpenAction(open)),
   setNameInput: (name: string) => dispatch(setNameInputAction(name)),
   setStartDateInput: (date: DayDate) => dispatch(setStartDateInputAction(date)),
