@@ -7,6 +7,7 @@ import { connect } from "react-redux"
 import { StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
 import { SettingsScreenEntry, setModalOpenAction } from "../redux/reducers/ui/SettingsReducer"
 import * as EmailUtils from "../utils/EmailUtils"
+import ManageHabitsView from "./ManageHabitsView";
 
 interface PropsFromState {
   modalOpen?: SettingsScreenEntry
@@ -97,7 +98,7 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   private createSettingsView(entryData: SettingEntryData): ReactNode | undefined {
     switch (entryData.entry) {
       case SettingsScreenEntry.MANAGE_HABITS:
-        return <Text>{"TODO MANAGE HABITS"}</Text>
+        return <ManageHabitsView />
       case SettingsScreenEntry.ABOUT:
         return <Text>{"TODO ABOUT"}</Text>
       case SettingsScreenEntry.FEEDBACK:
