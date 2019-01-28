@@ -7,7 +7,7 @@ import { connect } from "react-redux"
 import { StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
 import { SettingsScreenEntry, setModalOpenAction } from "../redux/reducers/ui/SettingsReducer"
 import * as EmailUtils from "../utils/EmailUtils"
-import ManageHabitsView from "./ManageHabitsView";
+import ManageHabitsView from "./ManageHabitsView"
 
 interface PropsFromState {
   modalOpen?: SettingsScreenEntry
@@ -32,14 +32,14 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   private settings: SettingEntryData[] = [
     { entry: SettingsScreenEntry.MANAGE_HABITS, name: "Manage habits" },
     { entry: SettingsScreenEntry.FEEDBACK, name: "Feedback" },
-    { entry: SettingsScreenEntry.ABOUT, name: "About" }
+    { entry: SettingsScreenEntry.ABOUT, name: "About" },
   ]
 
   /**
    * This function should never return undefined. Unless we forget to add a setting entry data for a setting entry.
    */
   private getSettingsData(entry: SettingsScreenEntry): SettingEntryData | undefined {
-    return this.settings.find((setting) => setting.entry == entry)
+    return this.settings.find(setting => setting.entry == entry)
   }
 
   private onPressSetting(setting: SettingsScreenEntry) {
@@ -47,7 +47,7 @@ class SettingsView extends Component<AllProps, StatsViewState> {
       case SettingsScreenEntry.FEEDBACK:
         EmailUtils.openFeedbackEmail() // open directly, without redux
         break
-      default:     
+      default:
         this.props.setModalOpen(setting, true)
     }
   }
@@ -56,12 +56,12 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   // when the redux state sets modal to undefined (i.e. modal should be closed), 2 things are happening at the same time:
   // 1. visible prop of existing modal is set to false - this triggers the animation to hide it
   // 2. render runs, where maybeModal() is called, which returns undefined - this essentially is removing the modal (?)
-  // so is it possible that 1. and 2. conflict with each other? 
+  // so is it possible that 1. and 2. conflict with each other?
   // at the moment appears to work, on the iOS simlator at least.
   private wrapInModal(entryData: SettingEntryData, content: ReactNode) {
     const leftButtonConfig = {
       title: "x",
-      handler: () => this.props.setModalOpen(entryData.entry, false)
+      handler: () => this.props.setModalOpen(entryData.entry, false),
     }
 
     return (
@@ -100,7 +100,15 @@ class SettingsView extends Component<AllProps, StatsViewState> {
       case SettingsScreenEntry.MANAGE_HABITS:
         return <ManageHabitsView />
       case SettingsScreenEntry.ABOUT:
-        return <Text>{"TODO ABOUT"}</Text>
+        return (
+          <View>
+            <Text>{"Ivan Schuetz"}</Text>
+            <Text>{"Birkenstraße 15"}</Text>
+            <Text>{"10559 Berlin"}</Text>
+            <Text>{"Germany"}</Text>
+            <Text>{"VATIN: DE289356506"}</Text>
+          </View>
+        )
       case SettingsScreenEntry.FEEDBACK:
         return undefined
     }
@@ -129,16 +137,16 @@ class SettingsView extends Component<AllProps, StatsViewState> {
 }
 
 const mapStateToProps = ({ ui: { settings } }: ApplicationState) => ({
-  modalOpen: settings.modalOpen
+  modalOpen: settings.modalOpen,
 })
 const mapDispatchToProps = (dispatch: StatsThunkDispatch) => ({
-  setModalOpen: (entry: SettingsScreenEntry, open: boolean) => dispatch(setModalOpenAction(entry, open))
+  setModalOpen: (entry: SettingsScreenEntry, open: boolean) => dispatch(setModalOpenAction(entry, open)),
 })
 
 const styles = StyleSheet.create({
   list: {},
   row: {},
-  settingName: {}
+  settingName: {},
 })
 
 export default connect(
