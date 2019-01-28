@@ -107,7 +107,7 @@ export default class Repo {
                 const dateString: string = map["date"]
                 return {
                   habitId: habitId,
-                  date: DayDateHelpers.parse(dateString)
+                  date: DayDateHelpers.parse(dateString),
                 }
               })
             )
@@ -206,7 +206,7 @@ export default class Repo {
       case "between":
         return [
           ` where date>=? and date<=?`,
-          [DayDateHelpers.toJSON(dateFilter.startDate), DayDateHelpers.toJSON(dateFilter.endDate)]
+          [DayDateHelpers.toJSON(dateFilter.startDate), DayDateHelpers.toJSON(dateFilter.endDate)],
         ]
       case "none":
         return [``, []]
@@ -299,13 +299,13 @@ export default class Repo {
                   id: taskId,
                   habitId: habitId,
                   done: doneNumber == 1 ? true : false,
-                  date: DayDateHelpers.parse(dateString)
+                  date: DayDateHelpers.parse(dateString),
                 },
                 habit: {
                   id: habitId,
                   name: habitName,
-                  time: TimeRuleHelpers.parse(JSON.parse(timeString))
-                }
+                  time: TimeRuleHelpers.parse(JSON.parse(timeString)),
+                },
               }
             })
             resolve(tasks)
@@ -319,20 +319,32 @@ export default class Repo {
     )
   }
 
-  static addHabit = async (inputs: EditHabitInputs) => {
+  static upsertHabit = async (inputs: EditHabitInputs) => {
+    const pars = [
+      inputs.name,
+      JSON.stringify(
+        TimeRuleHelpers.toJSON({
+          value: inputs.timeRuleValue,
+          start: inputs.startDate,
+        })
+      ),
+    ]
+
+    const generateQuery = (): [string, string[]] => {
+      if (inputs.id === undefined) {
+        return [`insert or replace into habits (name, time) values (?, ?)`, pars]
+      } else {
+        return [`insert or replace into habits (id, name, time) values (?, ?, ?)`, [inputs.id.toString()].concat(pars)]
+      }
+    }
+
+    const [query, parameters] = generateQuery()
+
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
-          `insert or replace into habits (name, time) values (?, ?)`,
-          [
-            inputs.name,
-            JSON.stringify(
-              TimeRuleHelpers.toJSON({
-                value: inputs.timeRuleValue,
-                start: inputs.startDate
-              })
-            )
-          ],
+          query,
+          parameters,
           () => {
             resolve()
           },
@@ -355,7 +367,7 @@ export default class Repo {
       id: id,
       habitId: habitId,
       done: doneNumber == 1 ? true : false,
-      date: DayDateHelpers.parse(dateString)
+      date: DayDateHelpers.parse(dateString),
     }
   }
 
@@ -366,7 +378,7 @@ export default class Repo {
     return {
       id: id,
       name: nameString,
-      time: TimeRuleHelpers.parse(JSON.parse(timeString))
+      time: TimeRuleHelpers.parse(JSON.parse(timeString)),
     }
   }
 }

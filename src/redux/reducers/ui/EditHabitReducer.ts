@@ -11,12 +11,12 @@ import { TimeRuleValue, EachTimeRuleValue, WeekdayTimeRuleValue } from "../../..
 
 export enum EditTimeRuleModalStep {
   STEP1,
-  STEP2
+  STEP2,
 }
 
 export enum TimeRuleOptionType {
   WEEKDAY,
-  EACH
+  EACH,
 }
 
 export interface EditHabitState {
@@ -48,7 +48,7 @@ export enum EditHabitActionTypes {
   SET_TIME_RULE_OPTION_TYPE = "@@EditHabitActionTypes/SET_TIME_RULE_OPTION_TYPE",
   SET_WEEKDAYS_TIME_RULE = "@@EditHabitActionTypes/SET_WEEKDAYS_TIME_RULE",
   SET_EACH_TIME_RULE = "@@EditHabitActionTypes/SET_EACH_TIME_RULE",
-  SUBMIT_TIME_RULE = "@@EditHabitActionTypes/SUBMIT_TIME_RULE"
+  SUBMIT_TIME_RULE = "@@EditHabitActionTypes/SUBMIT_TIME_RULE",
 }
 
 const initialState: EditHabitState = {
@@ -58,7 +58,7 @@ const initialState: EditHabitState = {
   inputs: { name: "", timeRuleValue: undefined, startDate: undefined },
   editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
   timeRuleOptionType: undefined,
-  editTimeRuleModalBackButtonVisible: false
+  editTimeRuleModalBackButtonVisible: false,
 }
 
 // General
@@ -87,23 +87,26 @@ type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
 export type EditHabitThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
 
 export const trySubmitHabitInputsAction = (): ThunkResult<{}> => async (dispatch, state) => {
-  const inputs = toInputs(state().ui.editHabit.inputs)
+  const editingState = state().ui.editHabit
+  const habitIdMaybe = editingState.editingHabit === undefined ? undefined : editingState.editingHabit.id
+  const inputs = toInputs(editingState.inputs, habitIdMaybe)
   if (inputs !== null) {
-    await Repo.addHabit(inputs)
+    await Repo.upsertHabit(inputs)
     dispatch(onSubmitHabitSuccessAction())
     dispatch(updateTasksForCurrentDate())
   }
 }
 
-const toInputs = (tmpInputs: EditHabitTemporaryInputs): EditHabitInputs | null => {
+const toInputs = (tmpInputs: EditHabitTemporaryInputs, habitId: number | undefined): EditHabitInputs | null => {
   if (!tmpInputs.name || !tmpInputs.timeRuleValue || !tmpInputs.startDate) {
     console.log("Input validation failed: " + JSON.stringify(tmpInputs))
     return null
   }
   return {
+    id: habitId,
     name: tmpInputs.name,
     timeRuleValue: tmpInputs.timeRuleValue,
-    startDate: tmpInputs.startDate
+    startDate: tmpInputs.startDate,
   }
 }
 
@@ -111,7 +114,7 @@ const emptyTemporaryInputs = (): EditHabitTemporaryInputs => {
   return {
     name: "",
     timeRuleValue: undefined,
-    startDate: undefined
+    startDate: undefined,
   }
 }
 
@@ -119,7 +122,7 @@ const toTemporaryInputs = (habit: Habit): EditHabitTemporaryInputs => {
   return {
     name: habit.name,
     timeRuleValue: habit.time.value,
-    startDate: habit.time.start
+    startDate: habit.time.start,
   }
 }
 
@@ -130,7 +133,7 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         ...state,
         editingHabit: undefined,
         editHabitModalOpen: true,
-        inputs: emptyTemporaryInputs()
+        inputs: emptyTemporaryInputs(),
       }
 
     case EditHabitActionTypes.SET_EDITING_HABIT_EXISTING: {
@@ -139,7 +142,7 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         ...state,
         editingHabit: habit,
         editHabitModalOpen: true,
-        inputs: toTemporaryInputs(habit)
+        inputs: toTemporaryInputs(habit),
       }
     }
     case EditHabitActionTypes.EXIT_EDITING_HABIT:
@@ -149,7 +152,7 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         editingHabit: undefined,
         editHabitModalOpen: false,
         inputs: emptyTemporaryInputs(),
-        editTimeRuleModalStep: EditTimeRuleModalStep.STEP1
+        editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
       }
     case EditHabitActionTypes.SET_NAME_INPUT:
       return { ...state, inputs: { ...state.inputs, name: action.payload } }
@@ -165,7 +168,7 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
           ...state,
           editTimeRuleModalOpen: open,
           editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
-          inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: undefined } // Clear time rule inputs
+          inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: undefined }, // Clear time rule inputs
         }
       }
     case EditHabitActionTypes.SET_TIME_RULE_MODAL_STEP:
@@ -173,19 +176,19 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
       return {
         ...state,
         editTimeRuleModalStep: step,
-        editTimeRuleModalBackButtonVisible: step != EditTimeRuleModalStep.STEP1
+        editTimeRuleModalBackButtonVisible: step != EditTimeRuleModalStep.STEP1,
       }
     case EditHabitActionTypes.SET_TIME_RULE_OPTION_TYPE:
       return { ...state, timeRuleOptionType: action.payload }
     case EditHabitActionTypes.SET_WEEKDAYS_TIME_RULE:
       return {
         ...state,
-        inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: action.payload }
+        inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: action.payload },
       }
     case EditHabitActionTypes.SET_EACH_TIME_RULE:
       return {
         ...state,
-        inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: action.payload }
+        inputs: { ...state.inputs, timeRuleValueInTimeRulePopup: action.payload },
       }
     case EditHabitActionTypes.SUBMIT_TIME_RULE:
       return {
@@ -195,8 +198,8 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         inputs: {
           ...state.inputs,
           timeRuleValue: state.inputs.timeRuleValueInTimeRulePopup,
-          timeRuleValueInTimeRulePopup: undefined
-        }
+          timeRuleValueInTimeRulePopup: undefined,
+        },
       }
     default:
       return state
