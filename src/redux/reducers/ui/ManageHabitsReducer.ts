@@ -6,6 +6,7 @@ import { ApplicationState } from "../RootReducer"
 import { Habit } from "../../../models/Habit"
 import { setModalOpenAction, SettingsScreenEntry } from "./SettingsReducer";
 import { updateTasksForCurrentDate } from "./DailyHabitsListReducer";
+import { fetchAllStatsAction } from './StatsReducer';
 
 export interface ManageHabitsState {
   readonly habits: Habit[]
@@ -41,10 +42,10 @@ export const deleteHabitAction = (habit: Habit): ThunkResult<{}> => async dispat
   dispatch(action(ManageHabitsActionTypes.DELETE_HABIT_SUCCESS))
   dispatch(getHabitsAction())
 
-  // Make the daily task list refresh
+  // Make dependencies refresh
   // TODO (low prio) it doesn't seem right to trigger this from here, there could be a middleware instead 
-  // (ideally in the DailyhabitsListReducer file) that
-  // observes DELETE_HABIT_SUCCESS and dispatches it
+  // (ideally in DailyhabitsListReducer and StatsReducer files?) that observes DELETE_HABIT_SUCCESS
+  dispatch(fetchAllStatsAction())
   dispatch(updateTasksForCurrentDate())
 }
 

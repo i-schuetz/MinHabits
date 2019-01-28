@@ -51,7 +51,7 @@ export function groupHabitsByDonePercentageRange(
     const habit: Habit | undefined = habitsMap.get(habitId)
     if (habit === undefined) {
       // The habits array are assumed to be all existent habits, and tasks has a foreign key to habits so this is invalid state.
-      throw Error("Task habit id was not found in habits map")
+      throw Error("Task habit id was not found in habits map: " + habitId)
     }
 
     // Calculate done percentage

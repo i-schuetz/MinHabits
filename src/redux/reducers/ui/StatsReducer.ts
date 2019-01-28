@@ -7,6 +7,7 @@ import { MonthPercentage } from "../../../models/helpers/MonthPercentage"
 import { Habit } from "../../../models/Habit"
 import * as DateUtils from "../../../utils/DateUtils"
 import { action } from "typesafe-actions"
+import { ApplicationState } from '../RootReducer';
 
 export interface StatsState {
   readonly totalDonePercentage?: WholePercentage
@@ -26,8 +27,8 @@ const initialState: StatsState = {
   needAttentionHabits: []
 }
 
-type ThunkResult<R> = ThunkAction<R, StatsState, undefined, Action>
-export type StatsThunkDispatch = ThunkDispatch<StatsState, undefined, Action>
+type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
+export type StatsThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
 
 export const setTotalPercentageAction = (percentage: WholePercentage) =>
   action(StatsActionTypes.SET_TOTAL_DONE_PERCENTAGE, percentage)
