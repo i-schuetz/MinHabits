@@ -8,6 +8,7 @@ import { updateTasksForCurrentDate } from "./DailyHabitsListReducer"
 import { ApplicationState } from "../RootReducer"
 import { DayDate } from "../../../models/DayDate"
 import { TimeRuleValue, EachTimeRuleValue, WeekdayTimeRuleValue } from "../../../models/TimeRuleValue"
+import * as DateUtils from "../../../utils/DateUtils"
 
 export enum EditTimeRuleModalStep {
   STEP1,
@@ -33,7 +34,7 @@ export type EditHabitTemporaryInputs = {
   name?: string
   timeRuleValue?: TimeRuleValue
   timeRuleValueInTimeRulePopup?: TimeRuleValue // this is alive only while time rule popup is open
-  startDate?: DayDate
+  startDate: DayDate
 }
 
 export enum EditHabitActionTypes {
@@ -55,7 +56,7 @@ const initialState: EditHabitState = {
   editHabitModalOpen: false,
   editingHabit: undefined,
   editTimeRuleModalOpen: false,
-  inputs: { name: "", timeRuleValue: undefined, startDate: undefined },
+  inputs: { name: "", timeRuleValue: undefined, startDate: DateUtils.today() },
   editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
   timeRuleOptionType: undefined,
   editTimeRuleModalBackButtonVisible: false,
@@ -114,7 +115,7 @@ const emptyTemporaryInputs = (): EditHabitTemporaryInputs => {
   return {
     name: "",
     timeRuleValue: undefined,
-    startDate: undefined,
+    startDate: DateUtils.today(),
   }
 }
 
