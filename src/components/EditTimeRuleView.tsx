@@ -1,6 +1,17 @@
 import React, { Component } from "react"
 
-import { FlatList, StyleSheet, Text, View, TextInput, Picker, Button } from "react-native"
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Picker,
+  Button,
+  TouchableWithoutFeedback,
+  Image,
+  TouchableHighlight,
+} from "react-native"
 import NavigationBar from "react-native-navbar"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
@@ -13,13 +24,14 @@ import {
   setTimeRuleOptionTypeAction,
   setWeekdaysTimeRuleAction,
   setEachTimeRuleAction,
-  submitTimeRuleAction
+  submitTimeRuleAction,
 } from "../redux/reducers/ui/EditHabitReducer"
 import * as FullWeekdayHelpers from "../models/helpers/FullWeekday"
 import { TimeRuleValue, WeekdayTimeRuleValue, EachTimeRuleValue } from "../models/TimeRuleValue"
 import { Weekday } from "../models/Weekday"
 import { TimeUnit } from "../models/TimeUnit"
 import * as FullTimeUnitHelpers from "../models/helpers/FullTimeUnit"
+import { globalStyles, closeModalImage } from "../SharedStyles"
 
 export type TimeRuleOption = {
   name: string
@@ -51,7 +63,7 @@ export interface OwnState {}
 class TimeRuleView extends Component<AllProps, OwnState> {
   firstlevelOptions: TimeRuleOption[] = [
     { name: "Weekly", type: TimeRuleOptionType.WEEKDAY },
-    { name: "On each...", type: TimeRuleOptionType.EACH }
+    { name: "On each...", type: TimeRuleOptionType.EACH },
   ]
 
   private onFirstLevelSelection(selection: TimeRuleOption) {
@@ -159,7 +171,6 @@ class TimeRuleView extends Component<AllProps, OwnState> {
   private step1View(): JSX.Element {
     return (
       <View>
-        <Text>{"Select time interval"}</Text>
         <FlatList
           style={styles.popupList}
           data={this.firstlevelOptions}
@@ -179,7 +190,6 @@ class TimeRuleView extends Component<AllProps, OwnState> {
   private weekdaysSelectionView(): JSX.Element {
     return (
       <View>
-        <Text>{"Select weekday"}</Text>
         <FlatList
           style={styles.popupList}
           data={FullWeekdayHelpers.array()}
@@ -199,7 +209,14 @@ class TimeRuleView extends Component<AllProps, OwnState> {
             </View>
           )}
         />
-        <Button title={"Submit"} onPress={() => this.onSubmitTimeRule()} />
+
+        <TouchableHighlight
+          style={globalStyles.submitButton}
+          onPress={() => this.onSubmitTimeRule()}
+          underlayColor="#fff"
+        >
+          <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
+        </TouchableHighlight>
       </View>
     )
   }
@@ -207,7 +224,6 @@ class TimeRuleView extends Component<AllProps, OwnState> {
   private eachTimeRuleSelectionView(): JSX.Element {
     return (
       <View style={{ display: "flex" }}>
-        <Text>{"Select interval"}</Text>
         <Text>{"Each"}</Text>
         <TextInput
           placeholder="1"
@@ -220,7 +236,13 @@ class TimeRuleView extends Component<AllProps, OwnState> {
         >
           {this.generateTimeUnitPickerValues()}
         </Picker>
-        <Button title={"Submit"} onPress={() => this.onSubmitTimeRule()} />
+        <TouchableHighlight
+          style={globalStyles.submitButton}
+          onPress={() => this.onSubmitTimeRule()}
+          underlayColor="#fff"
+        >
+          <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
+        </TouchableHighlight>
       </View>
     )
   }
@@ -258,21 +280,40 @@ class TimeRuleView extends Component<AllProps, OwnState> {
   }
 
   render() {
-    const closeButtonConfig = {
-      title: "x",
-      handler: () => this.props.setTimeRuleModalOpen(false)
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.setTimeRuleModalOpen(false)
+          }}
+        >
+          {closeModalImage()}
+        </TouchableWithoutFeedback>
+      )
     }
-    const backButtonConfig = {
-      title: "<",
-      handler: () => this.props.setTimeRuleModalStep(EditTimeRuleModalStep.STEP1)
+
+    const backButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.setTimeRuleModalStep(EditTimeRuleModalStep.STEP1)
+          }}
+        >
+          <Image
+            style={{ width: 30, height: 30, marginTop: 10, marginRight: 15 }}
+            source={require("../../assets/back.png")}
+          />
+        </TouchableWithoutFeedback>
+      )
     }
 
     return (
       <View style={styles.container}>
         <NavigationBar
           title={{ title: "Scheduling" }}
-          leftButton={this.props.editTimeRuleModalStep == EditTimeRuleModalStep.STEP1 ? undefined : backButtonConfig}
-          rightButton={closeButtonConfig}
+          leftButton={this.props.editTimeRuleModalStep == EditTimeRuleModalStep.STEP1 ? undefined : backButtonConfig()}
+          rightButton={closeButtonConfig()}
+          style={globalStyles.navigationBar}
         />
         {this.step1ViewMaybe()}
         {this.weekdaysSelectionViewMaybe()}
@@ -286,35 +327,35 @@ const sharedStyles = StyleSheet.create({
   popupRowContent: {
     padding: 10,
     fontSize: 18,
-    height: 44
-  }
+    height: 44,
+  },
 })
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   popupList: {
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   popupRow: {
     flex: 1,
-    flexDirection: "row"
+    flexDirection: "row",
   },
   unSelectedPopupRowContent: {
     ...sharedStyles.popupRowContent,
-    color: "black"
+    color: "black",
   },
   selectedPopupRowContent: {
     ...sharedStyles.popupRowContent,
-    color: "blue"
-  }
+    color: "blue",
+  },
 })
 
 const mapStateToProps = ({ ui }: ApplicationState) => ({
   editTimeRuleModalStep: ui.editHabit.editTimeRuleModalStep,
   timeRuleValue: ui.editHabit.inputs.timeRuleValueInTimeRulePopup,
-  timeRuleOptionType: ui.editHabit.timeRuleOptionType
+  timeRuleOptionType: ui.editHabit.timeRuleOptionType,
 })
 
 const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
@@ -324,7 +365,7 @@ const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   setWeekdaysTimeRule: (value: WeekdayTimeRuleValue) => dispatch(setWeekdaysTimeRuleAction(value)),
   setEachTimeRule: (value: EachTimeRuleValue) => dispatch(setEachTimeRuleAction(value)),
   submitTimeRule: () => dispatch(submitTimeRuleAction()),
-  goBack: () => dispatch(setTimeRuleModalStepAction(EditTimeRuleModalStep.STEP1)) // There's only step 1 and 2
+  goBack: () => dispatch(setTimeRuleModalStepAction(EditTimeRuleModalStep.STEP1)), // There's only step 1 and 2
 })
 
 export default connect(

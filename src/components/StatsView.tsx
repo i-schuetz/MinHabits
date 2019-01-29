@@ -1,6 +1,5 @@
 import React, { Component } from "react"
-
-import { Text, View, ScrollView } from "react-native"
+import { Text, View, ScrollView, StyleSheet } from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
 import { ApplicationState } from "../redux/reducers/RootReducer"
@@ -9,9 +8,11 @@ import { WholePercentage } from "../models/helpers/WholePercentage"
 import * as WholePercentageHelpers from "../models/helpers/WholePercentage"
 import { MonthPercentage } from "../models/helpers/MonthPercentage"
 import { fetchAllStatsAction, StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
-import { VictoryBar, VictoryChart } from "victory-native"
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis } from "victory-native"
 import * as MonthHelpers from "../models/Month"
 import * as DateUtils from "../utils/DateUtils"
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles } from "../SharedStyles"
 
 interface PropsFromState {
   totalDonePercentage?: WholePercentage
@@ -48,29 +49,62 @@ class StatsView extends Component<AllProps, StatsViewState> {
   render() {
     return (
       <View>
-        <NavigationBar title={<Text>{"Stats"}</Text>} />
+        <NavigationBar
+          title={<Text style={globalStyles.navBarTitleText}>{"Stats"}</Text>}
+          style={globalStyles.navigationBar}
+        />
         <ScrollView>
-          <View>
-            <Text>{this.formatTotalDonePercentage(this.props.totalDonePercentage)}</Text>
+          <View style={styles.globalPercentageRow}>
+            <Text style={styles.globalPercentage}>
+              {this.formatTotalDonePercentage(this.props.totalDonePercentage)}
+            </Text>
           </View>
-          <View>
-            <VictoryChart domainPadding={25}>
+          <View style={styles.chartRow}>
+            <VictoryChart domainPadding={8}>
               <VictoryBar
                 categories={{
                   x: MonthHelpers.array().map(month => DateUtils.monthShortName(month)),
-                  y: []
+                  y: [],
                 }}
                 data={this.props.monthDonePercentages.map(monthPercentage => {
                   return {
                     x: DateUtils.monthShortName(monthPercentage.month),
-                    y: WholePercentageHelpers.toNumber(monthPercentage.percentage)
+                    y: WholePercentageHelpers.toNumber(monthPercentage.percentage),
                   }
                 })}
               />
+
+              <VictoryAxis
+                label=""
+                style={{
+                  axisLabel: { fontSize: 0, padding: 0, angle: 0 },
+                  tickLabels: { fontSize: 14, marginTop: 10, angle: 45 },
+                }}
+              />
+
+              <VictoryAxis
+                dependentAxis
+                tickValues={[50, 100]}
+                // domain={[0, 100]}
+                tickFormat={tick => `${tick}%`}
+                offsetX={50}
+                orientation="left"
+                standalone={false}
+                style={{
+                  grid: {
+                    stroke: "#000",
+                    strokeWidth: 0.5,
+                  },
+                  axisLabel: { fontSize: 0, padding: 0, angle: 0 },
+                  tickLabels: { fontSize: 14, marginTop: 0, angle: 0 },
+                  // ticks: { strokeWidth: 1 },
+                  axis: { stroke: "#00000000", strokeWidth: 0 },
+                }}
+              />
             </VictoryChart>
           </View>
-          <View>
-            <Text>{"Need attention: " + this.needAttentionHabitsString(this.props.needAttentionHabits)}</Text>
+          <View style={styles.needsAttentionRow}>
+            <Text style={{}}>{"🆘 " + this.needAttentionHabitsString(this.props.needAttentionHabits)}</Text>
           </View>
         </ScrollView>
       </View>
@@ -78,13 +112,48 @@ class StatsView extends Component<AllProps, StatsViewState> {
   }
 }
 
+const sharedStyles = StyleSheet.create({
+  withBottomBorder: {
+    borderBottomColor: SharedStyles.dividersGrey,
+    borderBottomWidth: SharedStyles.dividersHeight,
+  },
+})
+
+const styles = StyleSheet.create({
+  globalPercentageRow: {
+    ...sharedStyles.withBottomBorder,
+  },
+  globalPercentage: {
+    marginTop: 40,
+    marginBottom: 40,
+    fontSize: 40,
+    textAlign: "center",
+    alignSelf: "center",
+    paddingLeft: SharedStyles.defaultSideMargins,
+    paddingRight: SharedStyles.defaultSideMargins,
+    fontWeight: "bold",
+  },
+  chartRow: {
+    marginLeft: -20,
+    ...sharedStyles.withBottomBorder,
+    paddingLeft: SharedStyles.defaultSideMargins,
+    paddingRight: SharedStyles.defaultSideMargins,
+  },
+  needsAttentionRow: {
+    marginTop: 40,
+    marginBottom: 40,
+    paddingLeft: SharedStyles.defaultSideMargins,
+    paddingRight: SharedStyles.defaultSideMargins,
+  },
+})
+
 const mapStateToProps = ({ ui: { stats } }: ApplicationState) => ({
   totalDonePercentage: stats.totalDonePercentage,
   monthDonePercentages: stats.monthDonePercentages,
-  needAttentionHabits: stats.needAttentionHabits
+  needAttentionHabits: stats.needAttentionHabits,
 })
 const mapDispatchToProps = (dispatch: StatsThunkDispatch) => ({
-  fetchAllStats: () => dispatch(fetchAllStatsAction())
+  fetchAllStats: () => dispatch(fetchAllStatsAction()),
 })
 
 export default connect(

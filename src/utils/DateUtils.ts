@@ -9,6 +9,7 @@ import * as DayDateHelpers from "../models/DayDate"
 import { Order } from "../models/helpers/Order"
 
 const dayDateFormat = "YYYY-MM-DD" // Internal
+const dayDateUIFormat = "DD.MM.YYYY" // Internal
 const dayDateDailyHabitListDateSelectorFormat = "dddd Do MMM"
 const weekdayDateFormat = "dddd"
 const monthNameFormat = "MMMM"
@@ -118,6 +119,10 @@ export function formatDayDateWeekdayDayTextualMonth(dayDate: DayDate): string {
 
 export function formatWeekday(dayDate: DayDate): string {
   return toMomentFromDayDate(dayDate).format(weekdayDateFormat)
+}
+
+export function formatDayDateForUI(dayDate: DayDate): string {
+  return toMomentFromDayDate(dayDate).format(dayDateUIFormat)
 }
 
 /**

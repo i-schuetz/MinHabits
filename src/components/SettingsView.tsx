@@ -1,6 +1,15 @@
 import React, { Component, ReactNode } from "react"
 
-import { FlatList, StyleSheet, Text, View, Modal } from "react-native"
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  Image,
+} from "react-native"
 import NavigationBar from "react-native-navbar"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
@@ -8,6 +17,8 @@ import { StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
 import { SettingsScreenEntry, setModalOpenAction } from "../redux/reducers/ui/SettingsReducer"
 import * as EmailUtils from "../utils/EmailUtils"
 import ManageHabitsView from "./ManageHabitsView"
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles, listSeparator, closeModalImage } from "../SharedStyles"
 
 interface PropsFromState {
   modalOpen?: SettingsScreenEntry
@@ -59,9 +70,16 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   // so is it possible that 1. and 2. conflict with each other?
   // at the moment appears to work, on the iOS simlator at least.
   private wrapInModal(entryData: SettingEntryData, content: ReactNode) {
-    const leftButtonConfig = {
-      title: "x",
-      handler: () => this.props.setModalOpen(entryData.entry, false),
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.setModalOpen(entryData.entry, false)
+          }}
+        >
+          {closeModalImage()}
+        </TouchableWithoutFeedback>
+      )
     }
 
     return (
@@ -73,8 +91,12 @@ class SettingsView extends Component<AllProps, StatsViewState> {
           this.props.setModalOpen(entryData.entry, false)
         }}
       >
-        <View>
-          <NavigationBar title={<Text>{entryData.name}</Text>} leftButton={leftButtonConfig} />
+        <View style={{ display: "flex", flex: 1 }}>
+          <NavigationBar
+            title={<Text style={globalStyles.navBarTitleText}>{entryData.name}</Text>}
+            rightButton={closeButtonConfig()}
+            style={globalStyles.navigationBar}
+          />
           {content}
         </View>
       </Modal>
@@ -101,7 +123,7 @@ class SettingsView extends Component<AllProps, StatsViewState> {
         return <ManageHabitsView />
       case SettingsScreenEntry.ABOUT:
         return (
-          <View>
+          <View style={styles.aboutContainer}>
             <Text>{"Ivan Schuetz"}</Text>
             <Text>{"Birkenstraße 15"}</Text>
             <Text>{"10559 Berlin"}</Text>
@@ -117,17 +139,21 @@ class SettingsView extends Component<AllProps, StatsViewState> {
   render() {
     return (
       <View>
-        <NavigationBar title={<Text>{"Settings"}</Text>} />
+        <NavigationBar
+          title={<Text style={globalStyles.navBarTitleText}>{"Settings"}</Text>}
+          style={globalStyles.navigationBar}
+        />
         <FlatList
+          ItemSeparatorComponent={listSeparator}
           data={this.settings}
           keyExtractor={(item, {}) => item.name}
           style={styles.list}
           renderItem={({ item }) => (
-            <View style={styles.row}>
-              <Text style={styles.settingName} onPress={({}) => this.onPressSetting(item.entry)}>
-                {item.name}
-              </Text>
-            </View>
+            <TouchableHighlight onPress={({}) => this.onPressSetting(item.entry)} underlayColor="#ddd">
+              <View style={globalStyles.flatRow}>
+                <Text style={styles.settingName}>{item.name}</Text>
+              </View>
+            </TouchableHighlight>
           )}
         />
         {this.maybeModal()}
@@ -145,8 +171,17 @@ const mapDispatchToProps = (dispatch: StatsThunkDispatch) => ({
 
 const styles = StyleSheet.create({
   list: {},
-  row: {},
-  settingName: {},
+  settingName: {
+    fontSize: 18,
+    textAlign: "center",
+    alignSelf: "center",
+  },
+  aboutContainer: {
+    paddingTop: 30,
+    fontSize: 18,
+    paddingLeft: SharedStyles.defaultSideMargins,
+    paddingRight: SharedStyles.defaultSideMargins,
+  },
 })
 
 export default connect(

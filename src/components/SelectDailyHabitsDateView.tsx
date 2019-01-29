@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { StyleSheet, View, FlatList, Text } from "react-native"
+import { StyleSheet, View, FlatList, Text, TouchableWithoutFeedback, Image } from "react-native"
 import NavigationBar from "react-native-navbar"
 import { DayDate } from "../models/DayDate"
 import * as DayDateHelpers from "../models/DayDate"
@@ -16,6 +16,8 @@ import { DailyListDayDateViewData } from "../models/view_data/DailyListFormatted
 import * as DailyListFormattedDayDateHelpers from "../models/view_data/DailyListFormattedDayDate"
 import { Order } from "../models/helpers/Order"
 import MyDatePicker from "./MyDatePicker"
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles } from "../SharedStyles"
 
 interface PropsFromState {
   enterCustomDateModalOpen: boolean
@@ -110,9 +112,19 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
   }
 
   render() {
-    const closeButtonConfig = {
-      title: "x",
-      handler: () => this.props.setSelectDateModalOpen(false),
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.setSelectDateModalOpen(false)
+          }}
+        >
+          <Image
+            style={{ width: 30, height: 30, marginTop: 10, marginRight: 15 }}
+            source={require("../../assets/close.png")}
+          />
+        </TouchableWithoutFeedback>
+      )
     }
 
     const titleConfig = {
@@ -121,7 +133,7 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
 
     return (
       <View>
-        <NavigationBar title={titleConfig} rightButton={closeButtonConfig} />
+        <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
         <FlatList
           data={this.generateListViewData(this.props.referenceDate)}
           keyExtractor={(item: ListEntryViewData, {}) => item.key}
@@ -145,7 +157,9 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
 
 const sharedStyles = StyleSheet.create({
   dateEntry: {
-    height: 40,
+    paddingLeft: SharedStyles.defaultSideMargins,
+    paddingRight: SharedStyles.defaultSideMargins,
+    height: SharedStyles.defaultRowHeight,
   },
 })
 

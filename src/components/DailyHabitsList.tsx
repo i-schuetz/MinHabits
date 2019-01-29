@@ -1,6 +1,14 @@
 import React, { Component } from "react"
 
-import { FlatList, Modal, StyleSheet, Text, View } from "react-native"
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableWithoutFeedback,
+} from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
 import EditHabitView from "./EditHabitView"
@@ -9,13 +17,9 @@ import { connect } from "react-redux"
 import {
   DailyHabitsListThunkDispatch,
   setSelectDateModalOpenAction,
-  setTaskDoneStatusAction
+  setTaskDoneStatusAction,
 } from "../redux/reducers/ui/DailyHabitsListReducer"
-import {
-  addNewHabitAction,
-  setEditingHabitAction,
-  exitEditingHabitAction,
-} from "../redux/reducers/ui/EditHabitReducer"
+import { addNewHabitAction, setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/EditHabitReducer"
 import SelectDailyHabitsDateView from "./SelectDailyHabitsDateView"
 import * as DateUtils from "../utils/DateUtils"
 import { initSelectedDateAction } from "../redux/reducers/ui/DailyHabitsListReducer"
@@ -23,8 +27,8 @@ import { DayDate } from "../models/DayDate"
 import * as DayDateHelpers from "../models/DayDate"
 import { Order } from "../models/helpers/Order"
 import { Task, TaskDoneStatus } from "../models/helpers/Task"
-import { Ionicons } from "@expo/vector-icons"
-import { uiReducer } from "../redux/reducers/ui/UIReducer";
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles } from "../SharedStyles"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -77,13 +81,14 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
           return TaskDoneStatus.OPEN
         }
       case TaskDoneStatus.MISSED:
-        if (isPast) { // If user toggles a missed past task, it means that it was done.
+        if (isPast) {
+          // If user toggles a missed past task, it means that it was done.
           return TaskDoneStatus.DONE
         } else {
           // At the moment only the system marks tasks as missed, at the end of the day
           throw Error("Invalid state: A task in the present or future cannot be missed. Task" + JSON.stringify(task))
         }
-      case TaskDoneStatus.OPEN: 
+      case TaskDoneStatus.OPEN:
         // Toggling an open task always means that it's done (at the moment only the system marks tasks as missed, at the end of the day)
         return TaskDoneStatus.DONE
     }
@@ -100,14 +105,25 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
     return DayDateHelpers.compare(this.props.selectedDate, DateUtils.today()) == Order.EQ
   }
 
+
   render() {
-    const rightButtonConfig = {
-      title: "+",
-      handler: () => this.addNewHabit()
+    const navigationRightButton = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.addNewHabit()
+          }}
+        >
+          <Image
+            style={{ width: 30, height: 30, marginTop: 10, marginRight: 15 }}
+            source={require("../../assets/plus.png")}
+          />
+        </TouchableWithoutFeedback>
+      )
     }
 
     return (
-      <View>
+      <View style={styles.container}>
         <NavigationBar
           title={
             <Text
@@ -117,27 +133,29 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
               {this.props.title}
             </Text>
           }
-          rightButton={rightButtonConfig}
+          rightButton={navigationRightButton()}
+          style={globalStyles.navigationBar}
         />
+
         <FlatList
+          // ItemSeparatorComponent={this.renderSeparator}
           data={this.props.tasks}
           keyExtractor={(item, {}) => item.habit.name}
           style={styles.list}
           renderItem={({ item }) => (
-            <View style={styles.row}>
-              <Ionicons
-                name={item.doneStatus == TaskDoneStatus.DONE ? "md-checkbox" : "md-square-outline"}
-                size={32}
-                color="green"
-              />
-              <Text
-                style={styles.habit}
-                onPress={({}) => this.onPressTask(item)}
-                onLongPress={({}) => this.onLongPressTask(item)}
-              >
-                {item.habit.name}
-              </Text>
-            </View>
+            <TouchableWithoutFeedback
+              onPress={({}) => this.onPressTask(item)}
+              onLongPress={({}) => this.onLongPressTask(item)}
+            >
+              <View style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneRow : globalStyles.habitRow}>
+                <Text
+                  style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneHabit : styles.undoneHabit}
+                  numberOfLines={1}
+                >
+                  {item.habit.name}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           )}
         />
 
@@ -168,21 +186,48 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   }
 }
 
-const styles = StyleSheet.create({
-  list: {},
-  row: {
-    flex: 1,
-    flexDirection: "row"
-  },
+const sharedStyles = StyleSheet.create({
   habit: {
-    padding: 10,
     fontSize: 18,
-    height: 44
+    height: 20,
+    textAlign: "center",
+    alignSelf: "center",
   },
-  titleToday: {},
+})
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: SharedStyles.defaultBackgroundColor,
+    display: "flex",
+    flex: 1,
+  },
+  list: {
+    marginTop: 5,
+  },
+  doneRow: {
+    ...globalStyles.habitRow,
+    backgroundColor: SharedStyles.selectedHabitBackgroundColor,
+  },
+  undoneHabit: {
+    ...sharedStyles.habit,
+  },
+  doneHabit: {
+    ...sharedStyles.habit,
+    textDecorationLine: "line-through",
+    textDecorationStyle: "solid",
+    color: SharedStyles.selectedHabitTextColor,
+  },
+  checkbox: {
+    alignSelf: "center",
+    marginRight: 20,
+  },
+  titleToday: {
+    ...globalStyles.navBarTitleText,
+  },
   titleNotToday: {
-    color: "blue"
-  }
+    ...globalStyles.navBarTitleText,
+    color: "blue",
+  },
 })
 
 const mapStateToProps = ({ ui }: ApplicationState) => ({
@@ -191,7 +236,7 @@ const mapStateToProps = ({ ui }: ApplicationState) => ({
   tasks: ui.dailyHabitsList.tasks,
   selectDateModalOpen: ui.dailyHabitsList.selectDateModalOpen,
   selectedDate: ui.dailyHabitsList.selectedDate,
-  title: ui.dailyHabitsList.title
+  title: ui.dailyHabitsList.title,
 })
 const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   addNewHabit: () => dispatch(addNewHabitAction()),
@@ -199,7 +244,7 @@ const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
   setSelectDateModalOpen: (open: boolean) => dispatch(setSelectDateModalOpenAction(open)),
   initSelectedDate: () => dispatch(initSelectedDateAction()),
-  setTaskDone: (task: Task, doneStatus: TaskDoneStatus) => dispatch(setTaskDoneStatusAction(task, doneStatus))
+  setTaskDone: (task: Task, doneStatus: TaskDoneStatus) => dispatch(setTaskDoneStatusAction(task, doneStatus)),
 })
 
 export default connect(

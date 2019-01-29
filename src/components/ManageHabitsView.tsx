@@ -1,15 +1,15 @@
 import React, { Component } from "react"
 
-import { FlatList, Modal, StyleSheet, Text, View } from "react-native"
+import { FlatList, Modal, StyleSheet, Text, View, Image, TouchableWithoutFeedback } from "react-native"
 import { Habit } from "../models/Habit"
 import EditHabitView from "./EditHabitView"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import {
-  DailyHabitsListThunkDispatch,
-} from "../redux/reducers/ui/DailyHabitsListReducer"
+import { DailyHabitsListThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/EditHabitReducer"
 import { getHabitsAction, deleteHabitAction, exitAction } from "../redux/reducers/ui/ManageHabitsReducer"
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles } from "../SharedStyles"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -44,19 +44,21 @@ class ManageHabitsView extends Component<AllProps> {
 
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <FlatList
           data={this.props.habits}
           keyExtractor={(item, {}) => item.name}
           style={styles.list}
           renderItem={({ item }) => (
-            <View style={styles.row}>
-              <View>
-                <Text onPress={() => this.onPressDelete(item)}>{"x"}</Text>
-              </View>
-              <Text style={styles.habit} onPress={({}) => this.onPressHabit(item)}>
-                {item.name}
-              </Text>
+            <View style={globalStyles.manageHabitsRow}>
+              {/* <TouchableWithoutFeedback onPress={() => this.onPressDelete(item)} >
+                <Image style={styles.deleteButton} source={require("../../assets/close.png")} />
+              </TouchableWithoutFeedback> */}
+              <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.onPressHabit(item)} >
+                <View style={globalStyles.manageHabitsHabit}>
+                  <Text style={{ fontSize: 18 }}>{item.name}</Text>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           )}
         />
@@ -77,15 +79,19 @@ class ManageHabitsView extends Component<AllProps> {
 }
 
 const styles = StyleSheet.create({
-  list: {},
-  row: {
+  container: {
+    backgroundColor: SharedStyles.defaultBackgroundColor,
     flex: 1,
-    flexDirection: "row",
   },
+  list: {},
   habit: {
-    padding: 10,
     fontSize: 18,
-    height: 44,
+    textAlign: "center",
+  },
+  deleteButton: {
+    width: 30,
+    height: 30,
+    tintColor: "#f99",
   },
   title: {},
 })

@@ -1,7 +1,7 @@
 import React from "react"
 import { ApplicationState } from "./redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { StyleSheet, View, Modal, Text, Button } from "react-native"
+import { StyleSheet, View, Modal, Text, Button, TouchableWithoutFeedback, Image } from "react-native"
 import TabsContainer from "./TabsContainer"
 import NavigationBar from "react-native-navbar"
 import {
@@ -15,7 +15,9 @@ import {
   deleteHabitsNeedingAttentionAction,
   willDoNeedAttentionHabitsAction,
 } from "./redux/reducers/ui/AppReducer"
-import { Habit } from "./models/Habit";
+import { Habit } from "./models/Habit"
+import * as SharedStyles from "./SharedStyles"
+import { globalStyles, closeModalImage } from "./SharedStyles"
 
 interface PropsFromState {
   habitsNeedAttentionPopupState: HabitsNeedAttentionPopupState
@@ -46,18 +48,39 @@ class App extends React.Component<AllProps, any> {
   }
 
   private toHabitsNeedAttentionPopupView(contents: HabitsNeedAttentionPopupContents) {
-    const leftButtonConfig = {
-      title: "x",
-      handler: () => this.props.closeHabitsNeedAttentionPopup()
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.closeHabitsNeedAttentionPopup()
+          }}
+        >
+          <Image
+            style={{ width: 30, height: 30, marginTop: 10, marginRight: 15 }}
+            source={require("../assets/close.png")}
+          />
+        </TouchableWithoutFeedback>
+      )
     }
+
     return (
       <View>
-        <NavigationBar title={{ title: contents.title }} leftButton={leftButtonConfig} />
+        <NavigationBar
+          title={{ title: contents.title }}
+          rightButton={closeButtonConfig()}
+          style={globalStyles.navigationBar}
+        />
         <Text>{contents.introduction}</Text>
         <Text>{contents.habitsNamesString}</Text>
         <Text>{contents.callToAction}</Text>
-        <Button title={contents.willDoButtonLabel} onPress={() => this.props.willDoNeedAttentionHabits(contents.habits)}></Button>
-        <Button title={contents.removeHabitsButtonLabel} onPress={() => this.props.deleteNeedAttentionHabits(contents.habits)}></Button>
+        <Button
+          title={contents.willDoButtonLabel}
+          onPress={() => this.props.willDoNeedAttentionHabits(contents.habits)}
+        />
+        <Button
+          title={contents.removeHabitsButtonLabel}
+          onPress={() => this.props.deleteNeedAttentionHabits(contents.habits)}
+        />
       </View>
     )
   }
@@ -72,16 +95,28 @@ class App extends React.Component<AllProps, any> {
   }
 
   private toCongratsPopupView(contents: CongratsPopupContents) {
-    const leftButtonConfig = {
-      title: "x",
-      handler: () => this.props.closeCongratsPopup()
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.closeCongratsPopup()
+          }}
+        >
+        {closeModalImage()}
+        </TouchableWithoutFeedback>
+      )
     }
+
     return (
       <View>
-        <NavigationBar title={{ title: contents.title }} leftButton={leftButtonConfig} />
+        <NavigationBar
+          title={{ title: contents.title }}
+          rightButton={closeButtonConfig()}
+          style={globalStyles.navigationBar}
+        />
         <Text>{contents.description}</Text>
         <Text>{contents.callToAction}</Text>
-        <Button title={contents.okButtonLabel} onPress={() => this.props.closeCongratsPopup()}></Button>
+        <Button title={contents.okButtonLabel} onPress={() => this.props.closeCongratsPopup()} />
       </View>
     )
   }
@@ -123,13 +158,13 @@ class App extends React.Component<AllProps, any> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: "#fff",
+  },
 })
 
 const mapStateToProps = ({ ui: { app } }: ApplicationState) => ({
   habitsNeedAttentionPopupState: app.needAttentionPopupState,
-  congratsPopupState: app.congratsPopupState
+  congratsPopupState: app.congratsPopupState,
 })
 
 const mapDispatchToProps = (dispatch: AppReducerThunkDispatch) => ({

@@ -1,5 +1,15 @@
 import React, { Component } from "react"
-import { Button, StyleSheet, TextInput, View, Text, FlatList } from "react-native"
+import {
+  Button,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  FlatList,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+  Image,
+} from "react-native"
 import NavigationBar from "react-native-navbar"
 import { Habit } from "../models/Habit"
 import { Weekday } from "../models/Weekday"
@@ -27,6 +37,8 @@ import { FullTimeUnit } from "../models/helpers/FullTimeUnit"
 import { associateBy } from "../utils/ArrayUtils"
 import { TimeUnit } from "../models/TimeUnit"
 var deepEqual = require("fast-deep-equal")
+import * as SharedStyles from "../SharedStyles"
+import { globalStyles, closeModalImage } from "../SharedStyles"
 
 interface PropsFromState {
   editingHabit?: Habit
@@ -49,6 +61,7 @@ export interface OwnState {}
 
 class EditHabitView extends Component<AllProps, OwnState> {
   private textInput: React.RefObject<TextInput>
+  private startDatePicker: React.RefObject<MyDatePicker>
 
   constructor(props: AllProps) {
     super(props)
@@ -62,6 +75,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
 
     this.textInput = React.createRef()
+    this.startDatePicker = React.createRef()
   }
 
   private startDate(): DayDate {
@@ -133,10 +147,27 @@ class EditHabitView extends Component<AllProps, OwnState> {
     this.props.setTimeRuleModalOpen(true)
   }
 
+  private onPressStartDateButton() {
+    if (this.startDatePicker.current !== null) {
+      this.startDatePicker.current.open()
+    }
+  }
+
+  private startDateText(): string {
+    return DateUtils.formatDayDateForUI(this.props.inputs.startDate)
+  }
+
   render() {
-    const closeButtonConfig = {
-      title: "x",
-      handler: () => this.props.exitEditingHabit(),
+    const closeButtonConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.exitEditingHabit()
+          }}
+        >
+          {closeModalImage()}
+        </TouchableWithoutFeedback>
+      )
     }
 
     const titleConfig = {
@@ -144,7 +175,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
     return (
       <View>
-        <NavigationBar title={titleConfig} rightButton={closeButtonConfig} />
+        <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
         <View>
           <TextInput
             style={styles.nameInput}
@@ -155,14 +186,31 @@ class EditHabitView extends Component<AllProps, OwnState> {
               this.props.setNameInput(text)
             }}
           />
-          <Text onPress={() => this.onPressTimeRule()}>{this.timeText()}</Text>
-          <MyDatePicker showSelector={true} date={this.startDate()} onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)}/>
-          <Button
-            title="Submit"
-            onPress={() => {
-              this.props.trySubmitInputs()
-            }}
+          <Text style={styles.timeRuleButton} onPress={() => this.onPressTimeRule()}>
+            {this.timeText()}
+          </Text>
+
+          <Text style={styles.startDateLabel} onPress={() => this.onPressTimeRule()}>
+            {"Starting on"}
+          </Text>
+          <Text style={styles.startDateButton} onPress={() => this.onPressStartDateButton()}>
+            {this.startDateText()}
+          </Text>
+
+          <MyDatePicker
+            ref={this.startDatePicker}
+            showSelector={false}
+            date={this.startDate()}
+            onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)}
           />
+
+          <TouchableHighlight
+            style={globalStyles.submitButton}
+            onPress={() => this.props.trySubmitInputs()}
+            underlayColor="#fff"
+          >
+            <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
+          </TouchableHighlight>
         </View>
         <Modal isVisible={this.props.editTimeRuleModalOpen}>
           <EditTimeRuleView />
@@ -174,11 +222,34 @@ class EditHabitView extends Component<AllProps, OwnState> {
 
 const styles = StyleSheet.create({
   nameInput: {
+    marginTop: 60,
     height: 40,
+    alignSelf: "center",
+    marginLeft: SharedStyles.defaultSideMargins,
+    marginRight: SharedStyles.defaultSideMargins,
   },
-  weekdayPicker: {
-    height: 50,
+  timeRuleButton: {
+    marginTop: 60,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#000",
+    alignSelf: "center",
+    borderRadius: 6,
   },
+  startDateLabel: {
+    marginTop: 40,
+    color: "#6666",
+    alignSelf: "center",
+  },
+  startDateButton: {
+    color: "#666",
+    padding: 10,
+    borderColor: "#666",
+    alignSelf: "center",
+    borderRadius: 6,
+    marginBottom: 60,
+  },
+
 })
 
 const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
