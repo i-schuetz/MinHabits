@@ -1,6 +1,12 @@
 import { Reducer } from "redux"
 import { action } from "typesafe-actions"
 
+export enum SettingsScreenEntry {
+  FEEDBACK,
+  MANAGE_HABITS,
+  ABOUT,
+}
+
 export interface SettingsState {
   readonly modalOpen?: SettingsScreenEntry
 }
@@ -11,12 +17,6 @@ export enum SettingsActionTypes {
 
 const initialState: SettingsState = {
   modalOpen: undefined
-}
-
-export enum SettingsScreenEntry {
-  FEEDBACK,
-  MANAGE_HABITS,
-  ABOUT,
 }
 
 type SettingEntryModalOpenPayload = {
