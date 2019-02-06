@@ -12,6 +12,7 @@ import { Task, TaskDoneStatus } from "../../../models/helpers/Task"
 import * as TaskHelpers from "../../../models/helpers/Task"
 import { ApplicationState } from "../RootReducer"
 import { InteractionManager } from "react-native"
+import { EditHabitActionTypes } from '../../../../build/redux/reducers/ui/EditHabitReducer';
 
 export interface DailyHabitsListState {
   readonly tasks: Task[]
@@ -19,6 +20,7 @@ export interface DailyHabitsListState {
   readonly selectedDate?: DayDate
   readonly title: String
   readonly enterCustomDateModalOpen: boolean
+  readonly selectHabitModalOpen: boolean
 }
 
 export enum DailyHabitsListActionTypes {
@@ -28,6 +30,7 @@ export enum DailyHabitsListActionTypes {
   SET_SELECTED_DATE = "@@DailyHabitsListActions/SET_SELECTED_DATE",
   SET_TASK_DONE = "@@DailyHabitsListActions/SET_TASK_DONE",
   SET_ENTER_CUSTOM_DATE_MODAL_OPEN = "@@DailyHabitsListActions/SET_ENTER_CUSTOM_DATE_MODAL_OPEN",
+  SET_SELECT_HABIT_MODAL_OPEN = "@@DailyHabitsListActions/SET_SELECT_HABIT_MODAL_OPEN",
 }
 
 const initialState: DailyHabitsListState = {
@@ -36,6 +39,7 @@ const initialState: DailyHabitsListState = {
   selectedDate: undefined,
   title: "",
   enterCustomDateModalOpen: false,
+  selectHabitModalOpen: false
 }
 
 export const setSelectDateModalOpenAction = (open: boolean) =>
@@ -45,6 +49,8 @@ export const onGenerateTasksSuccessAction = (tasks: Task[]) =>
 const setSelectedDateAction = (date: DayDate) => action(DailyHabitsListActionTypes.SET_SELECTED_DATE, date)
 export const setEnterCustomDateModalOpenAction = (open: boolean) =>
   action(DailyHabitsListActionTypes.SET_ENTER_CUSTOM_DATE_MODAL_OPEN, open)
+export const setSelectHabitModalOpenAction = (open: boolean) =>
+  action(DailyHabitsListActionTypes.SET_SELECT_HABIT_MODAL_OPEN, open)
 
 type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
 export type DailyHabitsListThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
@@ -132,6 +138,11 @@ export const dailyHabitsListReducer: Reducer<DailyHabitsListState> = (state = in
       return { ...state, selectedDate: action.payload, title: title(action.payload) }
     case DailyHabitsListActionTypes.SET_ENTER_CUSTOM_DATE_MODAL_OPEN:
       return { ...state, enterCustomDateModalOpen: action.payload }
+    case DailyHabitsListActionTypes.SET_SELECT_HABIT_MODAL_OPEN:
+      return { ...state, selectHabitModalOpen: action.payload }
+    case EditHabitActionTypes.SET_EDITING_HABIT_NEW:
+    case EditHabitActionTypes.SET_EDITING_HABIT_EXISTING:
+      return { ...state, selectHabitModalOpen: false }
     default:
       return state
   }

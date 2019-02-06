@@ -18,6 +18,7 @@ import {
   DailyHabitsListThunkDispatch,
   setSelectDateModalOpenAction,
   setTaskDoneStatusAction,
+  setSelectHabitModalOpenAction,
 } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { addNewHabitAction, setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/EditHabitReducer"
 import SelectDailyHabitsDateView from "./SelectDailyHabitsDateView"
@@ -29,9 +30,11 @@ import { Order } from "../models/helpers/Order"
 import { Task, TaskDoneStatus } from "../models/helpers/Task"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
+import SelectHabitView from "./SelectHabitView";
 
 interface PropsFromState {
   editHabitModalOpen: boolean
+  selectHabitModalOpen: boolean
   editingHabit?: Habit
   tasks: Task[]
   selectDateModalOpen: boolean
@@ -46,6 +49,7 @@ interface PropsFromDispatch {
   setSelectDateModalOpen: typeof setSelectDateModalOpenAction
   initSelectedDate: typeof initSelectedDateAction
   setTaskDone: typeof setTaskDoneStatusAction
+  setSelectHabitModalOpen: typeof setSelectHabitModalOpenAction
 }
 
 interface OwnProps {}
@@ -58,10 +62,6 @@ export interface DailyHabitsState {}
 class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   componentWillMount() {
     this.props.initSelectedDate()
-  }
-
-  private addNewHabit() {
-    this.props.addNewHabit()
   }
 
   private onPressTask(task: Task) {
@@ -111,7 +111,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
       return (
         <TouchableWithoutFeedback
           onPress={() => {
-            this.addNewHabit()
+            this.props.setSelectHabitModalOpen(true)
           }}
         >
           <Image
@@ -158,6 +158,17 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
             </TouchableWithoutFeedback>
           )}
         />
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.props.selectHabitModalOpen}
+          onRequestClose={() => {
+            this.props.setSelectHabitModalOpen(false)
+          }}
+        >
+          <SelectHabitView />
+        </Modal>
 
         <Modal
           animationType="slide"
@@ -232,6 +243,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ ui }: ApplicationState) => ({
   editHabitModalOpen: ui.editHabit.editHabitModalOpen,
+  selectHabitModalOpen: ui.dailyHabitsList.selectHabitModalOpen,
   editingHabit: ui.editHabit.editingHabit,
   tasks: ui.dailyHabitsList.tasks,
   selectDateModalOpen: ui.dailyHabitsList.selectDateModalOpen,
@@ -245,6 +257,7 @@ const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   setSelectDateModalOpen: (open: boolean) => dispatch(setSelectDateModalOpenAction(open)),
   initSelectedDate: () => dispatch(initSelectedDateAction()),
   setTaskDone: (task: Task, doneStatus: TaskDoneStatus) => dispatch(setTaskDoneStatusAction(task, doneStatus)),
+  setSelectHabitModalOpen: (open: boolean) => dispatch(setSelectHabitModalOpenAction(open)),
 })
 
 export default connect(
