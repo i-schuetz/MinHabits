@@ -101,12 +101,10 @@ class EditHabitView extends Component<AllProps, OwnState> {
     const allFullWeekdays = FullWeekdayHelpers.array()
     const fullWeekdaysMap = associateBy(fullWeekday => fullWeekday.weekday, allFullWeekdays)
 
-    // Monday - Friday
     if (deepEqual(weekdays, [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday])) {
       return "On weekdays"
     }
 
-    // Every day
     if (deepEqual(weekdays, allFullWeekdays.map(fullWeekday => fullWeekday.weekday))) {
       return "Every day"
     }
