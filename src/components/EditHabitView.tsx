@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { Component, ReactNode } from "react"
 import {
   Button,
   StyleSheet,
@@ -30,6 +30,7 @@ import {
   setStartDateInputAction,
   deleteHabitAction,
   showDeleteConfirmationPopupAction,
+  HabitInputsValidationState,
 } from "../redux/reducers/ui/EditHabitReducer"
 import Modal from "react-native-modal"
 import EditTimeRuleView from "./EditTimeRuleView"
@@ -42,12 +43,14 @@ var deepEqual = require("fast-deep-equal")
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles, closeModalImage } from "../SharedStyles"
 import Dialog, { DialogButton, DialogContent } from "react-native-popup-dialog"
+import { uiReducer } from "../redux/reducers/ui/UIReducer"
 
 interface PropsFromState {
   editingHabit?: Habit
   editTimeRuleModalOpen: boolean
   inputs: EditHabitTemporaryInputs
   showingDeleteConfirmationPopup: boolean
+  validations: HabitInputsValidationState
 }
 interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
@@ -161,6 +164,12 @@ class EditHabitView extends Component<AllProps, OwnState> {
     return DateUtils.formatDayDateForUI(this.props.inputs.startDate)
   }
 
+  private validationsView(errors: string[]): ReactNode {
+    return errors.length == 0 ? null : (
+      <Text style={{ color: SharedStyles.validationRed, textAlign: "center" }}>{errors.join(", ")}</Text>
+    )
+  }
+
   render() {
     const closeButtonConfig = () => {
       return (
@@ -193,7 +202,8 @@ class EditHabitView extends Component<AllProps, OwnState> {
     return (
       <View>
         <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
-        <View>
+        <View style={styles.container}>
+          {this.validationsView(this.props.validations.name)}
           <TextInput
             style={styles.nameInput}
             ref={this.textInput}
@@ -203,10 +213,13 @@ class EditHabitView extends Component<AllProps, OwnState> {
               this.props.setNameInput(text)
             }}
           />
+
+          {this.validationsView(this.props.validations.timeRule)}
           <Text style={styles.timeRuleButton} onPress={() => this.onPressTimeRule()}>
             {this.timeText()}
           </Text>
 
+          {this.validationsView(this.props.validations.startDate)}
           <Text style={styles.startDateLabel} onPress={() => this.onPressTimeRule()}>
             {"Starting on"}
           </Text>
@@ -265,23 +278,25 @@ class EditHabitView extends Component<AllProps, OwnState> {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    paddingTop: 60,
+  },
   nameInput: {
-    marginTop: 60,
     height: 40,
     alignSelf: "center",
     marginLeft: SharedStyles.defaultSideMargins,
     marginRight: SharedStyles.defaultSideMargins,
+    marginBottom: 60,
   },
   timeRuleButton: {
-    marginTop: 60,
     padding: 10,
     borderWidth: 1,
     borderColor: "#000",
     alignSelf: "center",
     borderRadius: 6,
+    marginBottom: 40,
   },
   startDateLabel: {
-    marginTop: 40,
     color: "#6666",
     alignSelf: "center",
   },
@@ -300,6 +315,7 @@ const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
   editingHabit: editHabit.editingHabit,
   editTimeRuleModalOpen: editHabit.editTimeRuleModalOpen,
   showingDeleteConfirmationPopup: editHabit.showingDeleteConfirmationPopup,
+  validations: editHabit.validations,
 })
 const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),

@@ -8,6 +8,7 @@ export const habitRowTopBottomMargin = 10
 
 export const dividersGrey = "#ccc"
 export const dividersHeight = 0.5
+export const validationRed = "#f00"
 
 // export const defaultBackgroundColor = "#aaa"
 // export const defaultBackgroundColor = "#333"
