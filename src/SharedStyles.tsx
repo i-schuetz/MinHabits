@@ -30,6 +30,13 @@ const sharedStyles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: defaultRowBackgroundColor,
   },
+  button: {
+    width: 200,
+    paddingTop: 10,
+    paddingBottom: 10,
+    alignSelf: "center",
+    borderRadius: 6,
+  }
 })
 
 export const globalStyles = StyleSheet.create({
@@ -95,12 +102,12 @@ export const globalStyles = StyleSheet.create({
     fontWeight: "500",
   },
   submitButton: {
-    width: 200,
-    paddingTop: 10,
-    paddingBottom: 10,
+    ...sharedStyles.button,
     backgroundColor: "black",
-    alignSelf: "center",
-    borderRadius: 6,
+  },
+  deleteButton: {
+    ...sharedStyles.button,
+    backgroundColor: "red",
   },
   submitButtonText: {
     fontSize: 18,

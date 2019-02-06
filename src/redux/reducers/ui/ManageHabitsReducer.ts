@@ -38,7 +38,7 @@ export const getHabitsAction = (): ThunkResult<{}> => async dispatch => {
 }
 
 export const deleteHabitAction = (habit: Habit): ThunkResult<{}> => async dispatch => {
-  await Repo.deleteHabits([habit])
+  await Repo.deleteHabits([habit.id])
   dispatch(action(ManageHabitsActionTypes.DELETE_HABIT_SUCCESS))
   dispatch(getHabitsAction())
 

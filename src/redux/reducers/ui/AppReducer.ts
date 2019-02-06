@@ -146,7 +146,7 @@ export type AppReducerThunkDispatch = ThunkDispatch<AppState, undefined, Action>
 
 // TODO confirmation popup before deleting
 export const deleteHabitsNeedingAttentionAction = (habits: Habit[]): ThunkResult<{}> => async dispatch => {
-  await Repo.deleteHabits(habits) // TODO put this somewhere else - works now because the first thing we do when starting app is loading tasks
+  await Repo.deleteHabits(habits.map((habit) => habit.id)) // TODO put this somewhere else - works now because the first thing we do when starting app is loading tasks
   dispatch(needAttentionHabitsDeleteSuccess())
 }
 

@@ -50,6 +50,7 @@ export enum EditHabitActionTypes {
   SET_WEEKDAYS_TIME_RULE = "@@EditHabitActionTypes/SET_WEEKDAYS_TIME_RULE",
   SET_EACH_TIME_RULE = "@@EditHabitActionTypes/SET_EACH_TIME_RULE",
   SUBMIT_TIME_RULE = "@@EditHabitActionTypes/SUBMIT_TIME_RULE",
+  DELETE_SUCCESS = "@@EditHabitActionTypes/DELETE_SUCCESS",
 }
 
 const initialState: EditHabitState = {
@@ -84,6 +85,9 @@ export const setEachTimeRuleAction = (value: EachTimeRuleValue) =>
   action(EditHabitActionTypes.SET_EACH_TIME_RULE, value)
 export const submitTimeRuleAction = () => action(EditHabitActionTypes.SUBMIT_TIME_RULE)
 
+// Delete
+export const onDeleteSuccessAction = () => action(EditHabitActionTypes.DELETE_SUCCESS)
+
 type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
 export type EditHabitThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
 
@@ -96,6 +100,18 @@ export const trySubmitHabitInputsAction = (): ThunkResult<{}> => async (dispatch
     dispatch(onSubmitHabitSuccessAction())
     dispatch(updateTasksForCurrentDate())
   }
+}
+
+export const deleteHabitAction = (): ThunkResult<{}> => async (dispatch, state) => {
+  const editingState = state().ui.editHabit
+  const habitIdMaybe = editingState.editingHabit === undefined ? undefined : editingState.editingHabit.id
+  if (habitIdMaybe === undefined) {
+    console.error("There's no editing habit.");
+    return
+  }
+  await Repo.deleteHabits([habitIdMaybe])
+  dispatch(onDeleteSuccessAction())
+  dispatch(updateTasksForCurrentDate())
 }
 
 const toInputs = (tmpInputs: EditHabitTemporaryInputs, habitId: number | undefined): EditHabitInputs | null => {
@@ -148,6 +164,7 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
     }
     case EditHabitActionTypes.EXIT_EDITING_HABIT:
     case EditHabitActionTypes.SUBMIT_HABIT_SUCCESS:
+    case EditHabitActionTypes.DELETE_SUCCESS:
       return {
         ...state,
         editingHabit: undefined,

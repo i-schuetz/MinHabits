@@ -28,6 +28,7 @@ import {
   setTimeRuleModalOpenAction,
   setNameInputAction,
   setStartDateInputAction,
+  deleteHabitAction
 } from "../redux/reducers/ui/EditHabitReducer"
 import Modal from "react-native-modal"
 import EditTimeRuleView from "./EditTimeRuleView"
@@ -51,6 +52,7 @@ interface PropsFromDispatch {
   setTimeRuleModalOpen: typeof setTimeRuleModalOpenAction
   setNameInput: typeof setNameInputAction
   setStartDateInput: typeof setStartDateInputAction
+  deleteHabit: typeof deleteHabitAction
 }
 
 export interface OwnProps {}
@@ -209,6 +211,14 @@ class EditHabitView extends Component<AllProps, OwnState> {
           >
             <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
           </TouchableHighlight>
+          <TouchableHighlight
+            style={[globalStyles.deleteButton, {marginTop: 60}]}
+            onPress={() => this.props.deleteHabit()}
+            underlayColor="#fff"
+          >
+            <Text style={globalStyles.submitButtonText}>{"Delete"}</Text>
+          </TouchableHighlight>
+
         </View>
         <Modal isVisible={this.props.editTimeRuleModalOpen}>
           <EditTimeRuleView />
@@ -261,6 +271,7 @@ const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   setTimeRuleModalOpen: (open: boolean) => dispatch(setTimeRuleModalOpenAction(open)),
   setNameInput: (name: string) => dispatch(setNameInputAction(name)),
   setStartDateInput: (date: DayDate) => dispatch(setStartDateInputAction(date)),
+  deleteHabit: () => dispatch(deleteHabitAction()),
 })
 
 export default connect(

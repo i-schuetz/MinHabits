@@ -175,15 +175,14 @@ export default class Repo {
   }
 
   // TODO test (manual)
-  static deleteHabits = async (habits: Habit[]) => {
-    const habitIds = habits.map(habit => habit.id)
+  static deleteHabits = async (ids: number[]) => {
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
           `delete from habits where (id) in (?)`,
-          habitIds,
+          ids,
           () => {
-            console.log(`Deleted habits with ids: ${habitIds}`)
+            console.log(`Deleted habits with ids: ${ids}`)
             resolve()
           },
           ({}, error) => {
