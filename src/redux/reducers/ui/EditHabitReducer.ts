@@ -9,6 +9,7 @@ import { ApplicationState } from "../RootReducer"
 import { DayDate } from "../../../models/DayDate"
 import { TimeRuleValue, EachTimeRuleValue, WeekdayTimeRuleValue } from "../../../models/TimeRuleValue"
 import * as DateUtils from "../../../utils/DateUtils"
+import { InteractionManager } from "react-native"
 
 export enum EditTimeRuleModalStep {
   STEP1,
@@ -28,6 +29,7 @@ export interface EditHabitState {
   readonly editTimeRuleModalStep: EditTimeRuleModalStep
   readonly timeRuleOptionType?: TimeRuleOptionType
   readonly editTimeRuleModalBackButtonVisible: boolean
+  readonly showingDeleteConfirmationPopup: boolean
 }
 
 export type EditHabitTemporaryInputs = {
@@ -50,7 +52,12 @@ export enum EditHabitActionTypes {
   SET_WEEKDAYS_TIME_RULE = "@@EditHabitActionTypes/SET_WEEKDAYS_TIME_RULE",
   SET_EACH_TIME_RULE = "@@EditHabitActionTypes/SET_EACH_TIME_RULE",
   SUBMIT_TIME_RULE = "@@EditHabitActionTypes/SUBMIT_TIME_RULE",
+  SHOW_DELETE_CONFIRMATION = "@@EditHabitActionTypes/SHOW_DELETE_CONFIRMATION",
   DELETE_SUCCESS = "@@EditHabitActionTypes/DELETE_SUCCESS",
+
+  // "In between step" to only close the confirmation modal - since if we try to do this and exit the edit modal at the same time,
+  // it freezes. Letting DELETE_SUCCESS like it was - here we do set both the confirmation and edit modal to false.
+  DELETE_SUCCESS_HACK = "@@EditHabitActionTypes/DELETE_SUCCESS_HACK", 
 }
 
 const initialState: EditHabitState = {
@@ -61,6 +68,7 @@ const initialState: EditHabitState = {
   editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
   timeRuleOptionType: undefined,
   editTimeRuleModalBackButtonVisible: false,
+  showingDeleteConfirmationPopup: false,
 }
 
 // General
@@ -87,6 +95,8 @@ export const submitTimeRuleAction = () => action(EditHabitActionTypes.SUBMIT_TIM
 
 // Delete
 export const onDeleteSuccessAction = () => action(EditHabitActionTypes.DELETE_SUCCESS)
+export const showDeleteConfirmationPopupAction = (show: boolean) =>
+  action(EditHabitActionTypes.SHOW_DELETE_CONFIRMATION, show)
 
 type ThunkResult<R> = ThunkAction<R, ApplicationState, undefined, Action>
 export type EditHabitThunkDispatch = ThunkDispatch<ApplicationState, undefined, Action>
@@ -106,12 +116,16 @@ export const deleteHabitAction = (): ThunkResult<{}> => async (dispatch, state) 
   const editingState = state().ui.editHabit
   const habitIdMaybe = editingState.editingHabit === undefined ? undefined : editingState.editingHabit.id
   if (habitIdMaybe === undefined) {
-    console.error("There's no editing habit.");
+    console.error("There's no editing habit.")
     return
   }
   await Repo.deleteHabits([habitIdMaybe])
-  dispatch(onDeleteSuccessAction())
-  dispatch(updateTasksForCurrentDate())
+  dispatch(action(EditHabitActionTypes.DELETE_SUCCESS_HACK))
+  setTimeout(() => { 
+    // Needs apparently a pause after closing the confirmation popup before closing edit modal, otherwise freeze
+    dispatch(onDeleteSuccessAction())
+    dispatch(updateTasksForCurrentDate())
+  }, 500)
 }
 
 const toInputs = (tmpInputs: EditHabitTemporaryInputs, habitId: number | undefined): EditHabitInputs | null => {
@@ -171,6 +185,12 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
         editHabitModalOpen: false,
         inputs: emptyTemporaryInputs(),
         editTimeRuleModalStep: EditTimeRuleModalStep.STEP1,
+        showingDeleteConfirmationPopup: false,
+      }
+    case EditHabitActionTypes.DELETE_SUCCESS_HACK:
+      return {
+        ...state,
+        showingDeleteConfirmationPopup: false,
       }
     case EditHabitActionTypes.SET_NAME_INPUT:
       return { ...state, inputs: { ...state.inputs, name: action.payload } }
@@ -219,6 +239,12 @@ export const editHabitReducer: Reducer<EditHabitState> = (state = initialState, 
           timeRuleValueInTimeRulePopup: undefined,
         },
       }
+    case EditHabitActionTypes.SHOW_DELETE_CONFIRMATION:
+      return {
+        ...state,
+        showingDeleteConfirmationPopup: action.payload,
+      }
+
     default:
       return state
   }

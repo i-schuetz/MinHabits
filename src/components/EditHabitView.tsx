@@ -28,7 +28,8 @@ import {
   setTimeRuleModalOpenAction,
   setNameInputAction,
   setStartDateInputAction,
-  deleteHabitAction
+  deleteHabitAction,
+  showDeleteConfirmationPopupAction,
 } from "../redux/reducers/ui/EditHabitReducer"
 import Modal from "react-native-modal"
 import EditTimeRuleView from "./EditTimeRuleView"
@@ -40,11 +41,13 @@ import { TimeUnit } from "../models/TimeUnit"
 var deepEqual = require("fast-deep-equal")
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles, closeModalImage } from "../SharedStyles"
+import Dialog, { DialogButton, DialogContent } from "react-native-popup-dialog"
 
 interface PropsFromState {
   editingHabit?: Habit
   editTimeRuleModalOpen: boolean
   inputs: EditHabitTemporaryInputs
+  showingDeleteConfirmationPopup: boolean
 }
 interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
@@ -53,6 +56,7 @@ interface PropsFromDispatch {
   setNameInput: typeof setNameInputAction
   setStartDateInput: typeof setStartDateInputAction
   deleteHabit: typeof deleteHabitAction
+  showDeleteConfirmationPopup: typeof showDeleteConfirmationPopupAction
 }
 
 export interface OwnProps {}
@@ -173,6 +177,19 @@ class EditHabitView extends Component<AllProps, OwnState> {
     const titleConfig = {
       title: "Add habit",
     }
+
+    const closeConfirmDeletePopupConfig = () => {
+      return (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.props.showDeleteConfirmationPopup(false)
+          }}
+        >
+          {closeModalImage()}
+        </TouchableWithoutFeedback>
+      )
+    }
+
     return (
       <View>
         <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
@@ -211,17 +228,36 @@ class EditHabitView extends Component<AllProps, OwnState> {
           >
             <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
           </TouchableHighlight>
-          <TouchableHighlight
-            style={[globalStyles.deleteButton, {marginTop: 60}]}
-            onPress={() => this.props.deleteHabit()}
-            underlayColor="#fff"
-          >
-            <Text style={globalStyles.submitButtonText}>{"Delete"}</Text>
-          </TouchableHighlight>
 
+          {this.props.editingHabit === undefined ? null : (
+            <TouchableHighlight
+              style={[globalStyles.deleteButton, { marginTop: 60 }]}
+              onPress={() => this.props.showDeleteConfirmationPopup(true)}
+              underlayColor="#fff"
+            >
+              <Text style={globalStyles.submitButtonText}>{"Delete"}</Text>
+            </TouchableHighlight>
+          )}
         </View>
         <Modal isVisible={this.props.editTimeRuleModalOpen}>
           <EditTimeRuleView />
+        </Modal>
+        <Modal isVisible={this.props.showingDeleteConfirmationPopup}>
+          <View style={{ backgroundColor: "#fff" }}>
+            <NavigationBar
+              title={{ title: "Confirm" }}
+              rightButton={closeConfirmDeletePopupConfig()}
+              style={globalStyles.navigationBar}
+            />
+            <Text>{"Are you sure you want to delete this habit?"}</Text>
+            <TouchableHighlight
+              style={globalStyles.deleteButton}
+              onPress={() => this.props.deleteHabit()}
+              underlayColor="#fff"
+            >
+              <Text style={globalStyles.submitButtonText}>{"Ok"}</Text>
+            </TouchableHighlight>
+          </View>
         </Modal>
       </View>
     )
@@ -257,13 +293,13 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginBottom: 60,
   },
-
 })
 
 const mapStateToProps = ({ ui: { editHabit } }: ApplicationState) => ({
   inputs: editHabit.inputs,
   editingHabit: editHabit.editingHabit,
   editTimeRuleModalOpen: editHabit.editTimeRuleModalOpen,
+  showingDeleteConfirmationPopup: editHabit.showingDeleteConfirmationPopup,
 })
 const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
@@ -272,6 +308,7 @@ const mapDispatchToProps = (dispatch: EditHabitThunkDispatch) => ({
   setNameInput: (name: string) => dispatch(setNameInputAction(name)),
   setStartDateInput: (date: DayDate) => dispatch(setStartDateInputAction(date)),
   deleteHabit: () => dispatch(deleteHabitAction()),
+  showDeleteConfirmationPopup: (show: boolean) => dispatch(showDeleteConfirmationPopupAction(show)),
 })
 
 export default connect(
