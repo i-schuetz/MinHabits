@@ -63,7 +63,7 @@ class StatsView extends Component<AllProps, StatsViewState> {
             <VictoryChart domainPadding={8}>
               <VictoryBar
                 categories={{
-                  x: MonthHelpers.array().map(month => DateUtils.monthShortName(month)),
+                  x: DateUtils.last12Months().map(month => DateUtils.monthShortName(month)),
                   y: [],
                 }}
                 data={this.props.monthDonePercentages.map(monthPercentage => {

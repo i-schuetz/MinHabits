@@ -155,6 +155,22 @@ export function monthShortName(month: Month): string {
   return toMomentWithMonth(month).format(monthShortNameFormat)
 }
 
+// Returns last 12 months.
+// Example: If current month is Feb, this returns Mar-Feb.
+export function last12Months(): Month[] {
+  const thisMonth = today().month
+  const thisMonthNumber = MonthHelpers.toNumber(thisMonth)
+
+  var months: Month[] = []
+  for (var index = 1; index < 12; index += 1) {
+    const monthNumber = (thisMonthNumber + index) % 12
+    const month = MonthHelpers.parseNumber(monthNumber)
+    months.push(month)
+  }
+  months.push(thisMonth)
+  return months
+}
+
 /**
  * @returns moment with specified month. The rest of the date is irrelevant. This is used only to get month names.
  */

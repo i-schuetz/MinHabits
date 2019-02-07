@@ -56,7 +56,7 @@ export function parseNumber(number: number): Month {
   }
 }
 
-function toNumber(month: Month): number {
+export function toNumber(month: Month): number {
   switch (month) {
     case Month.January: return 0;
     case Month.February: return 1;
