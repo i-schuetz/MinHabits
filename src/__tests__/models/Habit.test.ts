@@ -13,7 +13,8 @@ describe("Habit", () => {
         time: {
           value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
           start: { day: 1, month: Month.January, year: 2019 }
-        }
+        },
+        order: 1
       })
     ).toEqual({
       id: 0,
@@ -22,7 +23,8 @@ describe("Habit", () => {
         type: "w",
         value: [1, 2],
         start: "2019-01-01"
-      }
+      },
+      order: 1
     } as HabitJSON)
 
     expect(
@@ -32,7 +34,8 @@ describe("Habit", () => {
         time: {
           value: { kind: "each", value: 2, unit: TimeUnit.Month },
           start: { day: 1, month: Month.January, year: 2019 }
-        }
+        },
+        order: 1
       })
     ).toEqual({
       id: 0,
@@ -41,7 +44,8 @@ describe("Habit", () => {
         type: "e",
         value: { value: 2, unit: "m" },
         start: "2019-01-01"
-      }
+      },
+      order: 1
     } as HabitJSON)
   })
 
@@ -54,7 +58,8 @@ describe("Habit", () => {
           type: "w",
           value: [1, 2],
           start: "2019-01-01"
-        }
+        },
+        order: 1
       })
     ).toEqual({
       id: 0,
@@ -62,7 +67,8 @@ describe("Habit", () => {
       time: {
         value: { kind: "weekday", weekdays: [Weekday.Tuesday, Weekday.Wednesday] },
         start: { day: 1, month: Month.January, year: 2019 }
-      }
+      },
+      order: 1
     } as Habit)
 
     expect(
@@ -73,7 +79,8 @@ describe("Habit", () => {
           type: "e",
           value: { value: 2, unit: "m" },
           start: "2019-01-01"
-        }
+        },
+        order: 1
       })
     ).toEqual({
       id: 0,
@@ -81,7 +88,8 @@ describe("Habit", () => {
       time: {
         value: { kind: "each", value: 2, unit: TimeUnit.Month },
         start: { day: 1, month: Month.January, year: 2019 }
-      }
+      },
+      order: 1
     } as Habit)
   })
 })

@@ -755,6 +755,14 @@
     "@types/react-native" "*"
     moment ">=2.14.0"
 
+"@types/react-native-draggable-flatlist@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-draggable-flatlist/-/react-native-draggable-flatlist-1.1.0.tgz#b4944e53c373a82536b39922535dfcff1153dd86"
+  integrity sha512-FaYEZkEsPjoF5ffB4Ysq8bDp6VUh+rMAhlfOqvhIm+45fe1vDskklmWmheHUnwPafd1SlsQKpVu0kow8Btmsfw==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
 "@types/react-native-modal@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@types/react-native-modal/-/react-native-modal-4.1.1.tgz#6621cf072927cdafc2a9cd7a5b951ace352c0cd0"
@@ -5888,6 +5896,11 @@ react-native-datepicker@^1.7.2:
   integrity sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0=
   dependencies:
     moment "^2.22.0"
+
+react-native-draggable-flatlist@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-1.1.7.tgz#d15cd84cfa924c8733114cb9d3324a5bdbcd7ec2"
+  integrity sha512-HBYYfbDbf7iRuEnSPUfh7iyGltwqLe3OokYI2d6aWY+OUEPEnd9bmTBu8LISQag+9W91/sqKsp8fRAZtnVIsNg==
 
 react-native-gesture-handler@1.0.9:
   version "1.0.9"

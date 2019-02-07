@@ -7,9 +7,11 @@ import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import { DailyHabitsListThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/EditHabitReducer"
-import { getHabitsAction, deleteHabitAction, exitAction } from "../redux/reducers/ui/ManageHabitsReducer"
+import { getHabitsAction, deleteHabitAction, exitAction, reorderHabitsAction } from "../redux/reducers/ui/ManageHabitsReducer"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
+import DraggableFlatList from "react-native-draggable-flatlist"
+import Repo from "../Repo"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -23,6 +25,7 @@ interface PropsFromDispatch {
   exitEditingHabit: typeof exitEditingHabitAction
   deleteHabit: typeof deleteHabitAction
   exit: typeof exitAction
+  reorderHabits: typeof reorderHabitsAction
 }
 
 interface OwnProps {}
@@ -45,16 +48,27 @@ class ManageHabitsView extends Component<AllProps> {
   render() {
     return (
       <View style={styles.container}>
-        <FlatList
+        <DraggableFlatList
           data={this.props.habits}
           keyExtractor={(item, {}) => item.name}
           style={styles.list}
-          renderItem={({ item }) => (
+          scrollPercent={5}
+          onMoveEnd={({ data }) => {
+            if (data === null) return
+            this.props.reorderHabits(data as Habit[])
+          }}
+          
+          renderItem={({ item, index, move, moveEnd, isActive }) => (
             <View style={globalStyles.manageHabitsRow}>
               {/* <TouchableWithoutFeedback onPress={() => this.onPressDelete(item)} >
                 <Image style={styles.deleteButton} source={require("../../assets/close.png")} />
               </TouchableWithoutFeedback> */}
-              <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.onPressHabit(item)} >
+              <TouchableWithoutFeedback
+                style={{ flex: 1 }}
+                onLongPress={move}
+                onPressOut={moveEnd}
+                onPress={() => this.onPressHabit(item)}
+              >
                 <View style={globalStyles.manageHabitsHabit}>
                   <Text style={{ fontSize: 18 }}>{item.name}</Text>
                 </View>
@@ -107,6 +121,7 @@ const mapDispatchToProps = (dispatch: DailyHabitsListThunkDispatch) => ({
   exitEditingHabit: () => dispatch(exitEditingHabitAction()),
   deleteHabit: (habit: Habit) => dispatch(deleteHabitAction(habit)),
   exit: () => dispatch(exitAction()),
+  reorderHabits: (newList: Habit[]) => dispatch(reorderHabitsAction(newList)),
 })
 
 export default connect(

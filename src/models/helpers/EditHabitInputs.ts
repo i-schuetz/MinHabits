@@ -6,4 +6,5 @@ export type EditHabitInputs = {
   name: string
   timeRuleValue: TimeRuleValue
   startDate: DayDate
+  order?: number
 }

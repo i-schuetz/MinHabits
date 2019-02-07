@@ -3,12 +3,12 @@ import { SQLite } from "expo"
 export default class PrefillRepo {
   static prefill = (tx: SQLite.Transaction) => {
     tx.executeSql(
-      `insert or ignore into habits (id, name, time) values (?, ?, ?)`,
+      `insert or ignore into habits (id, name, time, ord) values (?, ?, ?, ?)`,
       ["0", "Take a shower", JSON.stringify({
         type: "w",
         value: [0, 1, 2, 3, 4, 5, 6],
         start: "2019-01-01"
-      })],
+      }), "0"],
       () => {
       },
       ({}, error) => {
@@ -17,12 +17,12 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into habits (id, name, time) values (?, ?, ?)`,
+      `insert or ignore into habits (id, name, time, ord) values (?, ?, ?, ?)`,
       ["1", "Meditate", JSON.stringify({
         type: "w",
         value: [0, 1, 2, 3, 4, 5, 6],
         start: "2019-01-01"
-      })],
+      }), "1"],
       () => {
       },
       ({}, error) => {
@@ -31,12 +31,12 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into habits (id, name, time) values (?, ?, ?)`,
+      `insert or ignore into habits (id, name, time, ord) values (?, ?, ?, ?)`,
       ["2", "Do sports", JSON.stringify({
         type: "w",
         value: [0, 2, 4],
         start: "2019-01-01"
-      })],
+      }), "2"],
       () => {
       },
       ({}, error) => {
@@ -45,12 +45,12 @@ export default class PrefillRepo {
     )
 
     tx.executeSql(
-      `insert or ignore into habits (id, name, time) values (?, ?, ?)`,
+      `insert or ignore into habits (id, name, time, ord) values (?, ?, ?, ?)`,
       ["3", "Eat healthy", JSON.stringify({
         type: "w",
         value: [0, 1, 2, 3, 4, 5, 6],
         start: "2019-01-01"
-      })],
+      }), "3"],
       () => {
       },
       ({}, error) => {

@@ -12,7 +12,7 @@ import { Task, TaskDoneStatus } from "../../../models/helpers/Task"
 import * as TaskHelpers from "../../../models/helpers/Task"
 import { ApplicationState } from "../RootReducer"
 import { InteractionManager } from "react-native"
-import { EditHabitActionTypes } from '../../../../build/redux/reducers/ui/EditHabitReducer';
+import { EditHabitActionTypes } from "./EditHabitReducer";
 
 export interface DailyHabitsListState {
   readonly tasks: Task[]
@@ -65,7 +65,7 @@ const generateTasks: (dayDate: DayDate) => Promise<Task[]> = async (dayDate: Day
   }
 }
 
-const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
+export const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
   await Repo.init() // TODO put this somewhere else - works now because the first thing we do when starting app is loading tasks
   const tasks = await generateTasks(dayDate)
   dispatch(onGenerateTasksSuccessAction(tasks))

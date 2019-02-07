@@ -9,6 +9,8 @@ import PrefillRepo from "./PrefillRepo"
 import { ResolvedTaskWithHabit } from "./models/join/ResolvedTaskWithHabit"
 import { ResolvedTaskInput } from "./models/helpers/ResolvedTaskInput"
 import { WaitingNeedAttentionHabit } from "./models/WaitingNeedAttentionHabit"
+import { resolvedTasksWithManyFailed } from "./__tests_deps/ExampleTasks"
+import { MemoVoidDictionaryIterator } from "lodash"
 
 const db = SQLite.openDatabase("db.db")
 
@@ -25,7 +27,7 @@ export default class Repo {
       console.log("Initializing db")
       return db.transaction((tx: SQLite.Transaction) => {
         tx.executeSql(
-          "create table if not exists habits (id integer primary key not null, name text unique, time text);",
+          "create table if not exists habits (id integer primary key not null, name text unique, time text, ord integer);",
           [],
           () => {
             console.log("Create habits if not exist success")
@@ -83,7 +85,9 @@ export default class Repo {
           [],
           (_, { rows: { _array } }) => {
             // console.log(`Loaded habits from db: ${JSON.stringify(_array)}`)
-            resolve(_array.map((map: HashMap) => Repo.toHabit(map)))
+            const unsortedHabits = _array.map((map: HashMap) => Repo.toHabit(map))
+            const sortedHabits = unsortedHabits.sort((a, b) => a.order - b.order)
+            resolve(sortedHabits)
           },
           ({}, error) => {
             console.log(`Loading error: ${error}`)
@@ -292,6 +296,7 @@ export default class Repo {
 
               const habitName: string = map["name"]
               const timeString: string = map["time"]
+              const habitOrder: number = map["ord"]
 
               return {
                 task: {
@@ -304,6 +309,7 @@ export default class Repo {
                   id: habitId,
                   name: habitName,
                   time: TimeRuleHelpers.parse(JSON.parse(timeString)),
+                  order: habitOrder,
                 },
               }
             })
@@ -318,7 +324,88 @@ export default class Repo {
     )
   }
 
-  static upsertHabit = async (inputs: EditHabitInputs) => {
+  // TODO test this (at least manually, all paths)...
+  static determineOrder = async (inputs: EditHabitInputs): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `select (ord) from habits where name=${inputs.name}`,
+          [],
+          (_, { rows: { _array } }) => {
+            if (_array.length == 0) { // Habit doesn't exit
+
+              // Retrieve max order
+              db.transaction((tx: SQLite.Transaction) => {
+                tx.executeSql(
+                  `select max(ord) from habits`,
+                  [],
+                  (_, { rows: { _array } }) => {
+                    console.log(">>>> habit doesn't exist. retrieved max order: " + JSON.stringify(_array))
+                    resolve(1)
+                  },
+                  ({}, error) => {
+                    console.log(`Loading error: ${error}`)
+                    reject()
+                  }
+                )
+              })
+
+            } else {
+              // Habit already exists - return order of existing item
+              if (_array.length != 1) {
+                console.error("Expecting only 1 result: " + JSON.stringify(_array))
+              }
+              const habit = _array[0]
+              const order = habit["ord"]
+
+              console.log(">>> habit exists! it's order is: " + order + ". row: " + JSON.stringify(habit));
+              
+              resolve(order)
+            }
+          },
+          ({}, error) => {
+            console.log(`Loading error: ${error}`)
+            reject()
+          }
+        )
+      })
+    })
+  }
+
+  static upsertHabits = async (inputs: EditHabitInputs[]) => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        inputs.forEach(input => Repo.upsertHabitInTransaction(input, tx, resolve, reject))
+      })
+    )
+  }
+
+  static generateQuery = (inputs: EditHabitInputs, pars: string[]): [string, string[]] => {
+    var columns = ["name", "time"]
+    var finalPars = pars
+
+    if (inputs.id !== undefined) {
+      columns.push("id")
+      finalPars.push(inputs.id.toString())
+    }
+    if (inputs.order !== undefined) {
+      columns.push("ord")
+      finalPars.push(inputs.order.toString())
+    }
+
+    const columnsStr = columns.join(", ")
+    const placeholdersStr = new Array(columns.length).fill("?").join(", ")
+    const query = `insert or replace into habits (${columnsStr}) values (${placeholdersStr})`
+
+    return [query, finalPars]
+  }
+
+  static upsertHabitInTransaction = async (
+    inputs: EditHabitInputs,
+    tx: SQLite.Transaction,
+    resolve: () => void,
+    reject: () => void
+  ) => {
     const pars = [
       inputs.name,
       JSON.stringify(
@@ -329,29 +416,29 @@ export default class Repo {
       ),
     ]
 
-    const generateQuery = (): [string, string[]] => {
-      if (inputs.id === undefined) {
-        return [`insert or replace into habits (name, time) values (?, ?)`, pars]
-      } else {
-        return [`insert or replace into habits (id, name, time) values (?, ?, ?)`, [inputs.id.toString()].concat(pars)]
-      }
+    if (inputs.order === undefined) {
+      // retrieve order
+      inputs.order = await Repo.determineOrder(inputs)
     }
 
-    const [query, parameters] = generateQuery()
+    const [query, parameters] = Repo.generateQuery(inputs, pars)
+    tx.executeSql(
+      query,
+      parameters,
+      () => {
+        resolve()
+      },
+      ({}, error) => {
+        console.log(`Add habit error: ${error}`)
+        reject()
+      }
+    )
+  }
 
+  static upsertHabit = async (inputs: EditHabitInputs) => {
     return new Promise((resolve, reject) =>
       db.transaction((tx: SQLite.Transaction) => {
-        tx.executeSql(
-          query,
-          parameters,
-          () => {
-            resolve()
-          },
-          ({}, error) => {
-            console.log(`Add habit error: ${error}`)
-            reject()
-          }
-        )
+        Repo.upsertHabitInTransaction(inputs, tx, resolve, reject)
       })
     )
   }
@@ -374,10 +461,12 @@ export default class Repo {
     const id: number = map["id"]
     const nameString: string = map["name"]
     const timeString: string = map["time"]
+    const order: number = map["ord"]
     return {
       id: id,
       name: nameString,
       time: TimeRuleHelpers.parse(JSON.parse(timeString)),
+      order: order,
     }
   }
 }

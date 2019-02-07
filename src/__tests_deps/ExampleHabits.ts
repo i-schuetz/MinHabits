@@ -12,7 +12,8 @@ export const wakeUpWeekdaysHabit: Habit = {
       weekdays: [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday]
     },
     start: { day: 1, month: Month.January, year: 2019 }
-  }
+   },
+   order: 0
 }
 
 export const makeSportHabit: Habit = {
@@ -21,7 +22,8 @@ export const makeSportHabit: Habit = {
   time: {
     value: { kind: "weekday", weekdays: [Weekday.Monday, Weekday.Wednesday, Weekday.Friday] },
     start: { day: 1, month: Month.January, year: 2019 }
-  }
+  },
+  order: 1
 }
 
 export const meditateHabit: Habit = {
@@ -41,7 +43,8 @@ export const meditateHabit: Habit = {
       ]
     },
     start: { day: 1, month: Month.January, year: 2019 }
-  }
+  },
+  order: 2
 }
 
 export const sendVATHabit: Habit = {
@@ -50,7 +53,8 @@ export const sendVATHabit: Habit = {
   time: {
     value: { kind: "each", value: 1, unit: TimeUnit.Month },
     start: { day: 8, month: Month.January, year: 2019 }
-  }
+  },
+  order: 3
 }
 
 export const sendPreliminaryTaxes: Habit = {
@@ -59,7 +63,8 @@ export const sendPreliminaryTaxes: Habit = {
   time: {
     value: { kind: "each", value: 3, unit: TimeUnit.Month },
     start: { day: 1, month: Month.January, year: 2019 }
-  }
+  },
+  order: 4
 }
 
 // See note in the handling of TimesIn in GetHabitsForDate for why this is commented
