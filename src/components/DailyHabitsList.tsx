@@ -31,6 +31,7 @@ import { Task, TaskDoneStatus } from "../models/helpers/Task"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
 import SelectHabitView from "./SelectHabitView";
+import { listSeparator } from '../SharedStyles';
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -138,7 +139,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
         />
 
         <FlatList
-          // ItemSeparatorComponent={this.renderSeparator}
+          ItemSeparatorComponent={listSeparator}
           data={this.props.tasks}
           keyExtractor={(item, {}) => item.habit.name}
           style={styles.list}
@@ -198,32 +199,26 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
 }
 
 const sharedStyles = StyleSheet.create({
-  habit: {
-    fontSize: 18,
-    height: 20,
-    textAlign: "center",
-    alignSelf: "center",
-  },
 })
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: SharedStyles.defaultBackgroundColor,
+    // backgroundColor: "#f00",
     display: "flex",
     flex: 1,
   },
   list: {
-    marginTop: 5,
   },
   doneRow: {
     ...globalStyles.habitRow,
     backgroundColor: SharedStyles.selectedHabitBackgroundColor,
   },
   undoneHabit: {
-    ...sharedStyles.habit,
+    ...globalStyles.habit,
   },
   doneHabit: {
-    ...sharedStyles.habit,
+    ...globalStyles.habit,
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
     color: SharedStyles.selectedHabitTextColor,

@@ -5,7 +5,7 @@ import { ThunkAction, ThunkDispatch } from "redux-thunk"
 import { ApplicationState } from "../RootReducer"
 import { Habit } from "../../../models/Habit"
 import { setModalOpenAction, SettingsScreenEntry } from "./SettingsReducer"
-import { updateTasksForCurrentDate, retrieveTasksAction } from "./DailyHabitsListReducer"
+import { updateTasksForCurrentDate } from "./DailyHabitsListReducer"
 import { fetchAllStatsAction } from "./StatsReducer"
 
 export interface ManageHabitsState {

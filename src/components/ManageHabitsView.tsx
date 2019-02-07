@@ -11,7 +11,7 @@ import { getHabitsAction, deleteHabitAction, exitAction, reorderHabitsAction } f
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
 import DraggableFlatList from "react-native-draggable-flatlist"
-import Repo from "../Repo"
+import { listSeparator } from '../SharedStyles';
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -53,6 +53,7 @@ class ManageHabitsView extends Component<AllProps> {
           keyExtractor={(item, {}) => item.name}
           style={styles.list}
           scrollPercent={5}
+          ItemSeparatorComponent={listSeparator}
           onMoveEnd={({ data }) => {
             if (data === null) return
             this.props.reorderHabits(data as Habit[])
@@ -69,9 +70,7 @@ class ManageHabitsView extends Component<AllProps> {
                 onPressOut={moveEnd}
                 onPress={() => this.onPressHabit(item)}
               >
-                <View style={globalStyles.manageHabitsHabit}>
-                  <Text style={{ fontSize: 18 }}>{item.name}</Text>
-                </View>
+                <Text style={globalStyles.habit}>{item.name}</Text>
               </TouchableWithoutFeedback>
             </View>
           )}
