@@ -12,7 +12,7 @@ import { Task, TaskDoneStatus } from "../../../models/helpers/Task"
 import * as TaskHelpers from "../../../models/helpers/Task"
 import { ApplicationState } from "../RootReducer"
 import { InteractionManager } from "react-native"
-import { EditHabitActionTypes } from "./EditHabitReducer";
+import { EditHabitActionTypes } from "./EditHabitReducer"
 
 export interface DailyHabitsListState {
   readonly tasks: Task[]
@@ -39,7 +39,7 @@ const initialState: DailyHabitsListState = {
   selectedDate: undefined,
   title: "",
   enterCustomDateModalOpen: false,
-  selectHabitModalOpen: false
+  selectHabitModalOpen: false,
 }
 
 export const setSelectDateModalOpenAction = (open: boolean) =>
@@ -65,9 +65,45 @@ const generateTasks: (dayDate: DayDate) => Promise<Task[]> = async (dayDate: Day
   }
 }
 
-export const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
+const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
+
+  // Expected ordering: OPEN < DONE < MISSED
+  const toSortResult = (a: Task, b: Task): number => {
+    switch (a.doneStatus) {
+      case TaskDoneStatus.OPEN:
+        switch (b.doneStatus) {
+          case TaskDoneStatus.OPEN:
+            return 0
+          case TaskDoneStatus.DONE:
+          case TaskDoneStatus.MISSED:
+            return -1
+        }
+      case TaskDoneStatus.DONE:
+        switch (b.doneStatus) {
+          case TaskDoneStatus.OPEN:
+            return 1
+          case TaskDoneStatus.DONE:
+            return 0
+          case TaskDoneStatus.MISSED:
+            return -1
+        }
+      case TaskDoneStatus.MISSED:
+        switch (b.doneStatus) {
+          case TaskDoneStatus.OPEN:
+          case TaskDoneStatus.DONE:
+            return 1
+          case TaskDoneStatus.MISSED:
+            return 0
+        }
+    }
+
+    // The compiler doesn't detect that we covered all cases with nested switches, so this is needed.
+    throw Error("Invalid state: Shouldn't be here")
+  }
+
   await Repo.init() // TODO put this somewhere else - works now because the first thing we do when starting app is loading tasks
   const tasks = await generateTasks(dayDate)
+  tasks.sort((a, b) => toSortResult(a, b))
   dispatch(onGenerateTasksSuccessAction(tasks))
 }
 
