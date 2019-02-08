@@ -140,6 +140,15 @@ export function getDayDatesInWeek(dayDate: DayDate): DayDate[] {
   return dayDates
 }
 
+export function getSurroundingWeek(dayDate: DayDate): DayDate[] {
+  var dayDates: DayDate[] = []
+  for (var offset = -1; offset < 6; offset += 1) {
+    const moment = toMomentFromDayDate(dayDate).add(offset, toMomentUnitString(TimeUnit.Day))
+    dayDates.push(toDayDateFromMoment(moment))
+  }
+  return dayDates
+}
+
 /**
  * Converts moment lib month index to Month
  */

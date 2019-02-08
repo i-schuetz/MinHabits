@@ -18,6 +18,7 @@ import { Order } from "../models/helpers/Order"
 import MyDatePicker from "./MyDatePicker"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
+var deepEqual = require("fast-deep-equal")
 
 interface PropsFromState {
   enterCustomDateModalOpen: boolean
@@ -51,7 +52,7 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
   }
 
   private generateWeekDayDates(dayDate: DayDate): DayDate[] {
-    return DateUtils.getDayDatesInWeek(dayDate)
+    return DateUtils.getSurroundingWeek(dayDate)
   }
 
   private format(dayDate: DayDate, isReferenceDate: boolean): DailyListDayDateViewData {
@@ -105,7 +106,11 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
   private text(entry: ListEntryViewData) {
     switch (entry.kind) {
       case "date":
-        return entry.date.formatted
+        if (deepEqual(entry.date.dayDate, DateUtils.today())) {
+          return entry.date.formatted + " (today)"
+        } else {
+          return entry.date.formatted
+        }
       case "enterCustomDate":
         return "Enter date"
     }
