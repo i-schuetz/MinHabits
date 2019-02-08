@@ -98,7 +98,6 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
     return DayDateHelpers.compare(this.props.selectedDate, DateUtils.today()) == Order.EQ
   }
 
-
   render() {
     const navigationRightButton = () => {
       return (
@@ -119,10 +118,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
       <View style={styles.container}>
         <NavigationBar
           title={
-            <Text
-              style={this.isTodaySelected() ? styles.titleToday : styles.titleNotToday}
-              onPress={() => this.props.setSelectDateModalOpen(true)}
-            >
+            <Text style={styles.title} onPress={() => this.props.setSelectDateModalOpen(true)}>
               {this.props.title}
             </Text>
           }
@@ -222,12 +218,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginRight: 20,
   },
-  titleToday: {
+  title: {
     ...globalStyles.navBarTitleText,
-  },
-  titleNotToday: {
-    ...globalStyles.navBarTitleText,
-    color: "blue",
   },
 })
 
