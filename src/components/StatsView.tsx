@@ -104,7 +104,9 @@ class StatsView extends Component<AllProps, StatsViewState> {
             </VictoryChart>
           </View>
           <View style={styles.needsAttentionRow}>
-            <Text style={{}}>{"🆘 " + this.needAttentionHabitsString(this.props.needAttentionHabits)}</Text>
+            {this.props.needAttentionHabits.length === 0 ? null : (
+              <Text style={{}}>{"Attention: " + this.needAttentionHabitsString(this.props.needAttentionHabits)}</Text>
+            )}
           </View>
         </ScrollView>
       </View>
