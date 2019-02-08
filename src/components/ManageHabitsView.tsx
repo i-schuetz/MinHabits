@@ -7,11 +7,16 @@ import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import { DailyHabitsListThunkDispatch } from "../redux/reducers/ui/DailyHabitsListReducer"
 import { setEditingHabitAction, exitEditingHabitAction } from "../redux/reducers/ui/EditHabitReducer"
-import { getHabitsAction, deleteHabitAction, exitAction, reorderHabitsAction } from "../redux/reducers/ui/ManageHabitsReducer"
+import {
+  getHabitsAction,
+  deleteHabitAction,
+  exitAction,
+  reorderHabitsAction,
+} from "../redux/reducers/ui/ManageHabitsReducer"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
 import DraggableFlatList from "react-native-draggable-flatlist"
-import { listSeparator } from '../SharedStyles';
+import { listSeparator } from "../SharedStyles"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -58,7 +63,6 @@ class ManageHabitsView extends Component<AllProps> {
             if (data === null) return
             this.props.reorderHabits(data as Habit[])
           }}
-          
           renderItem={({ item, index, move, moveEnd, isActive }) => (
             <View style={globalStyles.manageHabitsRow}>
               {/* <TouchableWithoutFeedback onPress={() => this.onPressDelete(item)} >
@@ -70,7 +74,7 @@ class ManageHabitsView extends Component<AllProps> {
                 onPressOut={moveEnd}
                 onPress={() => this.onPressHabit(item)}
               >
-                <Text style={globalStyles.habit}>{item.name}</Text>
+                <Text style={[globalStyles.habit, { flex: 1 }]}>{item.name}</Text>
               </TouchableWithoutFeedback>
             </View>
           )}

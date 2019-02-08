@@ -55,7 +55,6 @@ export const globalStyles = StyleSheet.create({
   habit: {
     fontSize: 18,
     // height: 20,
-    textAlign: "center",
     alignSelf: "center",
   },
   navigationBar: {
