@@ -1,14 +1,6 @@
 import React, { Component } from "react"
 
-import {
-  FlatList,
-  Modal,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableWithoutFeedback,
-} from "react-native"
+import { FlatList, Modal, StyleSheet, Text, View, Image, TouchableWithoutFeedback } from "react-native"
 import { Habit } from "../models/Habit"
 import NavigationBar from "react-native-navbar"
 import EditHabitView from "./EditHabitView"
@@ -30,8 +22,8 @@ import { Order } from "../models/helpers/Order"
 import { Task, TaskDoneStatus } from "../models/helpers/Task"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
-import SelectHabitView from "./SelectHabitView";
-import { listSeparator } from '../SharedStyles';
+import SelectHabitView from "./SelectHabitView"
+import { listSeparator } from "../SharedStyles"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
@@ -139,7 +131,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
         />
 
         <FlatList
-          ItemSeparatorComponent={listSeparator}
+          // ItemSeparatorComponent={listSeparator}
           data={this.props.tasks}
           keyExtractor={(item, {}) => item.habit.name}
           style={styles.list}
@@ -148,13 +140,18 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
               onPress={({}) => this.onPressTask(item)}
               onLongPress={({}) => this.onLongPressTask(item)}
             >
-              <View style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneRow : globalStyles.habitRow}>
-                <Text
-                  style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneHabit : styles.undoneHabit}
-                  numberOfLines={1}
-                >
-                  {item.habit.name}
-                </Text>
+              <View style={{ flexDirection: "column", flex: 1 }}>
+                <View style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneRow : globalStyles.habitRow}>
+                  <Text
+                    style={item.doneStatus == TaskDoneStatus.DONE ? styles.doneHabit : styles.undoneHabit}
+                    numberOfLines={1}
+                  >
+                    {item.habit.name}
+                  </Text>
+                </View>
+                {item.doneStatus == TaskDoneStatus.OPEN ? (
+                  <View style={{ height: 0.5, backgroundColor: SharedStyles.dividersGrey }} />
+                ) : null}
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -198,8 +195,7 @@ class DailyHabitsList extends Component<AllProps, DailyHabitsState> {
   }
 }
 
-const sharedStyles = StyleSheet.create({
-})
+const sharedStyles = StyleSheet.create({})
 
 const styles = StyleSheet.create({
   container: {
@@ -208,8 +204,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
   },
-  list: {
-  },
+  list: {},
   doneRow: {
     ...globalStyles.habitRow,
     backgroundColor: SharedStyles.selectedHabitBackgroundColor,

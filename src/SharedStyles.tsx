@@ -14,7 +14,7 @@ export const validationRed = "#f00"
 // export const defaultBackgroundColor = "#333"
 // export const defaultBackgroundColor = "#003152"
 // export const defaultBackgroundColor = "#000"
-export const defaultBackgroundColor = "#fff"
+export const defaultBackgroundColor = "#ddd"
 // export const defaultBackgroundColor = "#ADD8E6"
 export const defaultRowBackgroundColor = "#fff"
 
@@ -22,7 +22,8 @@ export const defaultRowBackgroundColor = "#fff"
 // export const selectedHabitBackgroundColor = "#aaa"
 // export const selectedHabitBackgroundColor = "#003152"
 // export const selectedHabitBackgroundColor = "#ADD8E6"
-export const selectedHabitBackgroundColor = "#fff"
+// export const selectedHabitBackgroundColor = "#fff"
+export const selectedHabitBackgroundColor = "#ddd"
 export const selectedHabitTextColor = "#000"
 
 const sharedStyles = StyleSheet.create({
@@ -42,8 +43,8 @@ const sharedStyles = StyleSheet.create({
   plainRow: {
     flex: 1,
     // display: "flex",
-    backgroundColor: defaultRowBackgroundColor,
     flexDirection: "row",
+    backgroundColor: defaultRowBackgroundColor,
     paddingLeft: defaultSideMargins,
     paddingRight: defaultSideMargins,
     height: defaultRowHeight,
