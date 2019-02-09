@@ -80,9 +80,6 @@ export const globalStyles = StyleSheet.create({
   habitRow: {
     ...sharedStyles.plainRow
   },
-  manageHabitsHabit: {
-    backgroundColor: "#f00"
-  },
   manageHabitsRow: {
     ...sharedStyles.plainRow
   },

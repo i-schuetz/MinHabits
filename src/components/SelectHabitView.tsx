@@ -4,7 +4,10 @@ import { FlatList, StyleSheet, Text, View, TouchableWithoutFeedback } from "reac
 import { Habit } from "../models/Habit"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
-import { DailyHabitsListThunkDispatch, setSelectHabitModalOpenAction } from "../redux/reducers/ui/DailyHabitsListReducer"
+import {
+  DailyHabitsListThunkDispatch,
+  setSelectHabitModalOpenAction,
+} from "../redux/reducers/ui/DailyHabitsListReducer"
 import { setEditingHabitAction, exitEditingHabitAction, addNewHabitAction } from "../redux/reducers/ui/EditHabitReducer"
 import { getHabitsAction, exitAction } from "../redux/reducers/ui/ManageHabitsReducer"
 import * as SharedStyles from "../SharedStyles"
@@ -69,6 +72,16 @@ class ManageHabitsView extends Component<AllProps> {
     }
   }
 
+  private style(listItem: ListItem): object {
+    const common = { fontSize: 18 }
+    switch (listItem.kind) {
+      case "new":
+        return { ...common, fontWeight: "bold" }
+      case "habit":
+        return { ...common }
+    }
+  }
+
   private onPressItem(listItem: ListItem) {
     switch (listItem.kind) {
       case "new":
@@ -106,12 +119,15 @@ class ManageHabitsView extends Component<AllProps> {
           keyExtractor={(item, {}) => this.key(item)}
           style={styles.list}
           renderItem={({ item }) => (
-            <View style={globalStyles.manageHabitsRow}>
-              <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.onPressItem(item)}>
-                <View style={globalStyles.manageHabitsHabit}>
-                  <Text style={{ fontSize: 18 }}>{this.label(item)}</Text>
-                </View>
-              </TouchableWithoutFeedback>
+            <View style={{ flexDirection: "column" }}>
+              <View style={globalStyles.manageHabitsRow}>
+                <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.onPressItem(item)}>
+                  <View style={{ flex: 1, justifyContent: "center" }}>
+                    <Text style={this.style(item)}>{this.label(item)}</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              </View>
+              <View style={{ height: 0.5, backgroundColor: SharedStyles.dividersGrey }} />
             </View>
           )}
         />

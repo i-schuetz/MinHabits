@@ -17,8 +17,8 @@ import * as DailyListFormattedDayDateHelpers from "../models/view_data/DailyList
 import { Order } from "../models/helpers/Order"
 import MyDatePicker from "./MyDatePicker"
 import * as SharedStyles from "../SharedStyles"
-import { globalStyles } from "../SharedStyles"
 var deepEqual = require("fast-deep-equal")
+import { globalStyles, listSeparator, closeModalImage } from "../SharedStyles"
 
 interface PropsFromState {
   enterCustomDateModalOpen: boolean
@@ -140,13 +140,16 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
       <View>
         <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
         <FlatList
+          ItemSeparatorComponent={listSeparator}
           data={this.generateListViewData(this.props.referenceDate)}
           keyExtractor={(item: ListEntryViewData, {}) => item.key}
           style={styles.list}
           renderItem={({ item }) => (
-            <Text style={this.style(item)} onPress={() => this.onPress(item)}>
-              {this.text(item)}
-            </Text>
+            <View style={globalStyles.flatRow}>
+              <Text style={this.style(item)} onPress={() => this.onPress(item)}>
+                {this.text(item)}
+              </Text>
+            </View>
           )}
         />
         <MyDatePicker
@@ -162,9 +165,8 @@ class SelectDailyHabitsDateView extends Component<AllProps, FooState> {
 
 const sharedStyles = StyleSheet.create({
   dateEntry: {
-    paddingLeft: SharedStyles.defaultSideMargins,
-    paddingRight: SharedStyles.defaultSideMargins,
-    height: SharedStyles.defaultRowHeight,
+    textAlign: "center",
+    alignSelf: "center",
   },
 })
 
@@ -172,10 +174,10 @@ const styles = StyleSheet.create({
   list: {},
   defaultDateEntry: {
     ...sharedStyles.dateEntry,
-    color: "blue",
   },
   referenceDateEntry: {
     ...sharedStyles.dateEntry,
+    fontWeight: "bold",
   },
 })
 
