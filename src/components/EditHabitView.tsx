@@ -42,8 +42,7 @@ import { TimeUnit } from "../models/TimeUnit"
 var deepEqual = require("fast-deep-equal")
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles, closeModalImage } from "../SharedStyles"
-import Dialog, { DialogButton, DialogContent } from "react-native-popup-dialog"
-import { uiReducer } from "../redux/reducers/ui/UIReducer"
+import { Keyboard } from "react-native"
 
 interface PropsFromState {
   editingHabit?: Habit
@@ -200,80 +199,82 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
 
     return (
-      <View>
-        <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
-        <View style={styles.container}>
-          {this.validationsView(this.props.validations.name)}
-          <TextInput
-            style={styles.nameInput}
-            ref={this.textInput}
-            placeholder="Name"
-            autoFocus={true}
-            defaultValue={this.props.inputs.name}
-            onChangeText={text => {
-              this.props.setNameInput(text)
-            }}
-          />
-
-          {this.validationsView(this.props.validations.timeRule)}
-          <Text style={styles.timeRuleButton} onPress={() => this.onPressTimeRule()}>
-            {this.timeText()}
-          </Text>
-
-          {this.validationsView(this.props.validations.startDate)}
-          <Text style={styles.startDateLabel} onPress={() => this.onPressTimeRule()}>
-            {"Starting on"}
-          </Text>
-          <Text style={styles.startDateButton} onPress={() => this.onPressStartDateButton()}>
-            {this.startDateText()}
-          </Text>
-
-          <MyDatePicker
-            ref={this.startDatePicker}
-            showSelector={false}
-            date={this.startDate()}
-            onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)}
-          />
-
-          <TouchableHighlight
-            style={globalStyles.submitButton}
-            onPress={() => this.props.trySubmitInputs()}
-            underlayColor="#fff"
-          >
-            <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
-          </TouchableHighlight>
-
-          {this.props.editingHabit === undefined ? null : (
-            <TouchableHighlight
-              style={[globalStyles.deleteButton, { marginTop: 60 }]}
-              onPress={() => this.props.showDeleteConfirmationPopup(true)}
-              underlayColor="#fff"
-            >
-              <Text style={globalStyles.submitButtonText}>{"Delete"}</Text>
-            </TouchableHighlight>
-          )}
-        </View>
-        <Modal isVisible={this.props.editTimeRuleModalOpen}>
-          <EditTimeRuleView />
-        </Modal>
-        <Modal isVisible={this.props.showingDeleteConfirmationPopup}>
-          <View style={{ backgroundColor: "#fff" }}>
-            <NavigationBar
-              title={{ title: "Confirm" }}
-              rightButton={closeConfirmDeletePopupConfig()}
-              style={globalStyles.navigationBar}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View>
+          <NavigationBar title={titleConfig} rightButton={closeButtonConfig()} style={globalStyles.navigationBar} />
+          <View style={styles.container}>
+            {this.validationsView(this.props.validations.name)}
+            <TextInput
+              style={styles.nameInput}
+              ref={this.textInput}
+              placeholder="Name"
+              autoFocus={true}
+              defaultValue={this.props.inputs.name}
+              onChangeText={text => {
+                this.props.setNameInput(text)
+              }}
             />
-            <Text>{"Are you sure you want to delete this habit?"}</Text>
+
+            {this.validationsView(this.props.validations.timeRule)}
+            <Text style={styles.timeRuleButton} onPress={() => this.onPressTimeRule()}>
+              {this.timeText()}
+            </Text>
+
+            {this.validationsView(this.props.validations.startDate)}
+            <Text style={styles.startDateLabel} onPress={() => this.onPressTimeRule()}>
+              {"Starting on"}
+            </Text>
+            <Text style={styles.startDateButton} onPress={() => this.onPressStartDateButton()}>
+              {this.startDateText()}
+            </Text>
+
+            <MyDatePicker
+              ref={this.startDatePicker}
+              showSelector={false}
+              date={this.startDate()}
+              onSelectDate={(date: DayDate) => this.props.setStartDateInput(date)}
+            />
+
             <TouchableHighlight
-              style={globalStyles.deleteButton}
-              onPress={() => this.props.deleteHabit()}
+              style={globalStyles.submitButton}
+              onPress={() => this.props.trySubmitInputs()}
               underlayColor="#fff"
             >
-              <Text style={globalStyles.submitButtonText}>{"Ok"}</Text>
+              <Text style={globalStyles.submitButtonText}>{"Submit"}</Text>
             </TouchableHighlight>
+
+            {this.props.editingHabit === undefined ? null : (
+              <TouchableHighlight
+                style={[globalStyles.deleteButton, { marginTop: 60 }]}
+                onPress={() => this.props.showDeleteConfirmationPopup(true)}
+                underlayColor="#fff"
+              >
+                <Text style={globalStyles.submitButtonText}>{"Delete"}</Text>
+              </TouchableHighlight>
+            )}
           </View>
-        </Modal>
-      </View>
+          <Modal isVisible={this.props.editTimeRuleModalOpen}>
+            <EditTimeRuleView />
+          </Modal>
+          <Modal isVisible={this.props.showingDeleteConfirmationPopup}>
+            <View style={{ backgroundColor: "#fff" }}>
+              <NavigationBar
+                title={{ title: "Confirm" }}
+                rightButton={closeConfirmDeletePopupConfig()}
+                style={globalStyles.navigationBar}
+              />
+              <Text>{"Are you sure you want to delete this habit?"}</Text>
+              <TouchableHighlight
+                style={globalStyles.deleteButton}
+                onPress={() => this.props.deleteHabit()}
+                underlayColor="#fff"
+              >
+                <Text style={globalStyles.submitButtonText}>{"Ok"}</Text>
+              </TouchableHighlight>
+            </View>
+          </Modal>
+        </View>
+      </TouchableWithoutFeedback>
     )
   }
 }
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     marginRight: SharedStyles.defaultSideMargins,
     marginBottom: 60,
     alignSelf: "stretch",
-    textAlign: 'center',
+    textAlign: "center",
   },
   timeRuleButton: {
     padding: 10,
