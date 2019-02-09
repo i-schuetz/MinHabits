@@ -32,6 +32,7 @@ import { Weekday } from "../models/Weekday"
 import { TimeUnit } from "../models/TimeUnit"
 import * as FullTimeUnitHelpers from "../models/helpers/FullTimeUnit"
 import { globalStyles, closeModalImage } from "../SharedStyles"
+import * as SharedStyles from "../SharedStyles"
 
 export type TimeRuleOption = {
   name: string
@@ -91,7 +92,16 @@ class TimeRuleView extends Component<AllProps, OwnState> {
     const selectedWeekdays = this.determineSelectedWeekdays(this.props.timeRuleValue)
     const updatedWeekdays = this.toggleWeekday(selectedWeekdays, selection.weekday)
     const timeRuleValue: WeekdayTimeRuleValue = { kind: "weekday", weekdays: updatedWeekdays }
+    this.props.setWeekdaysTimeRule(timeRuleValue)
+  }
 
+  private overwriteWeekdaySelection(selection: FullWeekdayHelpers.FullWeekday[]) {
+    const timeRuleValue: WeekdayTimeRuleValue = { kind: "weekday", weekdays: selection.map(weekday => weekday.weekday) }
+    this.props.setWeekdaysTimeRule(timeRuleValue)
+  }
+
+  private deselectWeekdays() {
+    const timeRuleValue: WeekdayTimeRuleValue = { kind: "weekday", weekdays: [] }
     this.props.setWeekdaysTimeRule(timeRuleValue)
   }
 
@@ -187,25 +197,108 @@ class TimeRuleView extends Component<AllProps, OwnState> {
     )
   }
 
+  weekdayOptions(): WeekdayOption[] {
+    const weekdays: WeekdayOption[] = FullWeekdayHelpers.array().map(weekday => {
+      const weekdayOption: WeekdayOption = { kind: "weekday", weekday: weekday }
+      return weekdayOption
+    })
+    return weekdays.concat([{ kind: "workdays" }, { kind: "everyday" }])
+  }
+
+  weekdayOptionText(option: WeekdayOption): string {
+    switch (option.kind) {
+      case "weekday":
+        return option.weekday.name
+      case "workdays":
+        return "Workdays"
+      case "everyday":
+        return "Everyday"
+    }
+  }
+
+  weekdayOptionKey(option: WeekdayOption): string {
+    return this.weekdayOptionText(option)
+  }
+
+  isSelected(option: WeekdayOption): boolean {
+    switch (option.kind) {
+      case "weekday":
+        return this.isWeekdaySelected(option.weekday.weekday)
+      case "workdays":
+      case "everyday":
+        return false
+    }
+  }
+
+  areWorkdaysSelected(): boolean {
+    const selectedWeekdays = this.determineSelectedWeekdays(this.props.timeRuleValue)
+    console.log("???? " + JSON.stringify(selectedWeekdays))
+
+    return (
+      selectedWeekdays.length == 5 &&
+      selectedWeekdays.find(wd => wd === Weekday.Monday) !== undefined &&
+      selectedWeekdays.find(wd => wd === Weekday.Tuesday) !== undefined &&
+      selectedWeekdays.find(wd => wd === Weekday.Wednesday) !== undefined &&
+      selectedWeekdays.find(wd => wd === Weekday.Thursday) !== undefined &&
+      selectedWeekdays.find(wd => wd === Weekday.Friday) !== undefined
+    )
+  }
+
+  isEverydaySelected(): boolean {
+    const selectedWeekdays = this.determineSelectedWeekdays(this.props.timeRuleValue)
+    return selectedWeekdays.length == 7
+  }
+
+  weekdayOptionSelected(option: WeekdayOption) {
+    switch (option.kind) {
+      case "weekday":
+        this.onWeekdaySelected(option.weekday)
+        break
+      case "workdays":
+        if (this.areWorkdaysSelected()) {
+          this.deselectWeekdays()
+        } else {
+          this.overwriteWeekdaySelection(FullWeekdayHelpers.workdays())
+        }
+        break
+      case "everyday":
+        if (this.isEverydaySelected()) {
+          this.deselectWeekdays()
+        } else {
+          this.overwriteWeekdaySelection(FullWeekdayHelpers.array())
+        }
+        break
+    }
+  }
+
+  isLastWeekday(option: WeekdayOption) {
+    switch (option.kind) {
+      case "weekday":
+        return option.weekday.weekday === Weekday.Sunday
+      case "workdays":
+      case "everyday":
+        return false
+    }
+  }
+
   private weekdaysSelectionView(): JSX.Element {
     return (
       <View>
         <FlatList
           style={styles.popupList}
-          data={FullWeekdayHelpers.array()}
-          keyExtractor={(item, {}) => item.name}
+          data={this.weekdayOptions()}
+          keyExtractor={(item, {}) => this.weekdayOptionKey(item)}
           renderItem={({ item }) => (
             <View style={styles.popupRow}>
               <Text
-                style={
-                  this.isWeekdaySelected(item.weekday)
-                    ? styles.selectedPopupRowContent
-                    : styles.unSelectedPopupRowContent
-                }
-                onPress={({}) => this.onWeekdaySelected(item)}
+                style={this.isSelected(item) ? styles.selectedPopupRowContent : styles.unSelectedPopupRowContent}
+                onPress={({}) => this.weekdayOptionSelected(item)}
               >
-                {item.name}
+                {this.weekdayOptionText(item)}
               </Text>
+              {this.isLastWeekday(item) ? (
+                <View style={{ height: 0.5, backgroundColor: SharedStyles.dividersGrey }} />
+              ) : null}
             </View>
           )}
         />
@@ -340,7 +433,7 @@ const styles = StyleSheet.create({
   },
   popupRow: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
   },
   unSelectedPopupRowContent: {
     ...sharedStyles.popupRowContent,
@@ -372,3 +465,18 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(TimeRuleView)
+
+export type WeekdayOption = WeekdayOptionWeekday | WeekdayOptionWorkdays | WeekdayOptionEveryday
+
+export interface WeekdayOptionWeekday {
+  kind: "weekday"
+  weekday: FullWeekdayHelpers.FullWeekday
+}
+
+export interface WeekdayOptionWorkdays {
+  kind: "workdays"
+}
+
+export interface WeekdayOptionEveryday {
+  kind: "everyday"
+}

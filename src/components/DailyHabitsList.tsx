@@ -23,7 +23,6 @@ import { Task, TaskDoneStatus } from "../models/helpers/Task"
 import * as SharedStyles from "../SharedStyles"
 import { globalStyles } from "../SharedStyles"
 import SelectHabitView from "./SelectHabitView"
-import { listSeparator } from "../SharedStyles"
 
 interface PropsFromState {
   editHabitModalOpen: boolean
