@@ -208,6 +208,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
             style={styles.nameInput}
             ref={this.textInput}
             placeholder="Name"
+            autoFocus={true}
             defaultValue={this.props.inputs.name}
             onChangeText={text => {
               this.props.setNameInput(text)
@@ -283,10 +284,11 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     height: 40,
-    alignSelf: "center",
     marginLeft: SharedStyles.defaultSideMargins,
     marginRight: SharedStyles.defaultSideMargins,
     marginBottom: 60,
+    alignSelf: "stretch",
+    textAlign: 'center',
   },
   timeRuleButton: {
     padding: 10,
