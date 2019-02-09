@@ -183,7 +183,7 @@ class EditHabitView extends Component<AllProps, OwnState> {
     }
 
     const titleConfig = {
-      title: "Add habit",
+      title: this.props.editingHabit === undefined ? "Add habit" : "Edit habit"
     }
 
     const closeConfirmDeletePopupConfig = () => {
