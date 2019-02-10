@@ -437,11 +437,10 @@ const styles = StyleSheet.create({
   },
   unSelectedPopupRowContent: {
     ...sharedStyles.popupRowContent,
-    color: "black",
   },
   selectedPopupRowContent: {
     ...sharedStyles.popupRowContent,
-    color: "blue",
+    fontWeight: "bold"
   },
 })
 
