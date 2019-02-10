@@ -70,7 +70,7 @@ export default class Repo {
           }
         )
         
-        PrefillRepo.prefill(tx)
+        // PrefillRepo.prefill(tx)
 
         resolve()
       })
@@ -324,6 +324,24 @@ export default class Repo {
     )
   }
 
+  static resetProgress = async() => {
+    return new Promise((resolve, reject) =>
+      db.transaction((tx: SQLite.Transaction) => {
+        tx.executeSql(
+          `delete from resolved_tasks; delete from habits_attention_waiting`,
+          [],
+          () => {
+            resolve()
+          },
+          ({}, error) => {
+            console.log(`Add habit error: ${error}`)
+            reject()
+          }
+        )
+      })
+    )
+  }
+  
   // TODO test this (at least manually, all paths)...
   static determineOrder = async (inputs: EditHabitInputs): Promise<number> => {
     return new Promise((resolve, reject) => {

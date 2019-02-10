@@ -66,7 +66,6 @@ const generateTasks: (dayDate: DayDate) => Promise<Task[]> = async (dayDate: Day
 }
 
 const retrieveTasksAction = (dayDate: DayDate): ThunkResult<{}> => async dispatch => {
-
   // Expected ordering: OPEN < DONE < MISSED
   const toSortResult = (a: Task, b: Task): number => {
     switch (a.doneStatus) {
@@ -152,6 +151,11 @@ export const setTaskDoneStatusAction = (task: Task, doneStatus: TaskDoneStatus):
   }
   // TODO is it efficient to reload the list? does this work well with animation?
   dispatch(retrieveTasksAction(task.date))
+}
+
+// Clears cached tasks
+export const resetInMemoryTasks = (): ThunkResult<{}> => async (dispatch, state) => {
+  dispatch(updateTasksForCurrentDate())
 }
 
 function title(selectedDate: DayDate): string {

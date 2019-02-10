@@ -14,7 +14,7 @@ import NavigationBar from "react-native-navbar"
 import { ApplicationState } from "../redux/reducers/RootReducer"
 import { connect } from "react-redux"
 import { StatsThunkDispatch } from "../redux/reducers/ui/StatsReducer"
-import { SettingsScreenEntry, setModalOpenAction } from "../redux/reducers/ui/SettingsReducer"
+import { SettingsScreenEntry, setModalOpenAction, resetProgressAction } from "../redux/reducers/ui/SettingsReducer"
 import * as EmailUtils from "../utils/EmailUtils"
 import ManageHabitsView from "./ManageHabitsView"
 import * as SharedStyles from "../SharedStyles"
@@ -26,6 +26,7 @@ interface PropsFromState {
 
 interface PropsFromDispatch {
   setModalOpen: typeof setModalOpenAction
+  resetProgress: typeof resetProgressAction
 }
 
 interface OwnProps {}
@@ -42,6 +43,7 @@ type SettingEntryData = {
 class SettingsView extends Component<AllProps, StatsViewState> {
   private settings: SettingEntryData[] = [
     { entry: SettingsScreenEntry.MANAGE_HABITS, name: "Manage habits" },
+    { entry: SettingsScreenEntry.RESET, name: "Reset progress" },
     { entry: SettingsScreenEntry.FEEDBACK, name: "Feedback" },
     { entry: SettingsScreenEntry.ABOUT, name: "About" },
   ]
@@ -121,6 +123,19 @@ class SettingsView extends Component<AllProps, StatsViewState> {
     switch (entryData.entry) {
       case SettingsScreenEntry.MANAGE_HABITS:
         return <ManageHabitsView />
+      case SettingsScreenEntry.RESET:
+        return (
+          <View style={{ alignItems: "center" }}>
+            <Text style={{ marginTop: 30, marginBottom: 60 }}>{"Do you want to reset your progress?"}</Text>
+            <TouchableHighlight
+              style={globalStyles.deleteButton}
+              onPress={() => this.props.resetProgress()}
+              underlayColor="#fff"
+            >
+              <Text style={globalStyles.submitButtonText}>{"Yes"}</Text>
+            </TouchableHighlight>
+          </View>
+        )
       case SettingsScreenEntry.ABOUT:
         return (
           <View style={styles.aboutContainer}>
@@ -167,6 +182,7 @@ const mapStateToProps = ({ ui: { settings } }: ApplicationState) => ({
 })
 const mapDispatchToProps = (dispatch: StatsThunkDispatch) => ({
   setModalOpen: (entry: SettingsScreenEntry, open: boolean) => dispatch(setModalOpenAction(entry, open)),
+  resetProgress: () => dispatch(resetProgressAction()),
 })
 
 const styles = StyleSheet.create({
