@@ -46,7 +46,18 @@ class StatsView extends Component<AllProps, StatsViewState> {
     return habits.reduce((rv, habit) => rv + (rv.length == 0 ? "" : ", ") + habit.name, "")
   }
 
+  private chartData() {
+    return this.props.monthDonePercentages.map(monthPercentage => {
+      return {
+        x: DateUtils.monthShortName(monthPercentage.month),
+        y: WholePercentageHelpers.toNumber(monthPercentage.percentage),
+      }
+    })
+  }
+
   render() {
+    // console.log("!!! render " + JSON.stringify(this.props.monthDonePercentages))
+
     return (
       <View>
         <NavigationBar
@@ -60,48 +71,47 @@ class StatsView extends Component<AllProps, StatsViewState> {
             </Text>
           </View>
           <View style={styles.chartRow}>
-            <VictoryChart domainPadding={8}>
-              <VictoryBar
-                categories={{
-                  x: DateUtils.last12Months().map(month => DateUtils.monthShortName(month)),
-                  y: [],
-                }}
-                data={this.props.monthDonePercentages.map(monthPercentage => {
-                  return {
-                    x: DateUtils.monthShortName(monthPercentage.month),
-                    y: WholePercentageHelpers.toNumber(monthPercentage.percentage),
-                  }
-                })}
-              />
+            {/* NOTE: Android fix: if we don't return null when length is 0 the chart renders no data!
+            Apparently it can't handle updates in quick succession? (this is called 3x, in the first one the array is empty)  */}
+            {this.props.monthDonePercentages.length == 0 ? null : (
+              <VictoryChart domainPadding={8}>
+                <VictoryBar
+                  categories={{
+                    x: DateUtils.last12Months().map(month => DateUtils.monthShortName(month)),
+                    y: [],
+                  }}
+                  data={this.chartData()}
+                />
 
-              <VictoryAxis
-                label=""
-                style={{
-                  axisLabel: { fontSize: 0, padding: 0, angle: 0 },
-                  tickLabels: { fontSize: 14, marginTop: 10, angle: 45 },
-                }}
-              />
+                <VictoryAxis
+                  label=""
+                  style={{
+                    axisLabel: { fontSize: 0, padding: 0, angle: 0 },
+                    tickLabels: { fontSize: 14, marginTop: 10, angle: 45 },
+                  }}
+                />
 
-              <VictoryAxis
-                dependentAxis
-                tickValues={[50, 100]}
-                // domain={[0, 100]}
-                tickFormat={tick => `${tick}%`}
-                offsetX={50}
-                orientation="left"
-                standalone={false}
-                style={{
-                  grid: {
-                    stroke: "#000",
-                    strokeWidth: 0.5,
-                  },
-                  axisLabel: { fontSize: 0, padding: 0, angle: 0 },
-                  tickLabels: { fontSize: 14, marginTop: 0, angle: 0 },
-                  // ticks: { strokeWidth: 1 },
-                  axis: { stroke: "#00000000", strokeWidth: 0 },
-                }}
-              />
-            </VictoryChart>
+                <VictoryAxis
+                  dependentAxis
+                  tickValues={[50, 100]}
+                  // domain={[0, 100]}
+                  tickFormat={tick => `${tick}%`}
+                  offsetX={50}
+                  orientation="left"
+                  standalone={false}
+                  style={{
+                    grid: {
+                      stroke: "#000",
+                      strokeWidth: 0.5,
+                    },
+                    axisLabel: { fontSize: 0, padding: 0, angle: 0 },
+                    tickLabels: { fontSize: 14, marginTop: 0, angle: 0 },
+                    // ticks: { strokeWidth: 1 },
+                    axis: { stroke: "#00000000", strokeWidth: 0 },
+                  }}
+                />
+              </VictoryChart>
+            )}
           </View>
           <View style={styles.needsAttentionRow}>
             {this.props.needAttentionHabits.length === 0 ? null : (
